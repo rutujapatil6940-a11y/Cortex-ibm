@@ -1,0 +1,733 @@
+/* =====================================================
+   DOCUMENTATION PAGE
+===================================================== */
+
+.documentation-page {
+  min-height: 100vh;
+  width: 100%;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(82, 39, 255, 0.22),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 159, 252, 0.14),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      #090611,
+      #120b20 50%,
+      #08050e
+    );
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.documentation-header {
+  height: 72px;
+  padding: 0 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(10, 7, 18, 0.78);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+
+  backdrop-filter: blur(18px);
+
+  box-sizing: border-box;
+}
+
+
+.documentation-back {
+  border: none;
+
+  background: transparent;
+
+  color: #bdb4ce;
+
+  padding: 10px 14px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+
+.documentation-back:hover {
+  background: rgba(255, 255, 255, 0.07);
+
+  color: #ffffff;
+}
+
+
+.documentation-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 21px;
+
+  font-weight: 700;
+}
+
+
+.documentation-brand-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: linear-gradient(
+    135deg,
+    #5227ff,
+    #ff9ffc
+  );
+}
+
+
+.documentation-user {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  color: #d5cde1;
+
+  font-size: 14px;
+}
+
+
+.documentation-avatar {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #5227ff,
+    #ff9ffc
+  );
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.documentation-main {
+  width: 100%;
+
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  padding: 42px 32px 70px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.documentation-title {
+  margin-bottom: 28px;
+}
+
+
+.documentation-title > span {
+  color: #9b89ff;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+}
+
+
+.documentation-title h1 {
+  margin: 8px 0 0;
+
+  color: #ffffff;
+
+  font-size: 38px;
+
+  letter-spacing: -0.8px;
+}
+
+
+.documentation-title p {
+  margin: 8px 0 0;
+
+  color: #9e94ad;
+
+  font-size: 15px;
+}
+
+
+/* =====================================================
+   PROJECT CARD
+===================================================== */
+
+.documentation-project-card {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 20px 24px;
+
+  margin-bottom: 20px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  backdrop-filter: blur(15px);
+}
+
+
+.documentation-project-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: rgba(82, 39, 255, 0.18);
+
+  color: #b9a6ff;
+
+  font-size: 24px;
+}
+
+
+.documentation-project-card h2 {
+  margin: 0;
+
+  font-size: 19px;
+}
+
+
+.documentation-project-card p {
+  margin: 5px 0 0;
+
+  color: #968ba5;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.documentation-grid {
+  display: grid;
+
+  grid-template-columns: 0.9fr 1.1fr;
+
+  gap: 18px;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.documentation-card {
+  padding: 25px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  backdrop-filter: blur(15px);
+
+  box-sizing: border-box;
+}
+
+
+.documentation-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 22px;
+}
+
+
+.documentation-heading-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: rgba(82, 39, 255, 0.16);
+
+  color: #b7a4ff;
+}
+
+
+.documentation-card-heading h2 {
+  margin: 0;
+
+  font-size: 17px;
+}
+
+
+.documentation-card-heading p {
+  margin: 4px 0 0;
+
+  color: #91869e;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   SELECT
+===================================================== */
+
+.documentation-card label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #cfc7d9;
+
+  font-size: 13px;
+
+  font-weight: 500;
+}
+
+
+.documentation-card select {
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius: 9px;
+
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+
+.documentation-card select option {
+  background: #151020;
+
+  color: #ffffff;
+}
+
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
+.documentation-options {
+  margin-top: 22px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+
+.checkbox-row {
+  display: flex !important;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin: 0 !important;
+
+  color: #bdb4c9 !important;
+
+  cursor: pointer;
+}
+
+
+.checkbox-row input {
+  width: 15px;
+
+  height: 15px;
+
+  accent-color: #7055ff;
+}
+
+
+/* =====================================================
+   GENERATE BUTTON
+===================================================== */
+
+.generate-button {
+  width: 100%;
+
+  margin-top: 25px;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #5227ff,
+    #8c5cff
+  );
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+
+.generate-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 25px rgba(82, 39, 255, 0.25);
+}
+
+
+.generate-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =====================================================
+   EMPTY PREVIEW
+===================================================== */
+
+.empty-documentation {
+  min-height: 330px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  text-align: center;
+}
+
+
+.empty-icon,
+.loading-symbol {
+  width: 60px;
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+
+  border-radius: 16px;
+
+  background: rgba(82, 39, 255, 0.13);
+
+  color: #ae9bff;
+
+  font-size: 25px;
+}
+
+
+.loading-symbol {
+  animation: documentationPulse 1s infinite;
+}
+
+
+@keyframes documentationPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.empty-documentation h3 {
+  margin: 0;
+
+  font-size: 16px;
+}
+
+
+.empty-documentation p {
+  max-width: 360px;
+
+  margin: 8px 0 0;
+
+  color: #91869f;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   GENERATED DOCUMENTATION
+===================================================== */
+
+.generated-documentation {
+  color: #cfc7d9;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+.generated-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 15px;
+
+  padding: 7px 11px;
+
+  border-radius: 20px;
+
+  background: rgba(74, 222, 128, 0.08);
+
+  color: #7df2a1;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+.generated-status span {
+  color: #4ade80;
+}
+
+
+.generated-documentation h3 {
+  margin: 5px 0 10px;
+
+  color: #ffffff;
+
+  font-size: 19px;
+}
+
+
+.generated-documentation h4 {
+  margin: 20px 0 5px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+}
+
+
+.generated-documentation p {
+  margin: 0;
+
+  color: #aaa1b4;
+}
+
+
+.generated-documentation ul {
+  margin-top: 8px;
+
+  padding-left: 20px;
+
+  color: #aaa1b4;
+}
+
+
+.download-button {
+  margin-top: 18px;
+
+  padding: 10px 15px;
+
+  border: 1px solid rgba(82, 39, 255, 0.35);
+
+  border-radius: 9px;
+
+  background: rgba(82, 39, 255, 0.1);
+
+  color: #b8a7ff;
+
+  cursor: pointer;
+}
+
+
+.download-button:hover {
+  background: rgba(82, 39, 255, 0.2);
+}
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+.documentation-info {
+  display: flex;
+
+  gap: 13px;
+
+  margin-top: 20px;
+
+  padding: 20px 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.035);
+}
+
+
+.documentation-info-icon {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: rgba(82, 39, 255, 0.15);
+
+  color: #b7a4ff;
+}
+
+
+.documentation-info h3 {
+  margin: 0;
+
+  font-size: 14px;
+}
+
+
+.documentation-info p {
+  margin: 5px 0 0;
+
+  color: #91869f;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 850px) {
+
+  .documentation-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .documentation-header {
+    padding: 0 16px;
+  }
+
+  .documentation-user span {
+    display: none;
+  }
+
+  .documentation-main {
+    padding: 30px 16px 50px;
+  }
+
+  .documentation-title h1 {
+    font-size: 30px;
+  }
+
+  .documentation-project-card {
+    align-items: flex-start;
+  }
+
+}

@@ -1,0 +1,585 @@
+import "./ProjectOverview.css";
+
+function ProjectOverview({
+  onBack,
+  onDocumentation,
+  onDetailedAnalysis,
+  onCodeStructure,
+}) {
+  const project = {
+    name: "Cortex AI Project",
+    description:
+      "AI-powered code intelligence and automated documentation system.",
+    repository: "https://github.com/username/cortex-ai",
+
+    files: 128,
+    lines: "24.6K",
+    languages: 5,
+    moduleCount: 12,
+
+    technologies: [
+      {
+        name: "JavaScript",
+        percentage: 48,
+        type: "js",
+      },
+      {
+        name: "CSS",
+        percentage: 27,
+        type: "css",
+      },
+      {
+        name: "HTML",
+        percentage: 15,
+        type: "html",
+      },
+      {
+        name: "Python",
+        percentage: 10,
+        type: "python",
+      },
+    ],
+
+    modules: [
+      {
+        name: "Authentication",
+        description: "Login, signup and user authentication",
+      },
+      {
+        name: "Dashboard",
+        description: "Main application dashboard",
+      },
+      {
+        name: "Repository Analyzer",
+        description: "Codebase analysis module",
+      },
+      {
+        name: "AI Documentation",
+        description: "Automated documentation generation",
+      },
+    ],
+
+    summary: [
+      "The project is a web-based AI code intelligence platform.",
+      "It analyzes repository structure, technologies and modules.",
+      "Bob AI can generate project insights and automated documentation.",
+    ],
+
+    insights: [
+      {
+        type: "success",
+        text: "Repository structure is well organized.",
+      },
+      {
+        type: "success",
+        text: "Authentication and dashboard modules are clearly separated.",
+      },
+      {
+        type: "warning",
+        text: "Some components could be optimized for better performance.",
+      },
+    ],
+  };
+
+  const handleReAnalyze = () => {
+    alert("Re-analyze will be connected to Bob AI backend later.");
+  };
+
+  const handleCodeStructure = () => {
+    if (onCodeStructure) {
+      onCodeStructure();
+    } else {
+      alert("Code Structure handler is not connected.");
+    }
+  };
+
+  const handleDependencies = () => {
+    alert("Dependency analysis will be connected later.");
+  };
+
+  return (
+    <div className="project-overview-page">
+
+      {/* HEADER */}
+      <header className="project-header">
+
+        <button
+          className="project-back-button"
+          type="button"
+          onClick={onBack}
+        >
+          ← Back
+        </button>
+
+        <div className="project-brand">
+          <div className="project-brand-icon">
+            ◇
+          </div>
+
+          <span>Cortex</span>
+        </div>
+
+        <div className="project-user">
+          <div className="project-avatar">
+            U
+          </div>
+
+          <span>User</span>
+        </div>
+
+      </header>
+
+
+      {/* MAIN */}
+      <main className="project-main">
+
+        {/* TITLE */}
+        <section className="project-title-section">
+
+          <div>
+            <h1>
+              Project Overview
+            </h1>
+
+            <p>
+              AI-generated insights about your repository
+            </p>
+          </div>
+
+          <div className="analysis-status">
+            <span className="status-dot"></span>
+            Analysis Complete
+          </div>
+
+        </section>
+
+
+        {/* PROJECT INFO */}
+        <section className="project-info-card">
+
+          <div className="project-info-left">
+
+            <div className="repo-large-icon">
+              ◈
+            </div>
+
+            <div>
+
+              <h2>
+                {project.name}
+              </h2>
+
+              <p>
+                {project.description}
+              </p>
+
+              <span className="repository-url">
+                {project.repository}
+              </span>
+
+            </div>
+
+          </div>
+
+          <button
+            className="reanalyze-button"
+            type="button"
+            onClick={handleReAnalyze}
+          >
+            ↻ Re-analyze
+          </button>
+
+        </section>
+
+
+        {/* STATISTICS */}
+        <section className="overview-stats">
+
+          <div className="overview-stat-card">
+
+            <div className="overview-stat-icon">
+              ◫
+            </div>
+
+            <div>
+              <span>Files</span>
+              <strong>{project.files}</strong>
+            </div>
+
+          </div>
+
+
+          <div className="overview-stat-card">
+
+            <div className="overview-stat-icon">
+              #
+            </div>
+
+            <div>
+              <span>Lines of Code</span>
+              <strong>{project.lines}</strong>
+            </div>
+
+          </div>
+
+
+          <div className="overview-stat-card">
+
+            <div className="overview-stat-icon">
+              ◉
+            </div>
+
+            <div>
+              <span>Languages</span>
+              <strong>{project.languages}</strong>
+            </div>
+
+          </div>
+
+
+          <div className="overview-stat-card">
+
+            <div className="overview-stat-icon">
+              ⬡
+            </div>
+
+            <div>
+              <span>Modules</span>
+              <strong>{project.moduleCount}</strong>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* MAIN GRID */}
+        <section className="overview-grid">
+
+          {/* PROJECT SUMMARY */}
+          <div className="overview-card">
+
+            <div className="overview-card-heading">
+
+              <div className="heading-symbol">
+                ✦
+              </div>
+
+              <div>
+                <h2>Project Summary</h2>
+
+                <p>
+                  AI-generated project understanding
+                </p>
+              </div>
+
+            </div>
+
+            <div>
+
+              {project.summary.map(
+                (text, index) => (
+                  <p
+                    className="summary-text"
+                    key={index}
+                  >
+                    {text}
+                  </p>
+                )
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* TECHNOLOGIES */}
+          <div className="overview-card">
+
+            <div className="overview-card-heading">
+
+              <div className="heading-symbol">
+                ◉
+              </div>
+
+              <div>
+                <h2>Technologies</h2>
+
+                <p>
+                  Detected technologies
+                </p>
+              </div>
+
+            </div>
+
+            <div className="technology-list">
+
+              {project.technologies.map(
+                (technology, index) => (
+
+                  <div key={index}>
+
+                    <div className="technology-row">
+
+                      <div className="technology-name">
+
+                        <div
+                          className={`tech-icon ${technology.type}`}
+                        >
+                          {technology.name
+                            .substring(0, 2)
+                            .toUpperCase()}
+                        </div>
+
+                        <span>
+                          {technology.name}
+                        </span>
+
+                      </div>
+
+                      <span>
+                        {technology.percentage}%
+                      </span>
+
+                    </div>
+
+                    <div className="technology-progress">
+
+                      <div
+                        className="technology-progress-fill"
+                        style={{
+                          width:
+                            `${technology.percentage}%`,
+                        }}
+                      />
+
+                    </div>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* PROJECT MODULES */}
+          <div className="overview-card">
+
+            <div className="overview-card-heading">
+
+              <div className="heading-symbol">
+                ⬡
+              </div>
+
+              <div>
+                <h2>Project Modules</h2>
+
+                <p>
+                  Main components detected
+                </p>
+              </div>
+
+            </div>
+
+            <div className="module-list">
+
+              {project.modules.map(
+                (module, index) => (
+
+                  <div
+                    className="module-item"
+                    key={index}
+                  >
+
+                    <div className="module-icon">
+                      ◇
+                    </div>
+
+                    <div>
+
+                      <strong>
+                        {module.name}
+                      </strong>
+
+                      <span>
+                        {module.description}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* AI INSIGHTS */}
+          <div className="overview-card">
+
+            <div className="overview-card-heading">
+
+              <div className="heading-symbol">
+                ✦
+              </div>
+
+              <div>
+                <h2>AI Insights</h2>
+
+                <p>
+                  Bob AI findings
+                </p>
+              </div>
+
+            </div>
+
+
+            {project.insights.map(
+              (insight, index) => (
+
+                <div
+                  className="insight-item"
+                  key={index}
+                >
+
+                  <div
+                    className={
+                      insight.type === "success"
+                        ? "insight-check"
+                        : "insight-warning"
+                    }
+                  >
+                    {insight.type === "success"
+                      ? "✓"
+                      : "!"}
+                  </div>
+
+                  <p>
+                    {insight.text}
+                  </p>
+
+                </div>
+
+              )
+            )}
+
+
+            {/* DETAILED AI ANALYSIS */}
+            <button
+              className="view-analysis-button"
+              type="button"
+              onClick={() => {
+                if (onDetailedAnalysis) {
+                  onDetailedAnalysis();
+                }
+              }}
+            >
+              View Detailed Analysis →
+            </button>
+
+          </div>
+
+        </section>
+
+
+        {/* CONTINUE EXPLORING */}
+        <section className="next-actions">
+
+          <h2>
+            Continue Exploring
+          </h2>
+
+          <p>
+            Explore different parts of your analyzed
+            codebase.
+          </p>
+
+
+          <div className="next-action-buttons">
+
+            {/* DOCUMENTATION */}
+            <button
+              className="next-action"
+              type="button"
+              onClick={() => {
+                if (onDocumentation) {
+                  onDocumentation();
+                }
+              }}
+            >
+
+              <span>
+                ◫
+              </span>
+
+              <div>
+                Generate Documentation
+              </div>
+
+              <b>
+                →
+              </b>
+
+            </button>
+
+
+            {/* CODE STRUCTURE */}
+            <button
+              className="next-action"
+              type="button"
+              onClick={handleCodeStructure}
+            >
+
+              <span>
+                ◈
+              </span>
+
+              <div>
+                Explore Code Structure
+              </div>
+
+              <b>
+                →
+              </b>
+
+            </button>
+
+
+            {/* DEPENDENCIES */}
+            <button
+              className="next-action"
+              type="button"
+              onClick={handleDependencies}
+            >
+
+              <span>
+                ⬡
+              </span>
+
+              <div>
+                View Dependencies
+              </div>
+
+              <b>
+                →
+              </b>
+
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+  );
+}
+
+export default ProjectOverview;
