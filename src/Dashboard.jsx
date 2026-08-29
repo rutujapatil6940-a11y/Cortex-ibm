@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DecryptedText from "./DecryptedText";
 import "./Dashboard.css";
@@ -72,10 +71,9 @@ function Dashboard({
   return (
     <div className="dashboard">
 
-      {/* ================= SIDEBAR ================= */}
+      {/* SIDEBAR */}
       <aside className="sidebar">
 
-        {/* LOGO */}
         <div className="brand">
           <img
             src={logo}
@@ -88,7 +86,6 @@ function Dashboard({
           </span>
         </div>
 
-        {/* NAVIGATION */}
         <nav className="sidebar-nav">
 
           <button
@@ -133,10 +130,10 @@ function Dashboard({
       </aside>
 
 
-      {/* ================= MAIN ================= */}
+      {/* MAIN */}
       <main className="dashboard-main">
 
-        {/* ================= TOPBAR ================= */}
+        {/* TOPBAR */}
         <header className="topbar">
 
           <form
@@ -166,6 +163,7 @@ function Dashboard({
             )}
           </form>
 
+
           {/* PROFILE */}
           <div className="topbar-right">
 
@@ -191,6 +189,7 @@ function Dashboard({
                     </div>
 
                     <div className="dropdown-user-info">
+
                       <strong>
                         {displayName}
                       </strong>
@@ -198,6 +197,7 @@ function Dashboard({
                       <span>
                         {displayEmail}
                       </span>
+
                     </div>
 
                   </div>
@@ -252,7 +252,7 @@ function Dashboard({
         </header>
 
 
-        {/* ================= CONTENT ================= */}
+        {/* CONTENT */}
         <section className="dashboard-content">
 
           {/* WELCOME */}
@@ -263,8 +263,8 @@ function Dashboard({
 
                 <DecryptedText
                   text={`Welcome back, ${displayName}!`}
-                  speed={60}
-                  maxIterations={10}
+                  speed={70}
+                  maxIterations={12}
                   characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%"
                   sequential
                   revealDirection="start"
@@ -294,7 +294,9 @@ function Dashboard({
               type="button"
               onClick={() => navigate("projects")}
             >
-              <div className="stat-icon">▣</div>
+              <div className="stat-icon">
+                ▣
+              </div>
 
               <div>
                 <span className="stat-title">
@@ -315,7 +317,9 @@ function Dashboard({
               type="button"
               onClick={() => navigate("bob")}
             >
-              <div className="stat-icon">✦</div>
+              <div className="stat-icon">
+                ✦
+              </div>
 
               <div>
                 <span className="stat-title">
@@ -334,9 +338,13 @@ function Dashboard({
             <button
               className="stat-card"
               type="button"
-              onClick={() => navigate("documentation")}
+              onClick={() =>
+                navigate("documentation")
+              }
             >
-              <div className="stat-icon">▤</div>
+              <div className="stat-icon">
+                ▤
+              </div>
 
               <div>
                 <span className="stat-title">
@@ -357,7 +365,9 @@ function Dashboard({
               type="button"
               onClick={() => navigate("projects")}
             >
-              <div className="stat-icon">✓</div>
+              <div className="stat-icon">
+                ✓
+              </div>
 
               <div>
                 <span className="stat-title">
@@ -375,10 +385,11 @@ function Dashboard({
           </div>
 
 
-          {/* REPOSITORIES HEADER */}
+          {/* REPOSITORIES */}
           <div className="section-header">
 
             <div>
+
               <h2>
                 Recent Code Repositories
               </h2>
@@ -392,6 +403,7 @@ function Dashboard({
                     } found for "${searchQuery}"`
                   : "Your recently analyzed projects"}
               </p>
+
             </div>
 
             <button
@@ -411,6 +423,7 @@ function Dashboard({
             <table>
 
               <thead>
+
                 <tr>
                   <th>Repository</th>
                   <th>Type</th>
@@ -418,67 +431,79 @@ function Dashboard({
                   <th>Status</th>
                   <th>Last Scan</th>
                 </tr>
+
               </thead>
 
               <tbody>
 
                 {filteredRepositories.length > 0 ? (
 
-                  filteredRepositories.map((repo, index) => (
+                  filteredRepositories.map(
+                    (repo, index) => (
 
-                    <tr
-                      key={index}
-                      onClick={() => navigate("repository")}
-                      tabIndex="0"
-                    >
+                      <tr
+                        key={index}
+                        onClick={() =>
+                          navigate("repository")
+                        }
+                        tabIndex="0"
+                      >
 
-                      <td>
-                        <div className="repo-name">
+                        <td>
 
-                          <span className="repo-icon">
-                            ◈
+                          <div className="repo-name">
+
+                            <span className="repo-icon">
+                              ◈
+                            </span>
+
+                            {repo.name}
+
+                          </div>
+
+                        </td>
+
+                        <td>
+
+                          <span
+                            className={`type-badge ${
+                              repo.type === "GitHub"
+                                ? "github"
+                                : "zip"
+                            }`}
+                          >
+                            {repo.type}
                           </span>
 
-                          {repo.name}
+                        </td>
 
-                        </div>
-                      </td>
+                        <td>
+                          {repo.language}
+                        </td>
 
-                      <td>
-                        <span
-                          className={`type-badge ${
-                            repo.type === "GitHub"
-                              ? "github"
-                              : "zip"
-                          }`}
-                        >
-                          {repo.type}
-                        </span>
-                      </td>
+                        <td>
 
-                      <td>
-                        {repo.language}
-                      </td>
+                          <span
+                            className={`status ${repo.statusClass}`}
+                          >
+                            ● {repo.status}
+                          </span>
 
-                      <td>
-                        <span
-                          className={`status ${repo.statusClass}`}
-                        >
-                          ● {repo.status}
-                        </span>
-                      </td>
+                        </td>
 
-                      <td>
-                        {repo.lastScan}
-                      </td>
+                        <td>
+                          {repo.lastScan}
+                        </td>
 
-                    </tr>
+                      </tr>
 
-                  ))
+                    )
+                  )
 
                 ) : (
 
                   <tr>
+
                     <td
                       colSpan="5"
                       style={{
@@ -507,11 +532,13 @@ function Dashboard({
                           fontSize: "13px",
                         }}
                       >
-                        Try searching for another project,
-                        language, type, or status.
+                        Try searching for another
+                        project, language, type, or
+                        status.
                       </div>
 
                     </td>
+
                   </tr>
 
                 )}
@@ -542,10 +569,14 @@ function Dashboard({
               </div>
 
               <p>
-                Your <strong>e-commerce-core</strong>{" "}
-                repository contains 47 modules across
-                3 technologies.
+                Your{" "}
+                <strong>
+                  e-commerce-core
+                </strong>{" "}
+                repository contains 47 modules
+                across 3 technologies.
               </p>
+
 
               <div className="technology">
 
@@ -554,10 +585,14 @@ function Dashboard({
                 </span>
 
                 <div className="progress">
+
                   <div
                     className="progress-fill"
-                    style={{ width: "62%" }}
+                    style={{
+                      width: "62%",
+                    }}
                   />
+
                 </div>
 
                 <span>
@@ -566,6 +601,7 @@ function Dashboard({
 
               </div>
 
+
               <div className="technology">
 
                 <span>
@@ -573,10 +609,14 @@ function Dashboard({
                 </span>
 
                 <div className="progress">
+
                   <div
                     className="progress-fill"
-                    style={{ width: "25%" }}
+                    style={{
+                      width: "25%",
+                    }}
                   />
+
                 </div>
 
                 <span>
@@ -585,6 +625,7 @@ function Dashboard({
 
               </div>
 
+
               <div className="technology">
 
                 <span>
@@ -592,10 +633,14 @@ function Dashboard({
                 </span>
 
                 <div className="progress">
+
                   <div
                     className="progress-fill"
-                    style={{ width: "13%" }}
+                    style={{
+                      width: "13%",
+                    }}
                   />
+
                 </div>
 
                 <span>
@@ -603,6 +648,7 @@ function Dashboard({
                 </span>
 
               </div>
+
 
               <button
                 className="insight-button"
@@ -629,6 +675,7 @@ function Dashboard({
                 </h2>
 
               </div>
+
 
               <button
                 className="action-item"
@@ -691,7 +738,9 @@ function Dashboard({
               <button
                 className="action-item"
                 type="button"
-                onClick={() => navigate("documentation")}
+                onClick={() =>
+                  navigate("documentation")
+                }
               >
 
                 <span className="action-icon">
@@ -729,7 +778,10 @@ function Dashboard({
             </span>
 
             <span>
-              Current Tier: <strong>MVP</strong>
+              Current Tier:{" "}
+              <strong>
+                MVP
+              </strong>
             </span>
 
           </footer>

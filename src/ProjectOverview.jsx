@@ -1,5 +1,7 @@
+
 import React from "react";
 import "./ProjectOverview.css";
+import logo from "./logo.jpg";
 
 function ProjectOverview({
   onBack,
@@ -98,14 +100,19 @@ function ProjectOverview({
         </button>
 
         <div className="project-brand">
+
+          {/* CORTEX LOGO */}
           <div className="project-brand-icon">
-            ◇
+            <img
+              src={logo}
+              alt="Cortex Logo"
+            />
           </div>
 
           <span>Cortex</span>
+
         </div>
 
-      
       </header>
 
       {/* MAIN */}
@@ -116,8 +123,6 @@ function ProjectOverview({
 
           <div>
             <h1>𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑶𝒗𝒆𝒓𝒗𝒊𝒆𝒘</h1>
-
-            
           </div>
 
           <div className="analysis-status">

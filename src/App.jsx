@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import logo from "./logo.jpg";
+
 import BobChat from "./BobChat";
 import Dashboard from "./Dashboard";
 import AnalyzeRepository from "./AnalyzeRepository";
@@ -17,6 +18,10 @@ function App() {
   const [page, setPage] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // IMPORTANT:
+  // false = repository not analyzed yet
+  // true = repository analyzed
   const [repositoryAnalyzed, setRepositoryAnalyzed] = useState(false);
 
   // =====================================================
@@ -96,7 +101,6 @@ function App() {
 
   // =====================================================
   // REGISTER
-  // AFTER REGISTER → DIRECT DASHBOARD
   // =====================================================
 
   const handleRegister = (e) => {
@@ -116,22 +120,16 @@ function App() {
       return;
     }
 
-    // Save newly registered user
     setUser({
       name: username,
       email: email,
     });
 
-    // User is now logged in
     setIsLoggedIn(true);
-
-    // Reset password visibility
     setShowPassword(false);
 
-    // Registration successful
     alert("Registration successful! Welcome to Cortex.");
 
-    // DIRECTLY OPEN DASHBOARD
     navigate("dashboard");
   };
 
@@ -169,7 +167,10 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+
+    // Logout ke baad repository bhi reset
     setRepositoryAnalyzed(false);
+
     setPage("login");
     setShowPassword(false);
 
@@ -193,8 +194,10 @@ function App() {
   // =====================================================
 
   const handleStartAnalysis = () => {
+    // Repository successfully analyzed
     setRepositoryAnalyzed(true);
 
+    // Go to Project Overview
     navigate("projects");
   };
 
@@ -257,13 +260,31 @@ function App() {
         );
 
       // =================================================
-      // PROJECT OVERVIEW
+      // PROJECTS
       // =================================================
 
       case "projects":
+
+        // -----------------------------------------------
+        // Repository NOT analyzed
+        // -----------------------------------------------
+
+        if (!repositoryAnalyzed) {
+          return (
+            <AnalyzeRepository
+              onBack={() => navigate("dashboard")}
+              onAnalyze={handleStartAnalysis}
+            />
+          );
+        }
+
+        // -----------------------------------------------
+        // Repository analyzed
+        // -----------------------------------------------
+
         return (
           <ProjectOverview
-            onBack={() => navigate("upload")}
+            onBack={() => navigate("dashboard")}
 
             onDocumentation={() =>
               navigate("documentation")
@@ -337,10 +358,27 @@ function App() {
 
       // =================================================
       // DOCUMENTATION
-      // ONLY DOCUMENTATION PAGE OPENS
       // =================================================
 
       case "documentation":
+
+        // -----------------------------------------------
+        // Repository NOT analyzed
+        // -----------------------------------------------
+
+        if (!repositoryAnalyzed) {
+          return (
+            <AnalyzeRepository
+              onBack={() => navigate("dashboard")}
+              onAnalyze={handleStartAnalysis}
+            />
+          );
+        }
+
+        // -----------------------------------------------
+        // Repository analyzed
+        // -----------------------------------------------
+
         return (
           <Documentation
             onBack={() => navigate("dashboard")}
@@ -868,8 +906,6 @@ function App() {
               </span>
 
             </label>
-
-            {/* REGISTER → DASHBOARD */}
 
             <button
               type="submit"
