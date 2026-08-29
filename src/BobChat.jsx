@@ -29,7 +29,7 @@ function BobChat({ onBack }) {
       },
       {
         type: "bob",
-        text: "I'm ready to help analyze your project. Backend AI integration will be connected later.",
+        text: "Repository analysis is available from the Analyze Repository page. Use it first, then review the AI-generated results in Cortex.",
       },
     ]);
 

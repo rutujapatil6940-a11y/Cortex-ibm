@@ -1,12 +1,9 @@
-/* eslint-disable react/no-unknown-property */
-
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   forwardRef,
   useRef,
   useMemo,
   useLayoutEffect,
-  useEffect,
 } from "react";
 import { Color } from "three";
 
@@ -148,27 +145,8 @@ const Silk = ({
       uRotation: { value: rotation },
       uTime: { value: 0 },
     }),
-    []
+    [speed, scale, noiseIntensity, color, rotation]
   );
-
-  useEffect(() => {
-    uniforms.uSpeed.value = speed;
-    uniforms.uScale.value = scale;
-    uniforms.uNoiseIntensity.value = noiseIntensity;
-
-    uniforms.uColor.value.setRGB(
-      ...hexToNormalizedRGB(color)
-    );
-
-    uniforms.uRotation.value = rotation;
-  }, [
-    speed,
-    scale,
-    noiseIntensity,
-    color,
-    rotation,
-    uniforms,
-  ]);
 
   return (
     <Canvas dpr={[1, 2]} frameloop="always">

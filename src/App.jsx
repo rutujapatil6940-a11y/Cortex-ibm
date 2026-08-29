@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import "./App.css";
-import logo from "./logo.jpg";
+
 import BobChat from "./BobChat";
 import Dashboard from "./Dashboard";
 import AnalyzeRepository from "./AnalyzeRepository";
@@ -13,20 +13,62 @@ import DetailedAnalysis from "./DetailedAnalysis";
 import Documentation from "./Documentation";
 import GenerateDocumentation from "./GenerateDocumentation";
 
+// =====================================================
+// BACKEND API URL
+// =====================================================
+
+// For local development:
+// http://localhost:5000
+
+// After Render deployment, replace this with:
+// https://your-backend-name.onrender.com
+
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+function readPersistedSession() {
+  if (typeof window === "undefined") {
+    return { isLoggedIn: false, user: { name: "", email: "" } };
+  }
+
+  const token = localStorage.getItem("token");
+  const savedUser = localStorage.getItem("user");
+  if (!token || !savedUser) {
+    return { isLoggedIn: false, user: { name: "", email: "" } };
+  }
+
+  try {
+    const parsedUser = JSON.parse(savedUser);
+    return {
+      isLoggedIn: true,
+      user: {
+        name: parsedUser.name || parsedUser.fullName || "Developer",
+        email: parsedUser.email || "",
+      },
+    };
+  } catch {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    return { isLoggedIn: false, user: { name: "", email: "" } };
+  }
+}
+
 function App() {
-  const [page, setPage] = useState("login");
+  const [initialSession] = useState(readPersistedSession);
+  const [page, setPage] = useState(
+    initialSession.isLoggedIn ? "dashboard" : "login"
+  );
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [repositoryAnalyzed, setRepositoryAnalyzed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(initialSession.isLoggedIn);
+  const [analysis, setAnalysis] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   // =====================================================
   // USER DETAILS
   // =====================================================
 
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-  });
+  const [user, setUser] = useState(initialSession.user);
 
   // =====================================================
   // BROWSER HISTORY
@@ -72,7 +114,7 @@ function App() {
   // LOGIN
   // =====================================================
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const email = e.target.email.value.trim();
@@ -83,28 +125,89 @@ function App() {
       return;
     }
 
-    setUser((previousUser) => ({
-      name: previousUser.name || "Developer",
-      email: email,
-    }));
+    try {
+      setLoading(true);
 
-    setIsLoggedIn(true);
-    setShowPassword(false);
+      const response = await fetch(
+        `${API_URL}/api/auth/login`,
+        {
+          method: "POST",
 
-    navigate("dashboard");
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      // Backend returned error
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Login failed."
+        );
+      }
+
+      // =================================================
+      // SAVE JWT TOKEN
+      // =================================================
+
+      localStorage.setItem("token", data.token);
+
+      // =================================================
+      // SAVE USER
+      // =================================================
+
+      const loggedInUser = {
+        name: data.user?.name || data.user?.fullName || "Developer",
+        email: data.user?.email || email,
+      };
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(loggedInUser)
+      );
+
+      setUser(loggedInUser);
+
+      setIsLoggedIn(true);
+      setShowPassword(false);
+
+      alert("Login successful! Welcome back.");
+
+      navigate("dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+
+      alert(
+        error.message ||
+          "Unable to login. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =====================================================
   // REGISTER
-  // AFTER REGISTER → DIRECT DASHBOARD
   // =====================================================
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    const username = e.target.username.value.trim();
-    const email = e.target.email.value.trim();
-    const password = e.target.password.value.trim();
+    const username =
+      e.target.username.value.trim();
+
+    const email =
+      e.target.email.value.trim();
+
+    const password =
+      e.target.password.value.trim();
 
     if (!username || !email || !password) {
       alert("Please fill all fields.");
@@ -112,45 +215,129 @@ function App() {
     }
 
     if (password.length < 8) {
-      alert("Password must be at least 8 characters.");
+      alert(
+        "Password must be at least 8 characters."
+      );
       return;
     }
 
-    // Save newly registered user
-    setUser({
-      name: username,
-      email: email,
-    });
+    try {
+      setLoading(true);
 
-    // User is now logged in
-    setIsLoggedIn(true);
+      // =================================================
+      // SEND REGISTRATION DATA TO BACKEND
+      // =================================================
 
-    // Reset password visibility
-    setShowPassword(false);
+      const response = await fetch(
+        `${API_URL}/api/auth/signup`,
+        {
+          method: "POST",
 
-    // Registration successful
-    alert("Registration successful! Welcome to Cortex.");
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-    // DIRECTLY OPEN DASHBOARD
-    navigate("dashboard");
+          body: JSON.stringify({
+          fullName: username,
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      // Backend returned error
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Registration failed."
+        );
+      }
+
+      // =================================================
+      // SAVE JWT TOKEN
+      // =================================================
+
+      localStorage.setItem("token", data.token);
+
+      // =================================================
+      // SAVE USER DETAILS
+      // =================================================
+
+      const registeredUser = {
+        name:
+          data.user?.name ||
+          data.user?.fullName ||
+          username,
+
+        email:
+          data.user?.email ||
+          email,
+      };
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(registeredUser)
+      );
+
+      setUser(registeredUser);
+
+      setIsLoggedIn(true);
+      setShowPassword(false);
+
+      alert(
+        "Registration successful! Welcome to Cortex."
+      );
+
+      // =================================================
+      // DIRECTLY OPEN DASHBOARD
+      // =================================================
+
+      navigate("dashboard");
+    } catch (error) {
+      console.error(
+        "Registration error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Unable to register. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =====================================================
   // FORGOT PASSWORD
   // =====================================================
 
-  const handleForgotPassword = (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
 
-    const email = e.target.email.value.trim();
+    const email =
+      e.target.email.value.trim();
 
     if (!email) {
       alert("Please enter your email address.");
       return;
     }
 
+    /*
+      IMPORTANT:
+
+      This currently only shows a message.
+
+      For real password reset, backend needs:
+      POST /api/auth/forgot-password
+
+      with email service such as Nodemailer/Resend.
+    */
+
     alert(
-      "Password reset link has been sent to your email!"
+      "Password reset functionality will be connected to the backend."
     );
 
     setPage("login");
@@ -168,8 +355,22 @@ function App() {
   // =====================================================
 
   const handleLogout = () => {
+    // Remove JWT
+    localStorage.removeItem("token");
+
+    // Remove user
+    localStorage.removeItem("user");
+
+    // Reset application
     setIsLoggedIn(false);
-    setRepositoryAnalyzed(false);
+
+    setAnalysis(null);
+
+    setUser({
+      name: "",
+      email: "",
+    });
+
     setPage("login");
     setShowPassword(false);
 
@@ -192,31 +393,74 @@ function App() {
   // ANALYZE REPOSITORY → PROJECT OVERVIEW
   // =====================================================
 
-  const handleStartAnalysis = () => {
-    setRepositoryAnalyzed(true);
+  const handleStartAnalysis = async (githubUrl) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      handleLogout();
+      throw new Error("Your session has expired. Please sign in again.");
+    }
 
-    navigate("projects");
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/analysis/github`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ repositoryUrl: githubUrl }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        if (response.status === 401) handleLogout();
+        throw new Error(data.message || "Repository analysis failed.");
+      }
+
+      setAnalysis({ ...data.analysis, repository: data.repository });
+      navigate("projects");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =====================================================
   // EDIT PROFILE
   // =====================================================
 
-  const handleUpdateProfile = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
-    const name = e.target.name.value.trim();
-    const email = e.target.email.value.trim();
+    const name =
+      e.target.name.value.trim();
+
+    const email =
+      e.target.email.value.trim();
 
     if (!name || !email) {
       alert("Please fill all fields.");
       return;
     }
 
-    setUser({
+    /*
+      Later you can connect this to:
+
+      PUT /api/auth/profile
+
+      For now it updates frontend + localStorage.
+    */
+
+    const updatedUser = {
       name,
       email,
-    });
+    };
+
+    setUser(updatedUser);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(updatedUser)
+    );
 
     alert("Profile updated successfully!");
 
@@ -238,8 +482,11 @@ function App() {
         return (
           <Dashboard
             user={user}
+            analysis={analysis}
             onLogout={handleLogout}
-            onAnalyzeRepository={handleAnalyzeRepository}
+            onAnalyzeRepository={
+              handleAnalyzeRepository
+            }
             onNavigate={navigate}
           />
         );
@@ -253,6 +500,7 @@ function App() {
           <AnalyzeRepository
             onBack={() => navigate("dashboard")}
             onAnalyze={handleStartAnalysis}
+            isAnalyzing={loading}
           />
         );
 
@@ -264,6 +512,7 @@ function App() {
         return (
           <ProjectOverview
             onBack={() => navigate("upload")}
+            analysis={analysis}
 
             onDocumentation={() =>
               navigate("documentation")
@@ -299,6 +548,7 @@ function App() {
         return (
           <AIAnalysis
             onBack={() => navigate("projects")}
+            analysis={analysis}
           />
         );
 
@@ -310,6 +560,7 @@ function App() {
         return (
           <CodeStructure
             onBack={() => navigate("projects")}
+            analysis={analysis}
           />
         );
 
@@ -321,6 +572,7 @@ function App() {
         return (
           <Dependencies
             onBack={() => navigate("projects")}
+            analysis={analysis}
           />
         );
 
@@ -332,18 +584,19 @@ function App() {
         return (
           <DetailedAnalysis
             onBack={() => navigate("projects")}
+            analysis={analysis}
           />
         );
 
       // =================================================
       // DOCUMENTATION
-      // ONLY DOCUMENTATION PAGE OPENS
       // =================================================
 
       case "documentation":
         return (
           <Documentation
             onBack={() => navigate("dashboard")}
+            analysis={analysis}
             onGenerateDocumentation={() =>
               navigate("generate-documentation")
             }
@@ -357,7 +610,10 @@ function App() {
       case "generate-documentation":
         return (
           <GenerateDocumentation
-            onBack={() => navigate("documentation")}
+            onBack={() =>
+              navigate("documentation")
+            }
+            analysis={analysis}
           />
         );
 
@@ -388,8 +644,8 @@ function App() {
               <h1>Architecture</h1>
 
               <p>
-                Project architecture visualization will
-                appear here.
+                Project architecture visualization
+                will appear here.
               </p>
 
               <div className="mock-chat">
@@ -401,7 +657,9 @@ function App() {
               <button
                 type="button"
                 className="secondary-button"
-                onClick={() => navigate("projects")}
+                onClick={() =>
+                  navigate("projects")
+                }
               >
                 ← Back to Projects
               </button>
@@ -459,7 +717,9 @@ function App() {
               <button
                 type="button"
                 className="secondary-button"
-                onClick={() => navigate("dashboard")}
+                onClick={() =>
+                  navigate("dashboard")
+                }
               >
                 ← Back to Dashboard
               </button>
@@ -479,7 +739,9 @@ function App() {
 
               <div className="temporary-avatar">
                 {user.name
-                  ? user.name.charAt(0).toUpperCase()
+                  ? user.name
+                      .charAt(0)
+                      .toUpperCase()
                   : "D"}
               </div>
 
@@ -492,12 +754,15 @@ function App() {
               </p>
 
               <p>
-                {user.email || "developer@example.com"}
+                {user.email ||
+                  "developer@example.com"}
               </p>
 
               <button
                 type="button"
-                onClick={() => navigate("edit-profile")}
+                onClick={() =>
+                  navigate("edit-profile")
+                }
               >
                 Edit Profile
               </button>
@@ -505,7 +770,9 @@ function App() {
               <button
                 type="button"
                 className="secondary-button"
-                onClick={() => navigate("dashboard")}
+                onClick={() =>
+                  navigate("dashboard")
+                }
               >
                 ← Back to Dashboard
               </button>
@@ -525,7 +792,9 @@ function App() {
 
               <div className="temporary-avatar">
                 {user.name
-                  ? user.name.charAt(0).toUpperCase()
+                  ? user.name
+                      .charAt(0)
+                      .toUpperCase()
                   : "D"}
               </div>
 
@@ -603,7 +872,9 @@ function App() {
               <button
                 type="button"
                 className="secondary-button"
-                onClick={() => navigate("profile")}
+                onClick={() =>
+                  navigate("profile")
+                }
               >
                 ← Back to Profile
               </button>
@@ -633,7 +904,9 @@ function App() {
 
               <button
                 type="button"
-                onClick={() => navigate("dashboard")}
+                onClick={() =>
+                  navigate("dashboard")
+                }
               >
                 ← Back to Dashboard
               </button>
@@ -650,8 +923,11 @@ function App() {
         return (
           <Dashboard
             user={user}
+            analysis={analysis}
             onLogout={handleLogout}
-            onAnalyzeRepository={handleAnalyzeRepository}
+            onAnalyzeRepository={
+              handleAnalyzeRepository
+            }
             onNavigate={navigate}
           />
         );
@@ -679,7 +955,9 @@ function App() {
 
       {/* AUTH WRAPPER */}
 
-      <div className={`auth-wrapper ${authMode}`}>
+      <div
+        className={`auth-wrapper ${authMode}`}
+      >
 
         {/* =================================================
             LOGIN
@@ -729,10 +1007,14 @@ function App() {
                 type="button"
                 className="show-password"
                 onClick={() =>
-                  setShowPassword(!showPassword)
+                  setShowPassword(
+                    !showPassword
+                  )
                 }
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword
+                  ? "Hide"
+                  : "Show"}
               </button>
 
             </div>
@@ -754,9 +1036,12 @@ function App() {
             <button
               type="submit"
               className="auth-button"
+              disabled={loading}
             >
               <span>
-                Login
+                {loading
+                  ? "Logging in..."
+                  : "Login"}
               </span>
 
               <span className="button-arrow">
@@ -848,10 +1133,14 @@ function App() {
                 type="button"
                 className="show-password"
                 onClick={() =>
-                  setShowPassword(!showPassword)
+                  setShowPassword(
+                    !showPassword
+                  )
                 }
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword
+                  ? "Hide"
+                  : "Show"}
               </button>
 
             </div>
@@ -869,15 +1158,16 @@ function App() {
 
             </label>
 
-            {/* REGISTER → DASHBOARD */}
-
             <button
               type="submit"
               className="auth-button"
+              disabled={loading}
             >
 
               <span>
-                Register
+                {loading
+                  ? "Creating account..."
+                  : "Register"}
               </span>
 
               <span className="button-arrow">
@@ -951,6 +1241,7 @@ function App() {
             <button
               type="submit"
               className="auth-button"
+              disabled={loading}
             >
 
               <span>
@@ -1094,3 +1385,4 @@ function App() {
 }
 
 export default App;
+

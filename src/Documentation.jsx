@@ -1,66 +1,21 @@
 import { useState } from "react";
 import "./Documentation.css";
 
-function Documentation({ onBack }) {
+function Documentation({ onBack, analysis }) {
   const [copied, setCopied] = useState(false);
 
+  const array = (value) => Array.isArray(value) ? value : [];
+  const text = (value) => typeof value === "string" ? value : value?.name || value?.technology || value?.package || value?.description || value?.purpose || "Not found in the repository.";
+  const technologies = array(analysis?.technologiesUsed).map(text);
+  const modules = array(analysis?.importantFunctionsAndComponents).map((item) => ({ name: text(item), description: typeof item === "object" ? item?.purpose || item?.behavior || "Not found in the repository." : "Not found in the repository." }));
   const documentation = {
-    projectName: "Cortex AI Project",
-    repository: "https://github.com/username/cortex-ai",
-
-    overview:
-      "Cortex AI is an AI-powered code intelligence and automated documentation platform designed to analyze software repositories and generate meaningful project insights.",
-
-    architecture: [
-      "Frontend: React + JavaScript",
-      "Styling: CSS",
-      "Backend: Node.js / REST API",
-      "AI Engine: Bob AI",
-    ],
-
-    modules: [
-      {
-        name: "Authentication",
-        description:
-          "Handles user login, signup, password validation and session management.",
-      },
-      {
-        name: "Dashboard",
-        description:
-          "Provides the main workspace where users can start repository analysis.",
-      },
-      {
-        name: "Repository Analyzer",
-        description:
-          "Analyzes GitHub repositories and uploaded project files.",
-      },
-      {
-        name: "AI Documentation",
-        description:
-          "Generates structured documentation and AI-based project insights.",
-      },
-      {
-        name: "Project Analysis",
-        description:
-          "Provides detailed information about code quality, files and technologies.",
-      },
-    ],
-
-    technologies: [
-      { name: "JavaScript", percentage: 48 },
-      { name: "CSS", percentage: 27 },
-      { name: "HTML", percentage: 15 },
-      { name: "Python", percentage: 10 },
-    ],
-
-    features: [
-      "Repository analysis",
-      "AI-powered project understanding",
-      "Automated documentation generation",
-      "Technology detection",
-      "Module identification",
-      "Code quality insights",
-    ],
+    projectName: analysis?.projectName || analysis?.repository?.name || "Repository",
+    repository: analysis?.repository?.repositoryUrl || "",
+    overview: analysis?.projectOverview || "Not found in the repository.",
+    architecture: array(analysis?.dataFlow).map(text),
+    modules,
+    technologies: technologies.map((name, index, all) => ({ name, percentage: Math.round(100 / all.length) })),
+    features: array(analysis?.howTheProjectWorks).map(text),
   };
 
   // COPY DOCUMENTATION

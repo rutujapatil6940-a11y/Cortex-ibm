@@ -1,47 +1,15 @@
 import "./GenerateDocumentation.css";
 
-function GenerateDocumentation({ onBack }) {
+function GenerateDocumentation({ onBack, analysis }) {
+  const array = (value) => Array.isArray(value) ? value : [];
+  const text = (value) => typeof value === "string" ? value : value?.name || value?.technology || value?.package || value?.description || value?.purpose || "Not found in the repository.";
   const documentation = {
-    projectName: "Cortex AI Project",
-
-    description:
-      "AI-powered code intelligence and automated documentation system.",
-
-    overview:
-      "This project is a web-based AI code intelligence platform designed to help developers understand software repositories quickly. It analyzes the project structure, technologies, modules and source files to generate useful documentation automatically.",
-
-    technologies: [
-      "React",
-      "JavaScript",
-      "CSS",
-      "HTML",
-      "Python",
-    ],
-
-    modules: [
-      {
-        name: "Authentication",
-        description:
-          "Handles user login, signup, password validation and authentication.",
-      },
-      {
-        name: "Dashboard",
-        description:
-          "Provides users with project statistics and repository analysis options.",
-      },
-      {
-        name: "Repository Analyzer",
-        description:
-          "Analyzes uploaded ZIP files or connected GitHub repositories.",
-      },
-    ],
-
-    setup: [
-      "Install Node.js and npm.",
-      "Clone or download the project repository.",
-      "Run npm install to install project dependencies.",
-      "Run npm run dev to start the development server.",
-    ],
+    projectName: analysis?.projectName || analysis?.repository?.name || "Repository",
+    description: analysis?.projectOverview || "Not found in the repository.",
+    overview: analysis?.projectOverview || "Not found in the repository.",
+    technologies: array(analysis?.technologiesUsed).map(text),
+    modules: array(analysis?.importantFunctionsAndComponents).map((item) => ({ name: text(item), description: typeof item === "object" ? item?.purpose || item?.behavior || "Not found in the repository." : "Not found in the repository." })),
+    setup: array(analysis?.setupInstructions).map(text),
   };
 
   return (

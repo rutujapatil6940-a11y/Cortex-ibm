@@ -1,37 +1,18 @@
 import "./AIAnalysis.css";
 
-function AIAnalysis({ onBack }) {
+function AIAnalysis({ onBack, analysis: repositoryAnalysis }) {
+  const textFrom = (items) => (Array.isArray(items) ? items : []).map((item) => (
+    typeof item === "string" ? item : item?.text || item?.description || item?.note || item?.purpose
+  )).filter(Boolean);
+  const findings = textFrom(repositoryAnalysis?.potentialImportantNotes)
+    .concat(textFrom(repositoryAnalysis?.dataFlow))
+    .map((text) => ({ type: "success", text }));
+  const recommendations = textFrom(repositoryAnalysis?.setupInstructions);
   const analysis = {
-    codeQuality: 87,
-    security: 92,
-    performance: 81,
-    maintainability: 89,
-
-    findings: [
-      {
-        type: "success",
-        text: "Project structure is well organized."
-      },
-      {
-        type: "success",
-        text: "Authentication modules are clearly separated."
-      },
-      {
-        type: "warning",
-        text: "Some components can be optimized for better performance."
-      },
-      {
-        type: "warning",
-        text: "Some error handling cases are missing."
-      }
-    ],
-
-    recommendations: [
-      "Improve error handling across components.",
-      "Reduce unnecessary component complexity.",
-      "Add automated unit testing.",
-      "Optimize large JavaScript components."
-    ]
+    codeQuality: "—", security: "—", performance: "—", maintainability: "—",
+    findings: findings.length ? findings : [{ type: "warning", text: "No AI findings were returned for this repository." }],
+    recommendations: recommendations.length ? recommendations : ["No AI recommendations were returned for this repository."],
+    overview: repositoryAnalysis?.projectOverview || "No AI overview was returned for this repository.",
   };
 
   return (
@@ -103,14 +84,14 @@ function AIAnalysis({ onBack }) {
             </span>
 
             <strong>
-              {analysis.codeQuality}%
+              {analysis.codeQuality}
             </strong>
 
             <div className="score-bar">
               <div
                 className="score-fill"
                 style={{
-                  width: `${analysis.codeQuality}%`
+                  width: analysis.codeQuality === "—" ? "0%" : `${analysis.codeQuality}%`
                 }}
               />
             </div>
@@ -129,14 +110,14 @@ function AIAnalysis({ onBack }) {
             </span>
 
             <strong>
-              {analysis.security}%
+              {analysis.security}
             </strong>
 
             <div className="score-bar">
               <div
                 className="score-fill"
                 style={{
-                  width: `${analysis.security}%`
+                  width: analysis.security === "—" ? "0%" : `${analysis.security}%`
                 }}
               />
             </div>
@@ -155,14 +136,14 @@ function AIAnalysis({ onBack }) {
             </span>
 
             <strong>
-              {analysis.performance}%
+              {analysis.performance}
             </strong>
 
             <div className="score-bar">
               <div
                 className="score-fill"
                 style={{
-                  width: `${analysis.performance}%`
+                  width: analysis.performance === "—" ? "0%" : `${analysis.performance}%`
                 }}
               />
             </div>
@@ -181,14 +162,14 @@ function AIAnalysis({ onBack }) {
             </span>
 
             <strong>
-              {analysis.maintainability}%
+              {analysis.maintainability}
             </strong>
 
             <div className="score-bar">
               <div
                 className="score-fill"
                 style={{
-                  width: `${analysis.maintainability}%`
+                  width: analysis.maintainability === "—" ? "0%" : `${analysis.maintainability}%`
                 }}
               />
             </div>
@@ -334,17 +315,13 @@ function AIAnalysis({ onBack }) {
             </h2>
 
             <p>
-              The repository has a strong overall structure
-              and good maintainability. Bob AI recommends
-              improving error handling, testing coverage and
-              performance optimization to make the codebase
-              more production-ready.
+              {analysis.overview}
             </p>
 
           </div>
 
           <div className="overall-score">
-            87%
+            —
             <span>
               Overall
             </span>

@@ -1,4 +1,3 @@
-import React from "react";
 import "./ProjectOverview.css";
 
 function ProjectOverview({
@@ -7,71 +6,44 @@ function ProjectOverview({
   onDetailedAnalysis,
   onCodeStructure,
   onDependencies,
+  analysis,
 }) {
-  const project = {
-    name: "e-commerce-core",
-    description:
-      "A modern e-commerce platform with product management, authentication, shopping cart and payment functionality.",
-    repository: "https://github.com/username/e-commerce-core",
-
-    files: 128,
-    lines: "24.6K",
-    languages: 4,
-    moduleCount: 12,
-
-    technologies: [
-      { name: "JavaScript", percentage: 48, type: "js" },
-      { name: "CSS", percentage: 27, type: "css" },
-      { name: "HTML", percentage: 15, type: "html" },
-      { name: "Python", percentage: 10, type: "python" },
-    ],
-
-    modules: [
-      {
-        name: "Authentication",
-        description: "Login, signup and user authentication",
-      },
-      {
-        name: "Product Management",
-        description: "Product listing, creation and management",
-      },
-      {
-        name: "Shopping Cart",
-        description: "Cart management and checkout functionality",
-      },
-      {
-        name: "Payment Gateway",
-        description: "Payment processing and transaction handling",
-      },
-    ],
-
-    summary: [
-      "The repository contains a complete e-commerce application.",
-      "The codebase is organized into multiple modules for authentication, products, cart and payments.",
-      "Bob AI analyzed the repository structure and identified the major technologies and components.",
-    ],
-
-    insights: [
-      {
-        type: "success",
-        text: "Repository structure is well organized.",
-      },
-      {
-        type: "success",
-        text: "Authentication and product modules are clearly separated.",
-      },
-      {
-        type: "warning",
-        text: "Some components could be optimized for better performance.",
-      },
-    ],
+  const emptyProject = {
+    name: "Analysis unavailable", description: "No repository analysis has been returned.", repository: "",
+    files: 0, lines: "—", languages: 0, moduleCount: 0, technologies: [], modules: [], summary: [], insights: [],
   };
 
-  const handleReAnalyze = () => {
-    alert(
-      "Re-analysis started! This is currently a frontend demo. Backend AI integration will be added later."
-    );
-  };
+  const list = (value) => (Array.isArray(value) ? value : []);
+  const values = (items, keys) => list(items).map((item) => {
+    if (typeof item === "string") return item;
+    return keys.map((key) => item?.[key]).find(Boolean) || "Not found in the repository.";
+  });
+
+  const analyzedTechnologies = values(analysis?.technologiesUsed, ["name", "technology", "package"]);
+  const analyzedModules = list(analysis?.importantFunctionsAndComponents).map((item) => ({
+    name: typeof item === "string" ? item : item?.name || item?.component || "Component",
+    description: typeof item === "string" ? "No component description was returned." : item?.purpose || item?.behavior || "No component description was returned.",
+  }));
+  const project = analysis ? {
+    ...emptyProject,
+    name: analysis.projectName || analysis.repository?.name || "Not found in the repository.",
+    description: analysis.projectOverview || "Not found in the repository.",
+    repository: analysis.repository?.repositoryUrl || "",
+    files: analysis.repository?.metadata?.fileCount || 0,
+    lines: analysis.repository?.metadata?.sourceBytes ? `${Math.round(analysis.repository.metadata.sourceBytes / 1024)} KB` : "—",
+    languages: analyzedTechnologies.length,
+    moduleCount: analyzedModules.length,
+    technologies: analyzedTechnologies.map((name, index, all) => ({
+      name,
+      percentage: Math.round(100 / all.length),
+      type: "js",
+    })),
+    modules: analyzedModules,
+    summary: [analysis.projectOverview, ...values(analysis.howTheProjectWorks, ["description", "purpose"])].filter(Boolean).slice(0, 3),
+    insights: values(analysis.potentialImportantNotes, ["text", "note", "description"]).slice(0, 3).map((text) => ({ type: "success", text })),
+  } : emptyProject;
+
+  const handleReAnalyze = onBack;
 
   const handleDependencies = () => {
     if (onDependencies) {

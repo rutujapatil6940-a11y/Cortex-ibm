@@ -1,34 +1,14 @@
 
-import React from "react";
 import "./Dependencies.css";
 
-function Dependencies({ onBack }) {
-  const dependencies = [
-    {
-      name: "React",
-      version: "^19.0.0",
-      type: "Frontend",
-      status: "Healthy",
-    },
-    {
-      name: "React DOM",
-      version: "^19.0.0",
-      type: "Frontend",
-      status: "Healthy",
-    },
-    {
-      name: "Vite",
-      version: "^7.0.0",
-      type: "Build Tool",
-      status: "Healthy",
-    },
-    {
-      name: "Framer Motion",
-      version: "^12.0.0",
-      type: "UI / Animation",
-      status: "Healthy",
-    },
-  ];
+function Dependencies({ onBack, analysis }) {
+  const dependencies = (Array.isArray(analysis?.importantDependencies) ? analysis.importantDependencies : [])
+    .map((dependency) => ({
+      name: typeof dependency === "string" ? dependency : dependency?.package || dependency?.name || "Dependency",
+      version: typeof dependency === "object" ? dependency?.version || "Not specified" : "Not specified",
+      type: typeof dependency === "object" ? dependency?.purpose || dependency?.usage || "Detected dependency" : "Detected dependency",
+      status: "Detected",
+    }));
 
   return (
     <div className="dependencies-page">
@@ -90,7 +70,7 @@ function Dependencies({ onBack }) {
 
           <div className="dependencies-list">
 
-            {dependencies.map((dependency, index) => (
+            {dependencies.length ? dependencies.map((dependency, index) => (
 
               <div
                 className="dependency-item"
@@ -123,7 +103,7 @@ function Dependencies({ onBack }) {
 
               </div>
 
-            ))}
+            )) : <p>No dependencies were returned by the repository analysis.</p>}
 
           </div>
 

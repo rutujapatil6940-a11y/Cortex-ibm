@@ -1,67 +1,26 @@
 
 import "./DetailedAnalysis.css";
 
-function DetailedAnalysis({ onBack }) {
-  // =========================================
-  // DUMMY AI ANALYSIS DATA
-  // =========================================
-
+function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
+  const asText = (item) => typeof item === "string" ? item : item?.text || item?.description || item?.note || item?.purpose || "Not found in the repository.";
+  const importantFiles = Array.isArray(repositoryAnalysis?.importantFiles) ? repositoryAnalysis.importantFiles : [];
   const analysis = {
-    projectName: "Cortex AI Project",
-    score: 87,
-
+    projectName: repositoryAnalysis?.projectName || repositoryAnalysis?.repository?.name || "Repository",
+    score: null,
     metrics: [
-      { name: "Code Quality", value: "87%", percentage: 87 },
-      { name: "Maintainability", value: "82%", percentage: 82 },
-      { name: "Security", value: "91%", percentage: 91 },
-      { name: "Documentation", value: "76%", percentage: 76 },
+      { name: "Files scanned", value: repositoryAnalysis?.repository?.metadata?.fileCount ?? "—", percentage: 0 },
+      { name: "Source files", value: repositoryAnalysis?.repository?.metadata?.sourceFileCount ?? "—", percentage: 0 },
+      { name: "Source size", value: repositoryAnalysis?.repository?.metadata?.sourceBytes ? `${Math.round(repositoryAnalysis.repository.metadata.sourceBytes / 1024)} KB` : "—", percentage: 0 },
+      { name: "Important files", value: importantFiles.length, percentage: 0 },
     ],
-
-    strengths: [
-      "Repository structure is well organized.",
-      "Authentication and dashboard modules are clearly separated.",
-      "Components follow a reusable architecture.",
-      "The project uses modern frontend technologies.",
-    ],
-
-    warnings: [
-      "Some components could be optimized for better performance.",
-      "Documentation coverage can be improved.",
-      "Some repeated UI logic can be converted into reusable components.",
-    ],
-
-    files: [
-      {
-        file: "src/App.jsx",
-        type: "React Component",
-        score: 92,
-        status: "Good",
-      },
-      {
-        file: "src/Dashboard.jsx",
-        type: "React Component",
-        score: 88,
-        status: "Good",
-      },
-      {
-        file: "src/ProjectOverview.jsx",
-        type: "React Component",
-        score: 86,
-        status: "Good",
-      },
-      {
-        file: "src/App.css",
-        type: "Stylesheet",
-        score: 81,
-        status: "Good",
-      },
-      {
-        file: "src/DetailedAnalysis.jsx",
-        type: "React Component",
-        score: 89,
-        status: "Good",
-      },
-    ],
+    strengths: (Array.isArray(repositoryAnalysis?.howTheProjectWorks) ? repositoryAnalysis.howTheProjectWorks : []).map(asText),
+    warnings: (Array.isArray(repositoryAnalysis?.potentialImportantNotes) ? repositoryAnalysis.potentialImportantNotes : []).map(asText),
+    files: importantFiles.map((item) => ({
+      file: typeof item === "string" ? item : item?.path || item?.file || "Repository file",
+      type: typeof item === "object" ? item?.purpose || "Important file" : "Important file",
+      score: null,
+      status: "Analyzed",
+    })),
   };
 
   // =========================================
@@ -69,7 +28,7 @@ function DetailedAnalysis({ onBack }) {
   // =========================================
 
   const handleReAnalyze = () => {
-    alert("Re-analysis will be connected to Bob AI backend later.");
+    onBack();
   };
 
   return (
@@ -152,7 +111,7 @@ function DetailedAnalysis({ onBack }) {
           <div className="score-circle">
 
             <strong>
-              {analysis.score}
+              —
             </strong>
 
             <span>
@@ -178,7 +137,7 @@ function DetailedAnalysis({ onBack }) {
               <div
                 className="score-progress-fill"
                 style={{
-                  width: `${analysis.score}%`,
+                  width: "0%",
                 }}
               />
 
@@ -410,14 +369,14 @@ function DetailedAnalysis({ onBack }) {
                   <div className="file-score">
 
                     <span>
-                      {file.score}%
+                      —
                     </span>
 
                     <div>
 
                       <div
                         style={{
-                          width: `${file.score}%`,
+                        width: "0%",
                         }}
                       />
 

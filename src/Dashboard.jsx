@@ -1,11 +1,12 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import DecryptedText from "./DecryptedText";
 import "./Dashboard.css";
 import logo from "./logo.jpg";
 
 function Dashboard({
   user,
+  analysis,
   onLogout,
   onAnalyzeRepository,
   onNavigate,
@@ -25,32 +26,23 @@ function Dashboard({
     }
   };
 
-  const repositories = [
-    {
-      name: "e-commerce-core",
-      type: "GitHub",
-      language: "JavaScript",
-      status: "Analyzed",
-      statusClass: "analyzed",
-      lastScan: "2 hours ago",
-    },
-    {
-      name: "payment-gateway",
-      type: ".ZIP",
-      language: "Java",
-      status: "Processing",
-      statusClass: "processing",
-      lastScan: "12 mins ago",
-    },
-    {
-      name: "legacy-monolith",
-      type: "GitHub",
-      language: "Python",
-      status: "Failed",
-      statusClass: "failed",
-      lastScan: "3 days ago",
-    },
-  ];
+  const technologyNames = (Array.isArray(analysis?.technologiesUsed)
+    ? analysis.technologiesUsed
+    : []).map((technology) => (
+    typeof technology === "string"
+      ? technology
+      : technology?.name || technology?.technology || technology?.package
+  )).filter(Boolean);
+
+  const repositories = analysis?.repository ? [{
+    name: analysis.repository.name,
+    type: "GitHub",
+    language: technologyNames[0] || "Not found",
+    status: analysis.repository.status || "processed",
+    statusClass: analysis.repository.status === "failed" ? "failed" : "analyzed",
+    lastScan: "Current session",
+  }] : [];
+  const insightTechnologies = technologyNames.slice(0, 3);
 
   const query = searchQuery.trim().toLowerCase();
 
@@ -428,7 +420,7 @@ function Dashboard({
 
                     <tr
                       key={index}
-                      onClick={() => navigate("repository")}
+                      onClick={() => navigate("projects")}
                       tabIndex="0"
                     >
 
@@ -541,68 +533,16 @@ function Dashboard({
 
               </div>
 
-              <p>
-                Your <strong>e-commerce-core</strong>{" "}
-                repository contains 47 modules across
-                3 technologies.
-              </p>
+              <p>{analysis?.projectOverview || "Analyze a GitHub repository to view Bob's actual findings here."}</p>
 
-              <div className="technology">
-
-                <span>
-                  JavaScript
-                </span>
-
-                <div className="progress">
-                  <div
-                    className="progress-fill"
-                    style={{ width: "62%" }}
-                  />
-                </div>
-
-                <span>
-                  62%
-                </span>
-
-              </div>
-
-              <div className="technology">
-
-                <span>
-                  CSS
-                </span>
-
-                <div className="progress">
-                  <div
-                    className="progress-fill"
-                    style={{ width: "25%" }}
-                  />
-                </div>
-
-                <span>
-                  25%
-                </span>
-
-              </div>
-
-              <div className="technology">
-
-                <span>
-                  HTML
-                </span>
-
-                <div className="progress">
-                  <div
-                    className="progress-fill"
-                    style={{ width: "13%" }}
-                  />
-                </div>
-
-                <span>
-                  13%
-                </span>
-
-              </div>
+              {insightTechnologies.map((technology) => {
+                const percentage = Math.round(100 / insightTechnologies.length);
+                return <div className="technology" key={technology}>
+                  <span>{technology}</span>
+                  <div className="progress"><div className="progress-fill" style={{ width: `${percentage}%` }} /></div>
+                  <span>{percentage}%</span>
+                </div>;
+              })}
 
               <button
                 className="insight-button"

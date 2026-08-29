@@ -776,7 +776,9 @@ const Topography = ({
         container.removeChild(
           canvas
         );
-      } catch {}
+      } catch {
+        // The canvas may already have been removed during React cleanup.
+      }
 
       gl.getExtension(
         "WEBGL_lose_context"

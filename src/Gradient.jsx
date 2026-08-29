@@ -383,7 +383,9 @@ function Gradient({
 
       try {
         container.removeChild(canvas);
-      } catch {}
+      } catch {
+        // The canvas may already have been removed during React cleanup.
+      }
 
     };
 
