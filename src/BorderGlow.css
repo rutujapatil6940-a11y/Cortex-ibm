@@ -1,0 +1,165 @@
+.border-glow-card {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --border-radius: 28px;
+  --glow-padding: 40px;
+  --cone-spread: 25;
+
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+
+  border-radius: var(--border-radius);
+
+  background: var(--card-bg);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  box-shadow:
+    0 0 5px rgba(56, 189, 248, 0.15),
+    0 0 20px rgba(56, 189, 248, 0.08);
+
+  overflow: visible;
+
+  transform: translateZ(0);
+}
+
+/* =========================================
+   COLOURED BORDER
+========================================= */
+
+.border-glow-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  padding: 2px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #c084fc,
+      #f472b6,
+      #38bdf8,
+      #2563eb,
+      #06b6d4,
+      #c084fc
+    );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  mask-composite: exclude;
+
+  pointer-events: none;
+
+  z-index: 2;
+
+  opacity: 1;
+}
+
+/* =========================================
+   GLOW
+========================================= */
+
+.border-glow-card::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -3px;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      135deg,
+      #c084fc,
+      #f472b6,
+      #38bdf8,
+      #2563eb,
+      #06b6d4
+    );
+
+  filter: blur(12px);
+
+  opacity: 0.55;
+
+  z-index: -1;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* =========================================
+   STRONGER GLOW WHEN MOUSE IS NEAR EDGE
+========================================= */
+
+.border-glow-card:hover::after {
+  opacity: 0.9;
+
+  filter: blur(18px);
+}
+
+/* =========================================
+   OUTER EDGE LIGHT
+========================================= */
+
+.border-glow-card > .edge-light {
+  position: absolute;
+
+  inset: calc(var(--glow-padding) * -1);
+
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(56, 189, 248, 0.35),
+      transparent 45%
+    );
+
+  filter: blur(25px);
+
+  opacity: 0.4;
+}
+
+/* =========================================
+   INNER CONTENT
+========================================= */
+
+.border-glow-inner {
+  position: relative;
+
+  z-index: 3;
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border-radius: inherit;
+}

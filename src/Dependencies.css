@@ -1,0 +1,823 @@
+/* =====================================================
+   DEPENDENCIES PAGE
+   LIGHT THEME
+
+   Black              #000000
+   Selago             #F0EAFB
+   Seance             #681A75
+   Shocking           #E61E4D
+   Denim              #1557C0
+   Danube             #5B9BD5
+   International Orange #FF4F00
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.dependencies-page {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  background: #ffffff;
+
+  color: #000000;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.dependencies-header {
+  min-height: 72px;
+  width: 100%;
+
+  padding: 0 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e1eb;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.dependencies-back-button {
+  padding: 10px 15px;
+
+  border: 1px solid #ddd8e8;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #000000;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.dependencies-back-button:hover {
+  background: #f0eafb;
+
+  border-color: #1557c0;
+
+  color: #681a75;
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.dependencies-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  color: #000000;
+
+  font-size: 21px;
+  font-weight: 700;
+}
+
+
+.dependencies-brand-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1557c0,
+      #5b9bd5
+    );
+
+  color: #ffffff;
+
+  font-size: 19px;
+
+  box-shadow:
+    0 5px 15px rgba(21, 87, 192, 0.18);
+}
+
+
+.dependencies-brand span {
+  color: #000000;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.dependencies-main {
+  width: 100%;
+  max-width: 1150px;
+
+  margin: 0 auto;
+
+  padding: 45px 30px 70px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.dependencies-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+
+.dependencies-title h1 {
+  margin: 0;
+
+  color: #000000;
+
+  font-size: 36px;
+  font-weight: 700;
+
+  letter-spacing: -0.7px;
+}
+
+
+.dependencies-title p {
+  margin: 7px 0 0;
+
+  color: #55505f;
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.dependencies-status {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 8px 13px;
+
+  border-radius: 20px;
+
+  background: #eef7fd;
+
+  border: 1px solid #c9e1f4;
+
+  color: #1557c0;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+.dependencies-status span {
+  width: 7px;
+  height: 7px;
+
+  display: block;
+
+  border-radius: 50%;
+
+  background: #5b9bd5;
+
+  box-shadow:
+    0 0 7px rgba(91, 155, 213, 0.45);
+}
+
+
+/* =====================================================
+   MAIN CARD
+===================================================== */
+
+.dependencies-card {
+  width: 100%;
+
+  overflow: hidden;
+
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  border: 1px solid #ddd8e8;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.06);
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   CARD HEADING
+===================================================== */
+
+.dependencies-card-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 23px 25px;
+
+  background: #f0eafb;
+
+  border-bottom:
+    1px solid #ddd5ea;
+}
+
+
+.dependencies-heading-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #d5cbe5;
+
+  color: #681a75;
+
+  font-size: 19px;
+}
+
+
+.dependencies-card-heading h2 {
+  margin: 0;
+
+  color: #000000;
+
+  font-size: 18px;
+  font-weight: 650;
+}
+
+
+.dependencies-card-heading p {
+  margin: 4px 0 0;
+
+  color: #5f5868;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   DEPENDENCY LIST
+===================================================== */
+
+.dependencies-list {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 100%;
+}
+
+
+/* =====================================================
+   DEPENDENCY ITEM
+===================================================== */
+
+.dependency-item {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 15px 25px;
+
+  background: #ffffff;
+
+  border-bottom:
+    1px solid #ebe8f0;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.dependency-item:last-child {
+  border-bottom: none;
+}
+
+
+.dependency-item:hover {
+  background: #f8f7fc;
+
+  border-color: #d8d1e5;
+}
+
+
+/* =====================================================
+   DEPENDENCY ICON
+===================================================== */
+
+.dependency-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #f0eafb;
+
+  border:
+    1px solid #d9cbe1;
+
+  color: #681a75;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   DEPENDENCY INFO
+===================================================== */
+
+.dependency-info {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.dependency-info strong {
+  color: #000000;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.dependency-info span {
+  color: #66616e;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   TYPE
+===================================================== */
+
+.dependency-type {
+  min-width: 125px;
+
+  padding: 6px 10px;
+
+  border-radius: 7px;
+
+  background: #eef5ff;
+
+  border:
+    1px solid #cbdcf5;
+
+  color: #1557c0;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.dependency-status {
+  min-width: 85px;
+
+  color: #168044;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-align: right;
+}
+
+
+/* =====================================================
+   BACK TO PROJECT BUTTON
+===================================================== */
+
+.dependencies-dashboard-button {
+  display: block;
+
+  margin: 22px 0 0 auto;
+
+  min-height: 43px;
+
+  padding: 0 18px;
+
+  border:
+    1px solid #d8d2e2;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #000000;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+
+.dependencies-dashboard-button:hover {
+  background: #f0eafb;
+
+  border-color: #1557c0;
+
+  color: #681a75;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   ORANGE ACCENT
+===================================================== */
+
+.dependencies-page .dependencies-dashboard-button:active {
+  border-color: #ff4f00;
+}
+
+
+/* =====================================================
+   TEXT SAFETY
+===================================================== */
+
+.dependencies-page h1,
+.dependencies-page h2,
+.dependencies-page h3,
+.dependencies-page h4,
+.dependencies-page p,
+.dependencies-page span,
+.dependencies-page strong,
+.dependencies-page label {
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 800px) {
+
+  .dependencies-header {
+    padding: 0 20px;
+  }
+
+
+  .dependencies-main {
+    padding: 35px 20px 55px;
+  }
+
+
+  .dependencies-title {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+
+  .dependencies-status {
+    align-self: flex-start;
+  }
+
+
+  .dependency-item {
+    flex-wrap: wrap;
+
+    padding: 17px 20px;
+  }
+
+
+  .dependency-info {
+    min-width:
+      calc(100% - 55px);
+  }
+
+
+  .dependency-type {
+    margin-left: 55px;
+  }
+
+
+  .dependency-status {
+    min-width: auto;
+
+    margin-left: auto;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .dependencies-header {
+    min-height: 65px;
+
+    padding: 0 15px;
+
+    gap: 10px;
+  }
+
+
+  .dependencies-back-button {
+    padding: 8px 9px;
+
+    font-size: 12px;
+  }
+
+
+  .dependencies-brand {
+    font-size: 18px;
+
+    gap: 7px;
+  }
+
+
+  .dependencies-brand-icon {
+    width: 32px;
+    height: 32px;
+
+    font-size: 17px;
+  }
+
+
+  .dependencies-main {
+    padding: 28px 15px 45px;
+  }
+
+
+  .dependencies-title {
+    margin-bottom: 22px;
+  }
+
+
+  .dependencies-title h1 {
+    font-size: 29px;
+
+    line-height: 1.2;
+  }
+
+
+  .dependencies-title p {
+    font-size: 13px;
+
+    line-height: 1.5;
+  }
+
+
+  .dependencies-status {
+    font-size: 11px;
+
+    padding: 7px 11px;
+  }
+
+
+  .dependencies-card {
+    border-radius: 13px;
+  }
+
+
+  .dependencies-card-heading {
+    padding: 18px;
+
+    gap: 11px;
+  }
+
+
+  .dependencies-heading-icon {
+    width: 37px;
+    height: 37px;
+
+    font-size: 17px;
+  }
+
+
+  .dependencies-card-heading h2 {
+    font-size: 16px;
+  }
+
+
+  .dependencies-card-heading p {
+    font-size: 11px;
+  }
+
+
+  .dependency-item {
+    min-height: auto;
+
+    display: grid;
+
+    grid-template-columns: 40px 1fr;
+
+    gap: 11px;
+
+    padding: 15px;
+  }
+
+
+  .dependency-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+
+  .dependency-info {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+
+  .dependency-info strong {
+    font-size: 13px;
+  }
+
+
+  .dependency-info span {
+    font-size: 10px;
+  }
+
+
+  .dependency-type {
+    grid-column: 2;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    text-align: center;
+  }
+
+
+  .dependency-status {
+    grid-column: 2;
+
+    min-width: 0;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size: 10px;
+  }
+
+
+  .dependencies-dashboard-button {
+    width: 100%;
+
+    margin-top: 18px;
+  }
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .dependencies-header {
+    padding: 0 10px;
+  }
+
+
+  .dependencies-back-button {
+    padding: 7px;
+
+    font-size: 11px;
+  }
+
+
+  .dependencies-brand {
+    font-size: 16px;
+  }
+
+
+  .dependencies-brand-icon {
+    width: 29px;
+    height: 29px;
+  }
+
+
+  .dependencies-main {
+    padding:
+      24px 12px 40px;
+  }
+
+
+  .dependencies-title h1 {
+    font-size: 26px;
+  }
+
+
+  .dependencies-card-heading {
+    padding: 15px;
+  }
+
+
+  .dependency-item {
+    padding: 13px;
+  }
+}

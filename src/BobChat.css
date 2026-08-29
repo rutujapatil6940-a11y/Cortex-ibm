@@ -1,0 +1,767 @@
+/* =====================================================
+   BOB CHAT PAGE — LIGHT PROFESSIONAL UI
+===================================================== */
+
+.bob-chat-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f4f7fb;
+  color: #172033;
+  box-sizing: border-box;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.bob-chat-header {
+  min-height: 72px;
+  width: 100%;
+  padding: 0 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e3e8ef;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.bob-back-button {
+  border: 1px solid #d8e0e9;
+  background: #ffffff;
+
+  color: #536174;
+
+  padding: 9px 15px;
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bob-back-button:hover {
+  background: #f1f6fc;
+  border-color: #a9c5e6;
+  color: #1769aa;
+  transform: translateX(-2px);
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.bob-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  color: #172033;
+}
+
+.bob-brand-icon {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #e8f2fc;
+  color: #1976b8;
+
+  font-size: 18px;
+}
+
+.bob-brand strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bob-brand span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8793a5;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.bob-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 12px;
+
+  border: 1px solid #cfe9dc;
+  border-radius: 20px;
+
+  background: #f2fbf6;
+
+  color: #25845a;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bob-status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #39a96b;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.bob-chat-main {
+  width: 100%;
+  max-width: 1080px;
+
+  margin: 0 auto;
+
+  padding: 42px 30px 70px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.bob-chat-title {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 24px;
+}
+
+.bob-title-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #eaf4fc;
+  border: 1px solid #d2e7f8;
+
+  color: #1976b8;
+
+  font-size: 21px;
+}
+
+.bob-chat-title h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.bob-chat-title p {
+  margin: 5px 0 0;
+
+  color: #7b8798;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   CHAT CARD
+===================================================== */
+
+.bob-chat-card {
+  width: 100%;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe5ec;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 35px rgba(31, 55, 80, 0.08);
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   CHAT CARD HEADER
+===================================================== */
+
+.bob-chat-card-header {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 17px 22px;
+
+  background: #f9fbfd;
+
+  border-bottom: 1px solid #e4e9ef;
+}
+
+.bob-avatar {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #e7f2fb;
+
+  color: #1976b8;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bob-chat-card-header h2 {
+  margin: 0;
+
+  color: #263246;
+
+  font-size: 15px;
+}
+
+.bob-chat-card-header span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8995a6;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.bob-messages {
+  min-height: 390px;
+
+  padding: 25px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+
+  background: #f8fafc;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   MESSAGE ROW
+===================================================== */
+
+.bob-message-row {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.bob-message-row.user {
+  justify-content: flex-end;
+}
+
+
+/* =====================================================
+   MESSAGE AVATAR
+===================================================== */
+
+.message-avatar {
+  width: 30px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #e8f2fb;
+
+  color: #1976b8;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.bob-message {
+  max-width: 72%;
+
+  padding: 12px 15px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   ASSISTANT MESSAGE
+===================================================== */
+
+.assistant-message {
+  background: #ffffff;
+
+  border: 1px solid #dfe5ec;
+
+  color: #435065;
+
+  border-top-left-radius: 4px;
+
+  box-shadow:
+    0 3px 10px rgba(30, 50, 70, 0.04);
+}
+
+
+/* =====================================================
+   USER MESSAGE
+===================================================== */
+
+.user-message {
+  background: #e5f1fb;
+
+  border: 1px solid #c9e1f3;
+
+  color: #245577;
+
+  border-top-right-radius: 4px;
+}
+
+
+/* =====================================================
+   QUICK ACTIONS
+===================================================== */
+
+.bob-quick-actions {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 9px;
+
+  padding: 15px 22px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e4e9ef;
+}
+
+.bob-quick-actions button {
+  padding: 8px 12px;
+
+  border: 1px solid #d7e0e9;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: #5d6b7e;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bob-quick-actions button:hover {
+  background: #edf6fd;
+
+  border-color: #b8d5ed;
+
+  color: #1769aa;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   INPUT AREA
+===================================================== */
+
+.bob-input-area {
+  display: flex;
+
+  gap: 10px;
+
+  padding: 18px 22px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e4e9ef;
+
+  box-sizing: border-box;
+}
+
+.bob-input-area textarea {
+  flex: 1;
+
+  min-height: 45px;
+
+  max-height: 110px;
+
+  resize: vertical;
+
+  padding: 13px 14px;
+
+  border: 1px solid #d5dde7;
+
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #fbfcfe;
+
+  color: #263246;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.bob-input-area textarea::placeholder {
+  color: #9aa5b4;
+}
+
+.bob-input-area textarea:focus {
+  border-color: #62a5d6;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(54, 135, 194, 0.10);
+}
+
+
+/* =====================================================
+   SEND BUTTON
+===================================================== */
+
+.bob-send-button {
+  height: 45px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #277db5;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.bob-send-button span {
+  margin-left: 5px;
+
+  color: #ffffff;
+}
+
+.bob-send-button:hover {
+  background: #206d9f;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 16px rgba(39, 125, 181, 0.20);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.bob-footer-text {
+  margin: 0;
+
+  padding: 0 22px 18px;
+
+  background: #ffffff;
+
+  color: #929cab;
+
+  font-size: 11px;
+
+  text-align: center;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .bob-chat-header {
+    padding: 0 24px;
+  }
+
+  .bob-chat-main {
+    padding: 35px 22px 60px;
+  }
+
+  .bob-message {
+    max-width: 78%;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .bob-chat-header {
+    min-height: 64px;
+
+    padding: 0 16px;
+  }
+
+  .bob-brand {
+    gap: 8px;
+  }
+
+  .bob-brand-icon {
+    width: 32px;
+    height: 32px;
+
+    font-size: 15px;
+  }
+
+  .bob-brand strong {
+    font-size: 14px;
+  }
+
+  .bob-brand span {
+    font-size: 10px;
+  }
+
+  .bob-status {
+    display: none;
+  }
+
+  .bob-back-button {
+    padding: 8px 11px;
+
+    font-size: 12px;
+  }
+
+  .bob-chat-main {
+    padding: 28px 14px 45px;
+  }
+
+  .bob-chat-title {
+    gap: 11px;
+
+    margin-bottom: 18px;
+  }
+
+  .bob-title-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+
+    font-size: 18px;
+  }
+
+  .bob-chat-title h1 {
+    font-size: 24px;
+  }
+
+  .bob-chat-title p {
+    font-size: 12px;
+  }
+
+  .bob-chat-card {
+    border-radius: 14px;
+  }
+
+  .bob-chat-card-header {
+    padding: 14px 16px;
+  }
+
+  .bob-messages {
+    min-height: 350px;
+
+    padding: 18px 14px;
+
+    gap: 14px;
+  }
+
+  .bob-message {
+    max-width: 86%;
+
+    padding: 11px 13px;
+
+    font-size: 12px;
+  }
+
+  .message-avatar {
+    width: 27px;
+    height: 27px;
+
+    font-size: 11px;
+  }
+
+  .bob-quick-actions {
+    padding: 13px 14px;
+
+    gap: 7px;
+  }
+
+  .bob-quick-actions button {
+    font-size: 11px;
+
+    padding: 7px 10px;
+  }
+
+  .bob-input-area {
+    flex-direction: column;
+
+    padding: 14px;
+  }
+
+  .bob-input-area textarea {
+    width: 100%;
+
+    min-height: 48px;
+  }
+
+  .bob-send-button {
+    width: 100%;
+  }
+
+  .bob-footer-text {
+    padding-bottom: 15px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+  .bob-chat-main {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .bob-chat-title h1 {
+    font-size: 21px;
+  }
+
+  .bob-chat-title p {
+    font-size: 11px;
+  }
+
+  .bob-message {
+    max-width: 90%;
+  }
+
+  .bob-brand span {
+    display: none;
+  }
+}

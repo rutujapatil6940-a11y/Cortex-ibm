@@ -1,0 +1,779 @@
+
+/* =====================================================
+   AI CODE ANALYSIS
+   CORTEX — LIGHT UI
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+.ai-analysis-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f6f8fb;
+  color: #172033;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.analysis-header {
+  width: 100%;
+  height: 72px;
+  padding: 0 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e9f0;
+
+  position: relative;
+  z-index: 5;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.analysis-back-button {
+  border: 1px solid #dfe4ec;
+  background: #ffffff;
+  color: #4b5565;
+
+  padding: 10px 15px;
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.analysis-back-button:hover {
+  background: #f3f7fc;
+  border-color: #9bbce0;
+  color: #1565c0;
+  transform: translateX(-2px);
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.analysis-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #172033;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.analysis-brand-icon {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #1565c0;
+  color: #ffffff;
+
+  font-size: 19px;
+
+  box-shadow: 0 5px 15px rgba(21, 101, 192, 0.18);
+}
+
+
+/* =====================================================
+   BOB AI BADGE
+===================================================== */
+
+.analysis-ai-badge {
+  padding: 8px 13px;
+
+  border-radius: 20px;
+
+  background: #edf5ff;
+  border: 1px solid #cfe2f7;
+
+  color: #1565c0;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.analysis-main {
+  width: 100%;
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  padding: 42px 32px 70px;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.analysis-title {
+  margin-bottom: 30px;
+}
+
+.analysis-label {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #1565c0;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.analysis-title h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 38px;
+  font-weight: 700;
+
+  letter-spacing: -0.8px;
+}
+
+.analysis-title p {
+  margin: 8px 0 0;
+
+  color: #6b7484;
+
+  font-size: 15px;
+}
+
+
+/* =====================================================
+   SCORE GRID
+===================================================== */
+
+.analysis-score-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   SCORE CARD
+===================================================== */
+
+.analysis-score-card {
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e3e8ef;
+
+  border-radius: 14px;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.analysis-score-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #b8d0e8;
+
+  box-shadow:
+    0 10px 28px rgba(31, 52, 76, 0.08);
+}
+
+
+/* =====================================================
+   SCORE ICON
+===================================================== */
+
+.score-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 13px;
+
+  border-radius: 10px;
+
+  background: #edf5ff;
+  color: #1565c0;
+
+  font-size: 17px;
+}
+
+
+/* =====================================================
+   SCORE LABEL
+===================================================== */
+
+.analysis-score-card span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #697386;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   SCORE
+===================================================== */
+
+.analysis-score-card strong {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #172033;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   SCORE BAR
+===================================================== */
+
+.score-bar {
+  width: 100%;
+  height: 5px;
+
+  border-radius: 10px;
+
+  background: #e8edf3;
+
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #1565c0;
+}
+
+
+/* =====================================================
+   CONTENT GRID
+===================================================== */
+
+.analysis-content-grid {
+  display: grid;
+
+  grid-template-columns: 1.3fr 0.7fr;
+
+  gap: 18px;
+
+  margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   COMMON CARD
+===================================================== */
+
+.analysis-card {
+  padding: 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e3e8ef;
+
+  border-radius: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.analysis-card:hover {
+  border-color: #cbd7e5;
+
+  box-shadow:
+    0 10px 30px rgba(31, 52, 76, 0.07);
+}
+
+
+/* =====================================================
+   CARD HEADING
+===================================================== */
+
+.analysis-card-heading {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 22px;
+}
+
+.card-heading-icon {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #edf5ff;
+  color: #1565c0;
+
+  font-size: 15px;
+}
+
+.analysis-card-heading h2 {
+  margin: 0;
+
+  color: #1b2433;
+
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.analysis-card-heading p {
+  margin: 4px 0 0;
+
+  color: #7a8494;
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   FINDINGS
+===================================================== */
+
+.finding-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.finding-item {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e8edf3;
+}
+
+.finding-item p {
+  margin: 1px 0 0;
+
+  color: #4d5868;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =====================================================
+   FINDING STATUS
+===================================================== */
+
+.finding-success,
+.finding-warning {
+  width: 23px;
+  height: 23px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.finding-success {
+  background: #e8f7ef;
+  color: #16834b;
+}
+
+.finding-warning {
+  background: #fff5df;
+  color: #c27a00;
+}
+
+
+/* =====================================================
+   RECOMMENDATIONS
+===================================================== */
+
+.recommendation-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  padding: 11px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e8edf3;
+}
+
+.recommendation-item span {
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #edf5ff;
+  color: #1565c0;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.recommendation-item p {
+  margin: 4px 0 0;
+
+  color: #4d5868;
+
+  font-size: 13px;
+
+  line-height: 1.45;
+}
+
+
+/* =====================================================
+   OVERALL ANALYSIS
+===================================================== */
+
+.overall-analysis {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 23px 25px;
+
+  background: #f0f6fc;
+
+  border: 1px solid #cfe0f0;
+
+  border-radius: 15px;
+}
+
+.overall-icon {
+  width: 43px;
+  height: 43px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #1565c0;
+
+  border: 1px solid #d8e6f4;
+
+  font-size: 18px;
+}
+
+.overall-analysis h2 {
+  margin: 0 0 5px;
+
+  color: #1b2433;
+
+  font-size: 16px;
+}
+
+.overall-analysis p {
+  margin: 0;
+
+  max-width: 850px;
+
+  color: #637083;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   OVERALL SCORE
+===================================================== */
+
+.overall-score {
+  margin-left: auto;
+
+  min-width: 70px;
+
+  text-align: center;
+
+  color: #1565c0;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.overall-score span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #7b8595;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   TEXT SELECTION
+===================================================== */
+
+::selection {
+  background: #1565c0;
+  color: #ffffff;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+  .analysis-main {
+    padding: 38px 24px 60px;
+  }
+
+  .analysis-score-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .analysis-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .analysis-header {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .analysis-back-button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .analysis-brand {
+    font-size: 17px;
+  }
+
+  .analysis-brand-icon {
+    width: 31px;
+    height: 31px;
+    font-size: 16px;
+  }
+
+  .analysis-ai-badge {
+    display: none;
+  }
+
+  .analysis-main {
+    padding: 30px 16px 50px;
+  }
+
+  .analysis-title {
+    margin-bottom: 24px;
+  }
+
+  .analysis-title h1 {
+    font-size: 30px;
+    letter-spacing: -0.5px;
+  }
+
+  .analysis-title p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .analysis-score-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .analysis-score-card {
+    padding: 16px;
+  }
+
+  .analysis-score-card strong {
+    font-size: 22px;
+  }
+
+  .analysis-card {
+    padding: 18px;
+  }
+
+  .overall-analysis {
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .overall-score {
+    min-width: 55px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+  .analysis-header {
+    padding: 0 12px;
+  }
+
+  .analysis-back-button {
+    font-size: 0;
+  }
+
+  .analysis-back-button::before {
+    content: "←";
+    font-size: 18px;
+  }
+
+  .analysis-brand {
+    font-size: 16px;
+  }
+
+  .analysis-main {
+    padding: 25px 12px 40px;
+  }
+
+  .analysis-title h1 {
+    font-size: 27px;
+  }
+
+  .analysis-score-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-score-card {
+    padding: 17px;
+  }
+
+  .analysis-content-grid {
+    gap: 14px;
+  }
+
+  .analysis-card {
+    padding: 16px;
+  }
+
+  .analysis-card-heading h2 {
+    font-size: 15px;
+  }
+
+  .finding-item,
+  .recommendation-item {
+    padding: 11px;
+  }
+
+  .overall-analysis {
+    flex-direction: column;
+  }
+
+  .overall-score {
+    margin-left: 0;
+    text-align: left;
+  }
+}
