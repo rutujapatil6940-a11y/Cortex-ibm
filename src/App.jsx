@@ -23,8 +23,9 @@ import GenerateDocumentation from "./GenerateDocumentation";
 // After Render deployment, replace this with:
 // https://your-backend-name.onrender.com
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = (
+    import.meta.env.VITE_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
 
 function readPersistedSession() {
   if (typeof window === "undefined") {
