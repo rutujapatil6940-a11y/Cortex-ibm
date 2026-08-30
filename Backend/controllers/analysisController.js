@@ -18,9 +18,12 @@ async function analyzeGitHubRepository(req, res) {
     });
 
     try {
-        const processed = await processGitHubRepository(record, repository);
+        const { repositoryRecord: processed } = await processGitHubRepository(record, repository);
         return res.status(200).json({
             success: true,
+            message: "Repository cloned and ready for analysis.",
+            analysisId: processed._id,
+            status: "workspace_ready",
             repository: {
                 id: processed._id,
                 name: processed.name,
@@ -30,7 +33,7 @@ async function analyzeGitHubRepository(req, res) {
                 status: processed.status,
                 metadata: processed.metadata,
             },
-            analysis: processed.analysis,
+            analysis: { id: processed._id, status: "workspace_ready" },
         });
     } catch (error) {
         return res.status(error.statusCode || 502).json({

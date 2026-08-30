@@ -476,6 +476,24 @@ body {
   color: #A0A5B3;
 }
 
+.workspace-ready-message {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid #6CB88A;
+  border-radius: 10px;
+  background: #EEF8F1;
+  color: #174F2D;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.workspace-ready-icon {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
 
 /* =====================================================
    OR DIVIDER

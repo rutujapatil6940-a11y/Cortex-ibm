@@ -4,14 +4,20 @@ import "./AnalyzeRepository.css";
 function AnalyzeRepository({ onBack, onAnalyze, isAnalyzing }) {
   const [githubUrl, setGithubUrl] = useState("");
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(null);
 
   const handleAnalyze = async () => {
     const repositoryUrl = githubUrl.trim();
     setError("");
+    setReady(null);
     if (!repositoryUrl) return setError("Please provide a GitHub repository URL.");
     if (!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/.test(repositoryUrl)) return setError("Enter a valid HTTPS GitHub repository URL.");
     try {
-      await onAnalyze(repositoryUrl);
+      const result = await onAnalyze(repositoryUrl);
+      setReady({
+        analysisId: result.analysisId || result.analysis?.id,
+        message: result.message || "Repository cloned and ready for analysis.",
+      });
     } catch (requestError) {
       setError(requestError.message || "Unable to analyze this repository.");
     }
@@ -32,9 +38,10 @@ function AnalyzeRepository({ onBack, onAnalyze, isAnalyzing }) {
           <input id="github-url" type="url" value={githubUrl} onChange={(event) => setGithubUrl(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); handleAnalyze(); } }} placeholder="https://github.com/username/repository" className="github-input" autoComplete="off" disabled={isAnalyzing} />
         </div>
         {error && <div className="error-message" role="alert"><span className="error-icon">⚠</span><span>{error}</span></div>}
-        <div className="analyze-actions"><button type="button" className="cancel-button" onClick={onBack} disabled={isAnalyzing}>Cancel</button><button type="button" className="analyze-repository-button" onClick={handleAnalyze} disabled={isAnalyzing}><span>✦</span><span>{isAnalyzing ? "Analyzing…" : "Analyze Repository"}</span></button></div>
+        {ready && <div className="workspace-ready-message" role="status"><span className="workspace-ready-icon">✓</span><span><strong>{ready.message}</strong><br />Analysis ID: {ready.analysisId}</span></div>}
+        <div className="analyze-actions"><button type="button" className="cancel-button" onClick={onBack} disabled={isAnalyzing}>Cancel</button><button type="button" className="analyze-repository-button" onClick={handleAnalyze} disabled={isAnalyzing}><span>✦</span><span>{isAnalyzing ? "Cloning repository…" : "Analyze Repository"}</span></button></div>
       </section>
-      <section className="analyze-info"><div className="info-icon">✦</div><div className="info-content"><h3>What happens next?</h3><p>Cortex clones the repository temporarily, reads eligible source files, sends their real contents to Bob AI, then saves and returns the generated analysis.</p></div></section>
+      <section className="analyze-info"><div className="info-icon">✦</div><div className="info-content"><h3>What happens next?</h3><p>Cortex clones the repository into temporary server storage and verifies it is ready for later analysis.</p></div></section>
     </main>
   </div>;
 }

@@ -391,7 +391,7 @@ function App() {
   };
 
   // =====================================================
-  // ANALYZE REPOSITORY → PROJECT OVERVIEW
+  // ANALYZE REPOSITORY → TEMPORARY WORKSPACE
   // =====================================================
 
   const handleStartAnalysis = async (githubUrl) => {
@@ -415,11 +415,20 @@ function App() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.success) {
         if (response.status === 401) handleLogout();
-        throw new Error(data.message || "Repository analysis failed.");
+        throw new Error(data.message || "Repository cloning failed.");
       }
 
-      setAnalysis({ ...data.analysis, repository: data.repository });
-      navigate("projects");
+      const workspaceAnalysis = {
+        ...data.analysis,
+        id: data.analysisId || data.analysis?.id,
+        status: data.status || data.analysis?.status,
+        repository: data.repository,
+      };
+      setAnalysis(workspaceAnalysis);
+      return {
+        ...data,
+        analysis: workspaceAnalysis,
+      };
     } finally {
       setLoading(false);
     }

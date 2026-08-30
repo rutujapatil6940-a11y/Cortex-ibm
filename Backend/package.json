@@ -2,7 +2,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test:bob": "node test-bob-documentation.js"
+    "test:bob": "node test-bob-documentation.js",
+    "test:github-workspace": "node test-github-workspace.js"
   },
   "dependencies": {
     "@ibm-cloud/watsonx-ai": "^1.7.16",
