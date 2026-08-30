@@ -12,7 +12,7 @@ const MAX_CONTEXT_FILES = Number(process.env.REPOSITORY_MAX_CONTEXT_FILES || 250
 
 function usesSensitiveName(name) {
     const lower = name.toLowerCase();
-    return lower.startsWith(".env") || SENSITIVE_FILE_NAMES.has(lower) || lower.endsWith(".pem") || lower.endsWith(".key") || /credential|private[._-]?key/.test(lower);
+    return lower.startsWith(".env") || SENSITIVE_FILE_NAMES.has(lower) || lower.endsWith(".pem") || lower.endsWith(".key") || /credential|secret|private[._-]?key/.test(lower);
 }
 
 function isRelevantTextFile(name) {

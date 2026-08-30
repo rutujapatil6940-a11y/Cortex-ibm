@@ -1,19 +1,44 @@
 require("dotenv").config();
 
 const fs = require("fs/promises");
-const path = require("path");
+const { randomBytes } = require("crypto");
+const { parseGitHubRepositoryUrl, cloneGitHubRepository } = require("./services/githubService");
+const { buildRepositoryContext } = require("./services/repositoryContextService");
 const { generateDocumentation } = require("./services/bobService");
+const {
+    cleanupRepositoryWorkspace,
+    getRepositoryWorkspacePath,
+    verifyRepositoryWorkspace,
+} = require("./services/repositoryWorkspaceService");
 
 async function main() {
-    const workspace = path.resolve(process.argv[2] || __dirname);
-    const outputPath = path.join(__dirname, "test-documentation.json");
+    const repository = parseGitHubRepositoryUrl(process.argv[2] || "https://github.com/octocat/Hello-World");
+    if (!repository) {
+        throw new Error("Provide a valid HTTPS GitHub repository URL.");
+    }
 
-    console.log(`Sending workspace to IBM Bob: ${workspace}`);
-    const analysis = await generateDocumentation(workspace);
-    await fs.writeFile(outputPath, JSON.stringify(analysis, null, 2), "utf8");
+    const workspaceId = randomBytes(12).toString("hex");
+    const workspace = getRepositoryWorkspacePath(workspaceId);
 
-    console.log(`IBM Bob response saved to: ${outputPath}`);
-    console.log(JSON.stringify(analysis, null, 2));
+    try {
+        await cloneGitHubRepository(repository.repositoryUrl, workspace, workspaceId);
+        await verifyRepositoryWorkspace(workspace);
+        const context = await buildRepositoryContext(workspace, repository);
+        const { analysis, bobResult } = await generateDocumentation(workspace, context, workspaceId);
+
+        if (!analysis.projectOverview || !bobResult.stats?.task_id) {
+            throw new Error("IBM Bob returned an incomplete analysis result.");
+        }
+
+        console.log("IBM Bob repository analysis test passed.");
+    } finally {
+        await cleanupRepositoryWorkspace(workspaceId);
+        await fs.access(workspace).then(
+            () => { throw new Error("Repository workspace was not cleaned up."); },
+            () => undefined
+        );
+        console.log("IBM Bob repository workspace cleanup test passed.");
+    }
 }
 
 main().catch((error) => {

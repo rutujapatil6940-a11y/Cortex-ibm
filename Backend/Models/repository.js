@@ -9,7 +9,7 @@ const repositorySchema = new mongoose.Schema(
         sourceType: { type: String, enum: ["github"], required: true, default: "github" },
         status: {
             type: String,
-            enum: ["uploaded", "processing", "processed", "failed"],
+            enum: ["uploaded", "processing", "workspace_ready", "analyzing", "processed", "failed"],
             required: true,
             default: "uploaded",
         },

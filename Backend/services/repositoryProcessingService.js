@@ -19,6 +19,7 @@ async function processGitHubRepository(repositoryRecord, repository) {
         await verifyRepositoryWorkspace(workspace);
         const defaultBranch = await getDefaultBranch(workspace);
         repositoryRecord.metadata.defaultBranch = defaultBranch || undefined;
+        repositoryRecord.status = "workspace_ready";
         await repositoryRecord.save();
         console.log("Repository workspace ready", { workspaceId });
         return { repositoryRecord, workspaceId };

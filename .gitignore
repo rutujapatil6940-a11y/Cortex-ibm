@@ -3,4 +3,5 @@ dist/
 build/
 .env
 Backend/.env
+Backend/.bob-shell/
 Backend/test-documentation.json

@@ -394,7 +394,7 @@ function App() {
   // ANALYZE REPOSITORY → TEMPORARY WORKSPACE
   // =====================================================
 
-  const handleStartAnalysis = async (githubUrl) => {
+  const handleCloneRepository = async (githubUrl) => {
     const token = localStorage.getItem("token");
     if (!token) {
       handleLogout();
@@ -428,6 +428,45 @@ function App() {
       return {
         ...data,
         analysis: workspaceAnalysis,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRunRepositoryAnalysis = async (analysisId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      handleLogout();
+      throw new Error("Your session has expired. Please sign in again.");
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/analysis/${encodeURIComponent(analysisId)}/analyze`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        if (response.status === 401) handleLogout();
+        throw new Error(data.message || "Repository analysis failed.");
+      }
+
+      const completedAnalysis = {
+        ...data.analysis,
+        id: data.analysisId || data.analysis?.id,
+        status: data.status || data.analysis?.status,
+        repository: data.repository || data.analysis?.repository,
+      };
+      setAnalysis(completedAnalysis);
+      return {
+        ...data,
+        analysis: completedAnalysis,
       };
     } finally {
       setLoading(false);
@@ -509,7 +548,8 @@ function App() {
         return (
           <AnalyzeRepository
             onBack={() => navigate("dashboard")}
-            onAnalyze={handleStartAnalysis}
+            onClone={handleCloneRepository}
+            onAnalyze={handleRunRepositoryAnalysis}
             isAnalyzing={loading}
           />
         );

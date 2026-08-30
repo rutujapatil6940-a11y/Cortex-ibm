@@ -35,7 +35,7 @@ async function run() {
         const processed = await processGitHubRepository(repositoryRecord, repository);
         assert.equal(processed.workspaceId, workspaceId);
         assert.equal(processed.repositoryRecord, repositoryRecord);
-        assert.equal(repositoryRecord.status, "processing");
+        assert.equal(repositoryRecord.status, "workspace_ready");
         assert.equal(repositoryRecord.error, null);
         assert.ok(repositoryRecord.metadata.defaultBranch);
         assert.equal(repositoryRecord.saveCalls, 2);

@@ -494,6 +494,12 @@ body {
   font-weight: 700;
 }
 
+.workspace-progress-message {
+  border-color: #5B8FD1;
+  background: #EEF4FB;
+  color: #163F73;
+}
+
 
 /* =====================================================
    OR DIVIDER

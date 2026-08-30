@@ -2,8 +2,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "build:render": "npm ci && npm run install:bob-shell",
+    "install:bob-shell": "bash scripts/install-bob-shell.sh",
     "test:bob": "node test-bob-documentation.js",
     "test:github-workspace": "node test-github-workspace.js"
+  },
+  "engines": {
+    "node": ">=24 <25"
   },
   "dependencies": {
     "@ibm-cloud/watsonx-ai": "^1.7.16",

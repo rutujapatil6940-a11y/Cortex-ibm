@@ -1,27 +1,45 @@
 import { useState } from "react";
 import "./AnalyzeRepository.css";
 
-function AnalyzeRepository({ onBack, onAnalyze, isAnalyzing }) {
+function AnalyzeRepository({ onBack, onClone, onAnalyze, isAnalyzing }) {
   const [githubUrl, setGithubUrl] = useState("");
   const [error, setError] = useState("");
   const [ready, setReady] = useState(null);
+  const [stage, setStage] = useState(null);
 
   const handleAnalyze = async () => {
     const repositoryUrl = githubUrl.trim();
     setError("");
     setReady(null);
+    setStage(null);
     if (!repositoryUrl) return setError("Please provide a GitHub repository URL.");
     if (!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/.test(repositoryUrl)) return setError("Enter a valid HTTPS GitHub repository URL.");
     try {
-      const result = await onAnalyze(repositoryUrl);
+      setStage("cloning");
+      const workspace = await onClone(repositoryUrl);
+      const analysisId = workspace.analysisId || workspace.analysis?.id;
       setReady({
-        analysisId: result.analysisId || result.analysis?.id,
-        message: result.message || "Repository cloned and ready for analysis.",
+        analysisId,
+        message: "Repository ready.",
       });
+      setStage("analyzing");
+      const result = await onAnalyze(analysisId);
+      setReady({
+        analysisId: result.analysisId || result.analysis?.id || analysisId,
+        message: result.message || "Repository analysis completed.",
+      });
+      setStage("completed");
     } catch (requestError) {
+      setStage(null);
       setError(requestError.message || "Unable to analyze this repository.");
     }
   };
+
+  const statusMessage = {
+    cloning: "Cloning repository...",
+    analyzing: "Repository ready. Analyzing repository...",
+    completed: ready?.message || "Repository analysis completed.",
+  }[stage];
 
   return <div className="analyze-page">
     <header className="analyze-header">
@@ -38,8 +56,8 @@ function AnalyzeRepository({ onBack, onAnalyze, isAnalyzing }) {
           <input id="github-url" type="url" value={githubUrl} onChange={(event) => setGithubUrl(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); handleAnalyze(); } }} placeholder="https://github.com/username/repository" className="github-input" autoComplete="off" disabled={isAnalyzing} />
         </div>
         {error && <div className="error-message" role="alert"><span className="error-icon">⚠</span><span>{error}</span></div>}
-        {ready && <div className="workspace-ready-message" role="status"><span className="workspace-ready-icon">✓</span><span><strong>{ready.message}</strong><br />Analysis ID: {ready.analysisId}</span></div>}
-        <div className="analyze-actions"><button type="button" className="cancel-button" onClick={onBack} disabled={isAnalyzing}>Cancel</button><button type="button" className="analyze-repository-button" onClick={handleAnalyze} disabled={isAnalyzing}><span>✦</span><span>{isAnalyzing ? "Cloning repository…" : "Analyze Repository"}</span></button></div>
+        {statusMessage && <div className={`workspace-ready-message ${stage === "completed" ? "" : "workspace-progress-message"}`} role="status"><span className="workspace-ready-icon">{stage === "completed" ? "✓" : "…"}</span><span><strong>{statusMessage}</strong>{ready?.analysisId && <><br />Analysis ID: {ready.analysisId}</>}</span></div>}
+        <div className="analyze-actions"><button type="button" className="cancel-button" onClick={onBack} disabled={isAnalyzing}>Cancel</button><button type="button" className="analyze-repository-button" onClick={handleAnalyze} disabled={isAnalyzing}><span>✦</span><span>{stage === "cloning" || (isAnalyzing && !stage) ? "Cloning repository..." : stage === "analyzing" ? "Analyzing repository..." : "Analyze Repository"}</span></button></div>
       </section>
       <section className="analyze-info"><div className="info-icon">✦</div><div className="info-content"><h3>What happens next?</h3><p>Cortex clones the repository into temporary server storage and verifies it is ready for later analysis.</p></div></section>
     </main>
