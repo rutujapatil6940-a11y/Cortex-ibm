@@ -1,11 +1,14 @@
 const fs = require("fs/promises");
+const os = require("os");
 const path = require("path");
-const { execFile } = require("child_process");
-const { promisify } = require("util");
+const { randomUUID } = require("crypto");
+const { spawn } = require("child_process");
 
-const execFileAsync = promisify(execFile);
 const CONTEXT_FILE_NAME = ".cortex-analysis-context.json";
 const MAX_OUTPUT_BYTES = Number(process.env.BOB_MAX_OUTPUT_BYTES || 5 * 1024 * 1024);
+const PROCESS_KILL_GRACE_MS = 5_000;
+const HEALTH_FILE_NAME = ".cortex-bob-health.txt";
+const HEALTH_MARKER = "CORTEX_BOB_HEALTH_READY";
 
 function createBobError(message, statusCode) {
     const error = new Error(message);
@@ -60,18 +63,242 @@ function parseAnalysis(lastMessage) {
     return analysis;
 }
 
-function createBobExecutionError(error) {
+function createBobExecutionError(error, operation = "repository analysis") {
     if (["ENOENT", "EACCES", "EPERM"].includes(error.code)) {
         return createBobError("IBM Bob Shell is not installed on the server. Run the Render Bob Shell build step before deploying.", 503);
     }
-    if (error.code === "ETIMEDOUT" || error.killed) {
-        return createBobError("IBM Bob repository analysis timed out.", 504);
+    if (error.code === "ETIMEDOUT" || error.timedOut) {
+        return createBobError(`IBM Bob ${operation} timed out.`, 504);
     }
-    if (error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER") {
+    if (error.code === "BOB_MAX_OUTPUT") {
         return createBobError("IBM Bob returned more output than the server can process.", 502);
     }
 
     return createBobError("IBM Bob could not complete the repository analysis.", 502);
+}
+
+function redactDiagnosticText(value) {
+    let diagnosticText = String(value || "");
+    if (process.env.BOB_API_KEY) {
+        diagnosticText = diagnosticText.replaceAll(process.env.BOB_API_KEY, "[REDACTED]");
+    }
+
+    return diagnosticText
+        .replace(/bob_[A-Za-z0-9_-]+/g, "[REDACTED]")
+        .replace(/(authorization\s*[:=]\s*bearer\s+)[^\s]+/gi, "$1[REDACTED]")
+        .replace(/(api[ _-]?key\s*[:=]\s*)[^\s,;]+/gi, "$1[REDACTED]")
+        .slice(0, 500);
+}
+
+function describeBobArgs(args, workspace) {
+    return args.map((argument, index) => {
+        if (argument === workspace) return "<workspace>";
+        if (args[index - 1] === "--team-id") return "<team-id>";
+        if (args[0] === "run" && index === args.length - 1) return "<prompt>";
+        return argument;
+    });
+}
+
+function createProcessDiagnostics({ executable, args, operation, timeoutMs, workspace, workspaceId }) {
+    return {
+        executable,
+        command: describeBobArgs(args, workspace),
+        operation,
+        workspaceId,
+        timeoutMs,
+        apiKeyConfigured: Boolean(process.env.BOB_API_KEY),
+        teamIdConfigured: Boolean(process.env.BOB_TEAM_ID),
+        stdin: "ignored (EOF)",
+        stdoutBytes: 0,
+        stderrBytes: 0,
+        stdoutReceived: false,
+        stderrReceived: false,
+    };
+}
+
+async function createBobRuntimeEnvironment() {
+    const runtimeRoot = path.join(os.tmpdir(), "cortex-bob-runtime");
+    const home = path.join(runtimeRoot, "home");
+    const config = path.join(runtimeRoot, "config");
+    const cache = path.join(runtimeRoot, "cache");
+    const state = path.join(runtimeRoot, "state");
+
+    await Promise.all([home, config, cache, state].map(async (directory) => {
+        await fs.mkdir(directory, { recursive: true, mode: 0o700 });
+        await fs.chmod(directory, 0o700);
+    }));
+
+    return {
+        env: {
+            ...process.env,
+            HOME: home,
+            XDG_CONFIG_HOME: config,
+            XDG_CACHE_HOME: cache,
+            XDG_STATE_HOME: state,
+        },
+        runtimeConfigured: true,
+    };
+}
+
+function stopBobProcess(child, signal) {
+    if (child.exitCode === null && child.signalCode === null) {
+        child.kill(signal);
+    }
+}
+
+function runBobProcess({ executable, args, env, operation, timeoutMs, workspace, workspaceId, allowOutputPreview = false }) {
+    return new Promise((resolve, reject) => {
+        const startedAt = Date.now();
+        const diagnostics = createProcessDiagnostics({ executable, args, operation, timeoutMs, workspace, workspaceId });
+        const stdout = [];
+        const stderr = [];
+        let settled = false;
+        let timedOut = false;
+        let outputLimitReached = false;
+        let killTimer;
+        let timeoutTimer;
+
+        const finish = (callback, value) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutTimer);
+            clearTimeout(killTimer);
+            callback(value);
+        };
+
+        let child;
+        try {
+            child = spawn(executable, args, {
+                cwd: workspace,
+                env,
+                stdio: ["ignore", "pipe", "pipe"],
+                windowsHide: true,
+            });
+        } catch (error) {
+            finish(reject, error);
+            return;
+        }
+
+        const terminate = (reason) => {
+            stopBobProcess(child, "SIGTERM");
+            killTimer = setTimeout(() => stopBobProcess(child, "SIGKILL"), PROCESS_KILL_GRACE_MS);
+            if (reason === "timeout") timedOut = true;
+            if (reason === "output_limit") outputLimitReached = true;
+        };
+
+        timeoutTimer = setTimeout(() => {
+            console.warn("IBM Bob process timeout reached", {
+                operation,
+                workspaceId,
+                stdoutReceived: diagnostics.stdoutReceived,
+                stderrReceived: diagnostics.stderrReceived,
+                stdoutBytes: diagnostics.stdoutBytes,
+                stderrBytes: diagnostics.stderrBytes,
+            });
+            terminate("timeout");
+        }, timeoutMs);
+
+        const capture = (stream, chunk) => {
+            const byteLength = Buffer.byteLength(chunk);
+            const bytesKey = `${stream}Bytes`;
+            const receivedKey = `${stream}Received`;
+            const firstOutput = !diagnostics[receivedKey];
+            diagnostics[bytesKey] += byteLength;
+            diagnostics[receivedKey] = true;
+
+            if (stream === "stdout") stdout.push(chunk);
+            else stderr.push(chunk);
+
+            if (firstOutput) {
+                console.log("IBM Bob process output received", {
+                    operation,
+                    workspaceId,
+                    stream,
+                    byteLength,
+                });
+            }
+
+            if (diagnostics.stdoutBytes + diagnostics.stderrBytes > MAX_OUTPUT_BYTES && !outputLimitReached) {
+                console.warn("IBM Bob process exceeded output limit", { operation, workspaceId });
+                terminate("output_limit");
+            }
+        };
+
+        child.once("spawn", () => {
+            console.log("IBM Bob process started", diagnostics);
+        });
+        child.stdout.on("data", (chunk) => capture("stdout", chunk));
+        child.stderr.on("data", (chunk) => capture("stderr", chunk));
+        child.once("error", (error) => {
+            diagnostics.elapsedMs = Date.now() - startedAt;
+            console.error("IBM Bob process failed to start", { ...diagnostics, code: error.code });
+            finish(reject, Object.assign(error, { diagnostics }));
+        });
+        child.once("close", (exitCode, signal) => {
+            diagnostics.elapsedMs = Date.now() - startedAt;
+            diagnostics.exitCode = exitCode;
+            diagnostics.signal = signal || null;
+            console.log("IBM Bob process exited", diagnostics);
+            const outputPreview = allowOutputPreview ? {
+                stdout: redactDiagnosticText(Buffer.concat(stdout).toString("utf8")),
+                stderr: redactDiagnosticText(Buffer.concat(stderr).toString("utf8")),
+            } : undefined;
+
+            if (timedOut) {
+                finish(reject, Object.assign(new Error("IBM Bob process timed out."), { code: "ETIMEDOUT", timedOut: true, diagnostics, outputPreview }));
+                return;
+            }
+            if (outputLimitReached) {
+                finish(reject, Object.assign(new Error("IBM Bob process exceeded output limit."), { code: "BOB_MAX_OUTPUT", diagnostics, outputPreview }));
+                return;
+            }
+            if (exitCode !== 0) {
+                finish(reject, Object.assign(new Error("IBM Bob process exited unsuccessfully."), { code: "BOB_EXIT_FAILURE", diagnostics, outputPreview }));
+                return;
+            }
+
+            finish(resolve, {
+                stdout: Buffer.concat(stdout).toString("utf8"),
+                stderr: Buffer.concat(stderr).toString("utf8"),
+                diagnostics,
+                outputPreview,
+            });
+        });
+    });
+}
+
+function buildBobRunArgs(workspace, prompt, options = {}) {
+    const args = [
+        "run",
+        "--format",
+        "json",
+        "--mode",
+        "ask",
+        "--workspace",
+        workspace,
+    ];
+
+    if (process.env.BOB_TEAM_ID) {
+        args.push("--team-id", process.env.BOB_TEAM_ID);
+    }
+
+    args.push(
+        "--max-cost",
+        options.maxCost || process.env.BOB_MAX_COST || "0.50",
+        "--max-turns",
+        options.maxTurns || process.env.BOB_MAX_TURNS || "10",
+        "--disable-mcp",
+        "--disable-subagents",
+        "--disable-tool-groups",
+        "execute",
+        "--accept-license",
+        "--trust",
+        "--log-level",
+        options.logLevel || process.env.BOB_LOG_LEVEL || "warn",
+        prompt,
+    );
+
+    return args;
 }
 
 function buildRepositoryAnalysisPrompt() {
@@ -108,54 +335,130 @@ async function writeRepositoryContext(workspace, repositoryContext) {
     );
 }
 
-async function runBob(prompt, workspace, workspaceId) {
+function assertBobConfigured() {
     if (!process.env.BOB_API_KEY) {
         throw createBobError("IBM Bob is not configured. Set BOB_API_KEY in the backend environment.", 503);
     }
+}
+
+function getTimeout(environmentVariable, fallback) {
+    const timeout = Number(process.env[environmentVariable]);
+    return Number.isSafeInteger(timeout) && timeout > 0 ? timeout : fallback;
+}
+
+function getBobHealthPrompt() {
+    return `Read @${HEALTH_FILE_NAME} and reply with exactly ${HEALTH_MARKER}.`;
+}
+
+async function runBobHealthCheck() {
+    assertBobConfigured();
 
     const executable = getBobExecutable();
-    const args = [
-        "run",
-        "--format",
-        "json",
-        "--workspace",
-        workspace,
-    ];
-
-    if (process.env.BOB_TEAM_ID) {
-        args.push("--team-id", process.env.BOB_TEAM_ID);
-    }
-
-    args.push(
-        "--max-cost",
-        process.env.BOB_MAX_COST || "0.50",
-        "--max-turns",
-        process.env.BOB_MAX_TURNS || "10",
-        "--disable-mcp",
-        "--disable-subagents",
-        "--disable-tool-groups",
-        "execute",
-        "--accept-license",
-        "--trust",
-        "--log-level",
-        "warn",
-        prompt,
-    );
-
-    console.log("IBM Bob repository analysis started", { workspaceId });
+    const workspace = await fs.mkdtemp(path.join(os.tmpdir(), "cortex-bob-health-"));
+    const workspaceId = `health-${randomUUID()}`;
     try {
-        const { stdout } = await execFileAsync(executable, args, {
-            cwd: workspace,
-            env: process.env,
-            windowsHide: true,
-            maxBuffer: MAX_OUTPUT_BYTES,
-            timeout: Number(process.env.BOB_TIMEOUT_MS || 300000),
+        await fs.writeFile(path.join(workspace, HEALTH_FILE_NAME), `${HEALTH_MARKER}\n`, "utf8");
+        const { env, runtimeConfigured } = await createBobRuntimeEnvironment();
+        console.log("IBM Bob health check started", {
+            workspaceId,
+            executable,
+            runtimeConfigured,
+            apiKeyConfigured: true,
+            teamIdConfigured: Boolean(process.env.BOB_TEAM_ID),
+        });
+
+        const version = await runBobProcess({
+            executable,
+            args: ["--version"],
+            env,
+            operation: "health version check",
+            timeoutMs: getTimeout("BOB_HEALTH_VERSION_TIMEOUT_MS", 15_000),
+            workspace,
+            workspaceId,
+            allowOutputPreview: true,
+        });
+
+        const healthRun = await runBobProcess({
+            executable,
+            args: buildBobRunArgs(workspace, getBobHealthPrompt(), {
+                maxCost: process.env.BOB_HEALTH_MAX_COST || "0.10",
+                maxTurns: process.env.BOB_HEALTH_MAX_TURNS || "2",
+                logLevel: process.env.BOB_HEALTH_LOG_LEVEL || "info",
+            }),
+            env,
+            operation: "health inference check",
+            timeoutMs: getTimeout("BOB_HEALTH_TIMEOUT_MS", 60_000),
+            workspace,
+            workspaceId,
+            allowOutputPreview: true,
+        });
+        const bobResult = parseBobResult(healthRun.stdout);
+        if (!bobResult.last_message.includes(HEALTH_MARKER)) {
+            throw createBobError("IBM Bob health check did not read the configured workspace.", 502);
+        }
+
+        const bobVersion = redactDiagnosticText(version.stdout).replace(/\s+/g, " ").trim();
+        console.log("IBM Bob health check successful", {
+            workspaceId,
+            version: bobVersion,
+            versionElapsedMs: version.diagnostics.elapsedMs,
+            inferenceElapsedMs: healthRun.diagnostics.elapsedMs,
+            stdoutReceived: healthRun.diagnostics.stdoutReceived,
+            stderrReceived: healthRun.diagnostics.stderrReceived,
+        });
+        return {
+            status: "ready",
+            bobVersion,
+            versionElapsedMs: version.diagnostics.elapsedMs,
+            inferenceElapsedMs: healthRun.diagnostics.elapsedMs,
+        };
+    } catch (error) {
+        const bobError = error.statusCode ? error : createBobExecutionError(error, "health check");
+        console.error("IBM Bob health check failed", {
+            workspaceId,
+            message: bobError.message,
+            diagnostics: error.diagnostics,
+            stdoutPreview: error.outputPreview?.stdout,
+            stderrPreview: error.outputPreview?.stderr,
+        });
+        throw bobError;
+    } finally {
+        try {
+            await fs.rm(workspace, { recursive: true, force: true });
+            console.log("IBM Bob health workspace cleanup completed", { workspaceId });
+        } catch (cleanupError) {
+            console.error("IBM Bob health workspace cleanup failed", {
+                workspaceId,
+                message: cleanupError.message,
+            });
+        }
+    }
+}
+
+async function runBob(prompt, workspace, workspaceId) {
+    assertBobConfigured();
+
+    const executable = getBobExecutable();
+    const { env, runtimeConfigured } = await createBobRuntimeEnvironment();
+    const args = buildBobRunArgs(workspace, prompt);
+
+    console.log("IBM Bob repository analysis started", { workspaceId, runtimeConfigured });
+    try {
+        const { stdout, diagnostics } = await runBobProcess({
+            executable,
+            args,
+            env,
+            operation: "repository analysis",
+            timeoutMs: getTimeout("BOB_TIMEOUT_MS", 300_000),
+            workspace,
+            workspaceId,
         });
         const bobResult = parseBobResult(stdout);
         const analysis = parseAnalysis(bobResult.last_message);
         console.log("IBM Bob repository analysis successful", {
             workspaceId,
             taskId: bobResult.stats?.task_id,
+            elapsedMs: diagnostics.elapsedMs,
         });
         return { analysis, bobResult };
     } catch (error) {
@@ -163,6 +466,7 @@ async function runBob(prompt, workspace, workspaceId) {
         console.error("IBM Bob repository analysis failed", {
             workspaceId,
             message: bobError.message,
+            diagnostics: error.diagnostics,
         });
         throw bobError;
     }
@@ -186,5 +490,6 @@ module.exports = {
     buildRepositoryAnalysisPrompt,
     generateDocumentation,
     runBob,
+    runBobHealthCheck,
     writeRepositoryContext,
 };

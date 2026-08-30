@@ -4,7 +4,7 @@ const fs = require("fs/promises");
 const { randomBytes } = require("crypto");
 const { parseGitHubRepositoryUrl, cloneGitHubRepository } = require("./services/githubService");
 const { buildRepositoryContext } = require("./services/repositoryContextService");
-const { generateDocumentation } = require("./services/bobService");
+const { generateDocumentation, runBobHealthCheck } = require("./services/bobService");
 const {
     cleanupRepositoryWorkspace,
     getRepositoryWorkspacePath,
@@ -12,6 +12,12 @@ const {
 } = require("./services/repositoryWorkspaceService");
 
 async function main() {
+    const health = await runBobHealthCheck();
+    console.log("IBM Bob health check test passed.", {
+        bobVersion: health.bobVersion,
+        inferenceElapsedMs: health.inferenceElapsedMs,
+    });
+
     const repository = parseGitHubRepositoryUrl(process.argv[2] || "https://github.com/octocat/Hello-World");
     if (!repository) {
         throw new Error("Provide a valid HTTPS GitHub repository URL.");

@@ -1,6 +1,6 @@
 const Repository = require("../Models/repository");
 const { parseGitHubRepositoryUrl } = require("../services/githubService");
-const { generateDocumentation } = require("../services/bobService");
+const { generateDocumentation, runBobHealthCheck } = require("../services/bobService");
 const {
     cleanupRepositoryWorkspace,
     getRepositoryWorkspacePath,
@@ -110,6 +110,12 @@ async function analyzeRepositoryWorkspace(req, res) {
         await record.save();
 
         await verifyRepositoryWorkspace(workspace);
+        const bobHealth = await runBobHealthCheck();
+        console.log("IBM Bob preflight completed", {
+            workspaceId: analysisId,
+            bobVersion: bobHealth.bobVersion,
+            inferenceElapsedMs: bobHealth.inferenceElapsedMs,
+        });
         const repository = {
             owner: record.owner,
             repository: record.name,
