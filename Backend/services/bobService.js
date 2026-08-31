@@ -21,6 +21,20 @@ function getBobExecutable() {
     return path.join(__dirname, "..", ".bob-shell", "bin", "bob");
 }
 
+function getRemoteBobUrl() {
+    const configuredUrl = process.env.BOB_REMOTE_URL?.trim();
+    if (!configuredUrl) return null;
+
+    try {
+        const remoteUrl = new URL(configuredUrl);
+        if (!['http:', 'https:'].includes(remoteUrl.protocol)) throw new Error("Unsupported protocol");
+        if (remoteUrl.username || remoteUrl.password) throw new Error("Credentials are not supported");
+        return remoteUrl.toString().replace(/\/+$/, "");
+    } catch {
+        throw createBobError("BOB_REMOTE_URL must be a valid HTTP(S) URL.", 503);
+    }
+}
+
 function parseBobResult(stdout) {
     let result;
     try {
@@ -414,11 +428,77 @@ function getTimeout(environmentVariable, fallback) {
     return Number.isSafeInteger(timeout) && timeout > 0 ? timeout : fallback;
 }
 
+async function requestRemoteBob(remoteUrl, endpoint, options = {}) {
+    const operation = options.operation || "request";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs);
+
+    try {
+        const response = await fetch(`${remoteUrl}${endpoint}`, {
+            method: options.method || "GET",
+            headers: options.body ? { "Content-Type": "application/json" } : undefined,
+            body: options.body ? JSON.stringify(options.body) : undefined,
+            signal: controller.signal,
+        });
+
+        if (!response.ok) {
+            console.error("Remote Bob service returned an unsuccessful response", {
+                operation,
+                status: response.status,
+            });
+            throw createBobError("Remote Bob service could not complete the request.", 502);
+        }
+
+        try {
+            return await response.json();
+        } catch {
+            throw createBobError("Remote Bob service returned invalid JSON.", 502);
+        }
+    } catch (error) {
+        if (error?.statusCode) throw error;
+        if (error?.name === "AbortError") {
+            throw createBobError(`Remote Bob ${operation} timed out.`, 504);
+        }
+
+        console.error("Remote Bob service request failed", {
+            operation,
+            message: error?.message,
+        });
+        throw createBobError("Remote Bob service is unavailable.", 503);
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
 function getBobHealthPrompt() {
     return `Read @${HEALTH_FILE_NAME} and reply with exactly ${HEALTH_MARKER}.`;
 }
 
+async function runRemoteBobHealthCheck(remoteUrl) {
+    console.log("Using remote Bob service", { host: new URL(remoteUrl).host });
+    const health = await requestRemoteBob(remoteUrl, "/health", {
+        operation: "health check",
+        timeoutMs: getTimeout("BOB_REMOTE_HEALTH_TIMEOUT_MS", getTimeout("BOB_HEALTH_VERSION_TIMEOUT_MS", 15_000)),
+    });
+
+    if (health?.ok !== true) {
+        throw createBobError("Remote Bob service health check did not succeed.", 502);
+    }
+
+    console.log("Remote Bob health check successful", {
+        service: health.service,
+        bobVersion: health.bob,
+    });
+    return {
+        status: "ready",
+        bobVersion: typeof health.bob === "string" ? health.bob : "remote",
+    };
+}
+
 async function runBobHealthCheck() {
+    const remoteUrl = getRemoteBobUrl();
+    if (remoteUrl) return runRemoteBobHealthCheck(remoteUrl);
+
     assertBobConfigured();
 
     const executable = getBobExecutable();
@@ -553,9 +633,46 @@ async function runBob(prompt, workspace, workspaceId) {
     }
 }
 
+async function runRemoteBob(prompt, repositoryContext, workspaceId) {
+    const remoteUrl = getRemoteBobUrl();
+    if (!remoteUrl) {
+        throw createBobError("Remote Bob service is not configured.", 503);
+    }
+
+    console.log("Sending repository analysis to remote Bob service", {
+        workspaceId,
+        host: new URL(remoteUrl).host,
+    });
+    const response = await requestRemoteBob(remoteUrl, "/analyze", {
+        method: "POST",
+        operation: "repository analysis",
+        timeoutMs: getTimeout("BOB_REMOTE_TIMEOUT_MS", getTimeout("BOB_TIMEOUT_MS", 300_000)),
+        body: {
+            repositoryContext,
+            prompt,
+        },
+    });
+
+    if (response?.success !== true || !response.result || typeof response.result !== "object") {
+        throw createBobError("Remote Bob service returned an invalid analysis response.", 502);
+    }
+
+    const bobResult = parseBobResult(JSON.stringify(response.result));
+    const analysis = parseAnalysis(bobResult.last_message);
+    console.log("Remote Bob repository analysis successful", {
+        workspaceId,
+        taskId: bobResult.stats?.task_id,
+    });
+    return { analysis, bobResult };
+}
+
 async function generateDocumentation(workspace, repositoryContext, workspaceId) {
     if (!repositoryContext?.sourceFiles?.length) {
         throw createBobError("Repository context contains no source files for AI analysis.", 422);
+    }
+
+    if (getRemoteBobUrl()) {
+        return runRemoteBob(buildRepositoryAnalysisPrompt(), repositoryContext, workspaceId);
     }
 
     await writeRepositoryContext(workspace, repositoryContext);
