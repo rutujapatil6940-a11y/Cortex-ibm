@@ -49,4 +49,4 @@ if [[ ! -x "${install_prefix}/bin/bob" ]]; then
     exit 1
 fi
 
-bob --version
+node "${project_root}/scripts/verify-bob-shell.js" "${install_prefix}/bin/bob"

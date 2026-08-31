@@ -7,6 +7,7 @@ const { spawn } = require("child_process");
 const CONTEXT_FILE_NAME = ".cortex-analysis-context.json";
 const MAX_OUTPUT_BYTES = Number(process.env.BOB_MAX_OUTPUT_BYTES || 5 * 1024 * 1024);
 const PROCESS_KILL_GRACE_MS = 5_000;
+const OUTPUT_DRAIN_GRACE_MS = 1_000;
 const HEALTH_FILE_NAME = ".cortex-bob-health.txt";
 const HEALTH_MARKER = "CORTEX_BOB_HEALTH_READY";
 
@@ -181,12 +182,19 @@ function runBobProcess({ executable, args, env, operation, timeoutMs, workspace,
         let outputLimitReached = false;
         let killTimer;
         let timeoutTimer;
+        let outputDrainTimer;
+        let processExited = false;
+        let stdoutEnded = false;
+        let stderrEnded = false;
+        let exitCode;
+        let exitSignal;
 
         const finish = (callback, value) => {
             if (settled) return;
             settled = true;
             clearTimeout(timeoutTimer);
             clearTimeout(killTimer);
+            clearTimeout(outputDrainTimer);
             callback(value);
         };
 
@@ -258,11 +266,11 @@ function runBobProcess({ executable, args, env, operation, timeoutMs, workspace,
             console.error("IBM Bob process failed to start", { ...diagnostics, code: error.code });
             finish(reject, Object.assign(error, { diagnostics }));
         });
-        child.once("close", (exitCode, signal) => {
+        const finishProcess = () => {
             diagnostics.elapsedMs = Date.now() - startedAt;
             diagnostics.exitCode = exitCode;
-            diagnostics.signal = signal || null;
-            console.log("IBM Bob process exited", diagnostics);
+            diagnostics.signal = exitSignal || null;
+            console.log("IBM Bob process completed", diagnostics);
             const outputPreview = allowOutputPreview ? {
                 stdout: redactDiagnosticText(Buffer.concat(stdout).toString("utf8")),
                 stderr: redactDiagnosticText(Buffer.concat(stderr).toString("utf8")),
@@ -287,6 +295,42 @@ function runBobProcess({ executable, args, env, operation, timeoutMs, workspace,
                 diagnostics,
                 outputPreview,
             });
+        };
+
+        const finishWhenOutputDrained = () => {
+            if (processExited && stdoutEnded && stderrEnded) {
+                finishProcess();
+            }
+        };
+
+        child.stdout.once("end", () => {
+            stdoutEnded = true;
+            finishWhenOutputDrained();
+        });
+        child.stderr.once("end", () => {
+            stderrEnded = true;
+            finishWhenOutputDrained();
+        });
+        child.once("exit", (code, signal) => {
+            processExited = true;
+            exitCode = code;
+            exitSignal = signal;
+            console.log("IBM Bob process exit received", {
+                operation,
+                workspaceId,
+                exitCode,
+                signal: exitSignal || null,
+            });
+            finishWhenOutputDrained();
+            if (!settled) {
+                outputDrainTimer = setTimeout(() => {
+                    if (settled) return;
+                    diagnostics.outputDrainTimedOut = true;
+                    child.stdout.destroy();
+                    child.stderr.destroy();
+                    finishProcess();
+                }, OUTPUT_DRAIN_GRACE_MS);
+            }
         });
     });
 }
