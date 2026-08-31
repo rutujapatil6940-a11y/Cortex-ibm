@@ -35,6 +35,10 @@ function getRemoteBobUrl() {
     }
 }
 
+function isRemoteBobConfigured() {
+    return Boolean(getRemoteBobUrl());
+}
+
 function parseBobResult(stdout) {
     let result;
     try {
@@ -474,7 +478,11 @@ function getBobHealthPrompt() {
     return `Read @${HEALTH_FILE_NAME} and reply with exactly ${HEALTH_MARKER}.`;
 }
 
-async function runRemoteBobHealthCheck(remoteUrl) {
+async function runRemoteBobHealthCheck(remoteUrl = getRemoteBobUrl()) {
+    if (!remoteUrl) {
+        throw createBobError("Remote Bob service is not configured.", 503);
+    }
+
     console.log("Using remote Bob service", { host: new URL(remoteUrl).host });
     const health = await requestRemoteBob(remoteUrl, "/health", {
         operation: "health check",
@@ -687,7 +695,9 @@ module.exports = {
     analyzeRepository,
     buildRepositoryAnalysisPrompt,
     generateDocumentation,
+    isRemoteBobConfigured,
     runBob,
     runBobHealthCheck,
+    runRemoteBobHealthCheck,
     writeRepositoryContext,
 };
