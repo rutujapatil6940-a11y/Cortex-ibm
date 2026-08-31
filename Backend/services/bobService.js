@@ -17,7 +17,7 @@ function createBobError(message, statusCode) {
 }
 
 function getBobExecutable() {
-    return process.env.BOB_EXECUTABLE || path.join(__dirname, "..", ".bob-shell", "bin", "bob");
+    return path.join(__dirname, "..", ".bob-shell", "bin", "bob");
 }
 
 function parseBobResult(stdout) {
@@ -33,6 +33,28 @@ function parseBobResult(stdout) {
     }
 
     return result;
+}
+
+function parseBobStreamResult(stdout) {
+    const events = [];
+    for (const line of String(stdout || "").split(/\r?\n/)) {
+        if (!line.trim()) continue;
+        try {
+            events.push(JSON.parse(line));
+        } catch {
+            throw createBobError("IBM Bob returned an invalid stream JSON response.", 502);
+        }
+    }
+
+    const result = events.findLast((event) => event?.type === "result");
+    if (!result) {
+        throw createBobError("IBM Bob ended without a result event.", 502);
+    }
+
+    return {
+        result: parseBobResult(JSON.stringify(result)),
+        eventTypes: [...new Set(events.map((event) => event.type).filter(Boolean))],
+    };
 }
 
 function parseAnalysis(lastMessage) {
@@ -108,6 +130,8 @@ function createProcessDiagnostics({ executable, args, operation, timeoutMs, work
         timeoutMs,
         apiKeyConfigured: Boolean(process.env.BOB_API_KEY),
         teamIdConfigured: Boolean(process.env.BOB_TEAM_ID),
+        proxyConfigured: Boolean(process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.ALL_PROXY),
+        nodeVersion: process.version,
         stdin: "ignored (EOF)",
         stdoutBytes: 0,
         stderrBytes: 0,
@@ -271,7 +295,7 @@ function buildBobRunArgs(workspace, prompt, options = {}) {
     const args = [
         "run",
         "--format",
-        "json",
+        options.format || "json",
         "--mode",
         "ask",
         "--workspace",
@@ -378,9 +402,21 @@ async function runBobHealthCheck() {
             allowOutputPreview: true,
         });
 
+        await runBobProcess({
+            executable,
+            args: ["run", "--help"],
+            env,
+            operation: "health command help check",
+            timeoutMs: getTimeout("BOB_HEALTH_VERSION_TIMEOUT_MS", 15_000),
+            workspace,
+            workspaceId,
+            allowOutputPreview: true,
+        });
+
         const healthRun = await runBobProcess({
             executable,
             args: buildBobRunArgs(workspace, getBobHealthPrompt(), {
+                format: "stream-json",
                 maxCost: process.env.BOB_HEALTH_MAX_COST || "0.10",
                 maxTurns: process.env.BOB_HEALTH_MAX_TURNS || "2",
                 logLevel: process.env.BOB_HEALTH_LOG_LEVEL || "info",
@@ -392,7 +428,7 @@ async function runBobHealthCheck() {
             workspaceId,
             allowOutputPreview: true,
         });
-        const bobResult = parseBobResult(healthRun.stdout);
+        const { result: bobResult, eventTypes } = parseBobStreamResult(healthRun.stdout);
         if (!bobResult.last_message.includes(HEALTH_MARKER)) {
             throw createBobError("IBM Bob health check did not read the configured workspace.", 502);
         }
@@ -405,6 +441,7 @@ async function runBobHealthCheck() {
             inferenceElapsedMs: healthRun.diagnostics.elapsedMs,
             stdoutReceived: healthRun.diagnostics.stdoutReceived,
             stderrReceived: healthRun.diagnostics.stderrReceived,
+            eventTypes,
         });
         return {
             status: "ready",
