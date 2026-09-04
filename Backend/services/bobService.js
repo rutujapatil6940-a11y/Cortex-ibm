@@ -545,17 +545,51 @@ async function runBobHealthCheck() {
             allowOutputPreview: true,
         });
 
-        const {
-            result: bobResult,
-            eventTypes,
-        } = parseBobStreamResult(healthRun.stdout);
+        const events = [];
 
-        if (!bobResult.last_message.includes(HEALTH_MARKER)) {
-            throw createBobError(
-                "IBM Bob health check did not read the configured workspace.",
-                502
-            );
-        }
+for (const line of String(healthRun.stdout || "").split(/\r?\n/)) {
+    if (!line.trim()) continue;
+
+    try {
+        events.push(JSON.parse(line));
+    } catch {
+        throw createBobError(
+            "IBM Bob returned invalid stream JSON during health check.",
+            502
+        );
+    }
+}
+
+const resultEvent = events.findLast(
+    (event) => event?.type === "result"
+);
+
+if (!resultEvent) {
+    throw createBobError(
+        "IBM Bob ended without a health-check result.",
+        502
+    );
+}
+
+const lastMessage =
+    typeof resultEvent.last_message === "string"
+        ? resultEvent.last_message
+        : "";
+
+if (!lastMessage.includes(HEALTH_MARKER)) {
+    throw createBobError(
+        "IBM Bob health check did not read the configured workspace.",
+        502
+    );
+}
+
+const eventTypes = [
+    ...new Set(
+        events
+            .map((event) => event.type)
+            .filter(Boolean)
+    ),
+];
 
         const bobVersion = "2.0.2";
 
