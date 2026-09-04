@@ -517,21 +517,6 @@ async function runBobHealthCheck() {
             teamIdConfigured: Boolean(process.env.BOB_TEAM_ID),
         });
 
-        // Verify Bob CLI help command.
-        await runBobProcess({
-            executable,
-            args: ["run", "--help"],
-            env,
-            operation: "health command help check",
-            timeoutMs: getTimeout(
-                "BOB_HEALTH_VERSION_TIMEOUT_MS",
-                15_000
-            ),
-            workspace,
-            workspaceId,
-            allowOutputPreview: true,
-        });
-
         // Verify that Bob can actually execute an inference
         // inside the configured workspace.
         const healthRun = await runBobProcess({
@@ -553,7 +538,7 @@ async function runBobHealthCheck() {
             operation: "health inference check",
             timeoutMs: getTimeout(
                 "BOB_HEALTH_TIMEOUT_MS",
-                60_000
+                120_000
             ),
             workspace,
             workspaceId,
