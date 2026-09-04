@@ -571,14 +571,14 @@ if (!resultEvent) {
     );
 }
 
-const lastMessage =
+const result =
     typeof resultEvent.last_message === "string"
         ? resultEvent.last_message
         : "";
 
-if (!lastMessage) {
+if (!result || result.type !== "result" || result.status !== "success") {
     throw createBobError(
-        "IBM Bob health check returned an empty response.",
+        "IBM Bob health check did not complete successfully.",
         502
     );
 }
