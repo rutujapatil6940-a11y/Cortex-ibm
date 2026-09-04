@@ -160,24 +160,10 @@ function createProcessDiagnostics({ executable, args, operation, timeoutMs, work
 }
 
 async function createBobRuntimeEnvironment() {
-    const runtimeRoot = path.join(os.tmpdir(), "cortex-bob-runtime");
-    const home = path.join(runtimeRoot, "home");
-    const config = path.join(runtimeRoot, "config");
-    const cache = path.join(runtimeRoot, "cache");
-    const state = path.join(runtimeRoot, "state");
-
-    await Promise.all([home, config, cache, state].map(async (directory) => {
-        await fs.mkdir(directory, { recursive: true, mode: 0o700 });
-        await fs.chmod(directory, 0o700);
-    }));
-
     return {
         env: {
             ...process.env,
-            HOME: home,
-            XDG_CONFIG_HOME: config,
-            XDG_CACHE_HOME: cache,
-            XDG_STATE_HOME: state,
+            BOB_API_KEY: process.env.BOB_API_KEY,
         },
         runtimeConfigured: true,
     };
