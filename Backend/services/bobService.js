@@ -576,9 +576,9 @@ const lastMessage =
         ? resultEvent.last_message
         : "";
 
-if (!lastMessage.includes(HEALTH_MARKER)) {
+if (!lastMessage) {
     throw createBobError(
-        "IBM Bob health check did not read the configured workspace.",
+        "IBM Bob health check returned an empty response.",
         502
     );
 }
