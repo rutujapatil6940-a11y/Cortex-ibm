@@ -96,16 +96,47 @@ function extractJsonValues(output) {
     return values;
 }
 
-function getBobEvents(output) {
-    const values = extractJsonValues(output);
-    if (!values.length) {
-        throw createBobError("IBM Bob returned no parseable JSON events.", 502, "BOB_INVALID_EVENT_STREAM");
+// ---------------------------------------------------------------------------
+// Stream-JSON (NDJSON) line-by-line parser — this is the canonical Bob output
+// format when --format stream-json is used. Each line is an independent JSON
+// object (event). Lines that are not valid JSON are silently skipped so that
+// progress text, warnings, or blank lines do not break parsing.
+// ---------------------------------------------------------------------------
+function parseBobStreamJson(output) {
+    const events = [];
+    for (const line of String(output || "").split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        try {
+            const value = JSON.parse(trimmed);
+            if (value && typeof value === "object" && !Array.isArray(value)) {
+                events.push(value);
+            }
+        } catch {
+            // Non-JSON line (progress text, warnings, etc.) — skip gracefully.
+        }
     }
+    return events;
+}
 
-    const events = values.flatMap((value) => Array.isArray(value) ? value : [value])
+// ---------------------------------------------------------------------------
+// Fallback: when stream-json parsing yields no events, fall back to the
+// balanced-brace scanner that handles non-NDJSON output (plain JSON, JSON
+// embedded in prose, etc.).
+// ---------------------------------------------------------------------------
+function getBobEvents(output) {
+    // Prefer line-by-line NDJSON parsing (stream-json format).
+    const streamEvents = parseBobStreamJson(output);
+    if (streamEvents.length) return streamEvents;
+
+    // Fallback: balanced-brace scanner for non-NDJSON output.
+    const values = extractJsonValues(output);
+    const events = values
+        .flatMap((value) => (Array.isArray(value) ? value : [value]))
         .filter((value) => value && typeof value === "object" && !Array.isArray(value));
+
     if (!events.length) {
-        throw createBobError("IBM Bob returned JSON that did not contain any event objects.", 502, "BOB_INVALID_EVENT_STREAM");
+        throw createBobError("IBM Bob returned no parseable JSON events.", 502, "BOB_INVALID_EVENT_STREAM");
     }
     return events;
 }
@@ -126,19 +157,44 @@ function extractBobResultEvent(output) {
     return { events, resultEvent };
 }
 
+// ---------------------------------------------------------------------------
+// Recursively extract a non-empty text string from various Bob event shapes.
+// Handles: string, array of content blocks, {text}, {content}, {message},
+// and nested arrays of content blocks (Anthropic message format).
+// ---------------------------------------------------------------------------
 function getTextValue(value) {
     if (typeof value === "string" && value.trim()) return value.trim();
     if (Array.isArray(value)) {
-        const text = value.map(getTextValue).filter(Boolean).join("\n").trim();
-        return text || null;
+        const parts = value.map(getTextValue).filter(Boolean);
+        return parts.length ? parts.join("\n").trim() : null;
     }
     if (!value || typeof value !== "object") return null;
+    // Anthropic content block: { type: "text", text: "..." }
+    if (value.type === "text" && typeof value.text === "string" && value.text.trim()) {
+        return value.text.trim();
+    }
     return getTextValue(value.text)
         || getTextValue(value.content)
-        || getTextValue(value.message);
+        || getTextValue(value.message)
+        || getTextValue(value.output)
+        || null;
 }
 
+// ---------------------------------------------------------------------------
+// Build the full assistant text from the Bob event stream.
+//
+// Strategy (in priority order):
+//   1. result event's last_message / assistant_message / output fields
+//   2. All assistant-role message events, concatenated (most complete for
+//      large outputs where Bob streams content progressively)
+//   3. Any text content blocks emitted directly in the event stream
+//
+// Never throws "no message" for a successful run — if there is any text at
+// all in the event stream, return it. Only throw if the stream is completely
+// empty of text content.
+// ---------------------------------------------------------------------------
 function extractAssistantMessage(resultEvent, events) {
+    // 1. Check well-known fields on the result event itself.
     const resultMessage = getTextValue(resultEvent.last_message)
         || getTextValue(resultEvent.lastMessage)
         || getTextValue(resultEvent.assistant_message)
@@ -148,41 +204,159 @@ function extractAssistantMessage(resultEvent, events) {
         || getTextValue(resultEvent.output);
     if (resultMessage) return resultMessage;
 
+    // 2. Walk the full event stream and collect all assistant text.
+    //    Bob stream-json emits multiple event types that can carry text:
+    //    - type: "message" with role: "assistant"
+    //    - type: "assistant" (shorthand form)
+    //    - type: "text" (direct text delta or final text block)
+    //    - type: "content_block_stop" with content
+    //    - type: "tool_result" is skipped (tool output, not the answer)
+    const assistantTexts = [];
+    for (const event of events) {
+        const eventType = event.type;
+
+        // Pure text events
+        if (eventType === "text") {
+            const text = getTextValue(event.text) || getTextValue(event.content) || getTextValue(event.value);
+            if (text) assistantTexts.push(text);
+            continue;
+        }
+
+        // Assistant-role message events
+        if (eventType === "message" || eventType === "assistant") {
+            const role = event.role || event.message?.role;
+            // Accept events where role is explicitly "assistant" or absent
+            if (role && role !== "assistant") continue;
+            const text = getTextValue(event.content) || getTextValue(event.message) || getTextValue(event.text);
+            if (text) assistantTexts.push(text);
+            continue;
+        }
+
+        // content_block_stop — may carry the final content block text
+        if (eventType === "content_block_stop") {
+            const text = getTextValue(event.content_block) || getTextValue(event.content);
+            if (text) assistantTexts.push(text);
+            continue;
+        }
+    }
+
+    if (assistantTexts.length) {
+        // Use the longest single message (most complete) if available,
+        // otherwise join all collected segments.
+        const longest = assistantTexts.reduce((a, b) => (b.length > a.length ? b : a), "");
+        return longest;
+    }
+
+    // 3. Last resort: return any non-empty text found anywhere in the events.
     for (const event of [...events].reverse()) {
-        if (event.type !== "message") continue;
-        const role = event.role || event.message?.role;
-        if (role && role !== "assistant") continue;
-        const message = getTextValue(event.content) || getTextValue(event.message) || getTextValue(event.text);
-        if (message) return message;
+        const text = getTextValue(event);
+        if (text && text.length > 20) return text;
     }
 
     throw createBobError("IBM Bob completed successfully but returned no assistant analysis message.", 502, "BOB_EMPTY_ASSISTANT_RESPONSE");
 }
 
-function validateCortexAnalysis(analysis) {
+// ---------------------------------------------------------------------------
+// Validate and normalise a candidate analysis object against the Cortex schema.
+//
+// Strict mode (default): throw BOB_INVALID_ANALYSIS_SCHEMA when any required
+//   field is absent or has the wrong type — used when looking for the *best*
+//   candidate among multiple JSON objects in the output.
+//
+// Lenient mode: coerce missing / wrong-typed fields to their default values
+//   (empty string / empty array) rather than throwing. Used as a last resort
+//   when no strict-passing candidate exists, so that a partial but useful
+//   response from Bob is never silently discarded.
+// ---------------------------------------------------------------------------
+function validateCortexAnalysis(analysis, { lenient = false } = {}) {
     if (!analysis || typeof analysis !== "object" || Array.isArray(analysis)) {
         throw createBobError("IBM Bob analysis JSON must be an object.", 502, "BOB_INVALID_ANALYSIS_SCHEMA");
+    }
+
+    const SCHEMA_KEYS = Object.keys(CORTEX_ANALYSIS_SCHEMA);
+    // A candidate must match at least one known Cortex field to be considered
+    // a Cortex analysis object at all (avoids treating Bob event envelopes as
+    // analysis objects).
+    if (!lenient) {
+        const hasAnyKnownKey = SCHEMA_KEYS.some((key) => key in analysis);
+        if (!hasAnyKnownKey) {
+            throw createBobError("IBM Bob analysis object does not contain any Cortex schema fields.", 502, "BOB_INVALID_ANALYSIS_SCHEMA");
+        }
     }
 
     const normalized = {};
     for (const [field, expectedType] of Object.entries(CORTEX_ANALYSIS_SCHEMA)) {
         const value = analysis[field];
         const valid = expectedType === "array" ? Array.isArray(value) : typeof value === expectedType;
-        if (!valid) {
+        if (valid) {
+            normalized[field] = value;
+        } else if (lenient) {
+            // Coerce to the default for the expected type.
+            normalized[field] = expectedType === "array" ? [] : "";
+        } else {
             throw createBobError(`IBM Bob analysis is missing or has an invalid '${field}' field.`, 502, "BOB_INVALID_ANALYSIS_SCHEMA");
         }
-        normalized[field] = value;
     }
     return normalized;
 }
 
+// ---------------------------------------------------------------------------
+// Count how many Cortex schema fields a candidate object satisfies.
+// Used to rank candidates when multiple JSON objects appear in Bob's output.
+// ---------------------------------------------------------------------------
+function scoreCortexCandidate(candidate) {
+    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return 0;
+    let score = 0;
+    for (const [field, expectedType] of Object.entries(CORTEX_ANALYSIS_SCHEMA)) {
+        const value = candidate[field];
+        const valid = expectedType === "array" ? Array.isArray(value) : typeof value === expectedType;
+        if (valid && (expectedType !== "string" || value.length > 0) && (expectedType !== "array" || value.length > 0)) {
+            score += 1;
+        }
+    }
+    return score;
+}
+
+// ---------------------------------------------------------------------------
+// Strip Markdown fenced code blocks from assistant message text so that
+//   ```json { ... } ```   is treated the same as plain   { ... }.
+// ---------------------------------------------------------------------------
+function stripFencedCodeBlocks(text) {
+    // Remove opening fence (```json, ```JSON, ``` etc.) and closing fence.
+    return text.replace(/^```[a-z]*\s*/gim, "").replace(/^```\s*$/gim, "");
+}
+
+// ---------------------------------------------------------------------------
+// Extract a structured Cortex analysis JSON object from the assistant message.
+//
+// Handles:
+//   A) Pure JSON                    — { "projectOverview": "...", ... }
+//   B) Fenced JSON                  — ```json\n{ ... }\n```
+//   C) Prose followed by JSON       — "Here is the analysis:\n{ ... }"
+//   D) Multiple JSON objects        — pick the best-matching one
+//   E) Partial schema               — coerce missing fields to defaults
+// ---------------------------------------------------------------------------
 function extractStructuredAnalysis(assistantMessage) {
-    const candidates = extractJsonValues(assistantMessage)
-        .filter((value) => value && typeof value === "object" && !Array.isArray(value));
+    const stripped = stripFencedCodeBlocks(assistantMessage);
+
+    // Collect all JSON object candidates from both the original and stripped text.
+    const seenJson = new Set();
+    const candidates = [];
+    for (const source of [stripped, assistantMessage]) {
+        for (const value of extractJsonValues(source)) {
+            if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+            const key = JSON.stringify(Object.keys(value).sort());
+            if (seenJson.has(key)) continue;
+            seenJson.add(key);
+            candidates.push(value);
+        }
+    }
+
     if (!candidates.length) {
         throw createBobError("IBM Bob returned analysis text without a JSON object.", 502, "BOB_STRUCTURED_ANALYSIS_PARSE_FAILED");
     }
 
+    // First pass: find a candidate that strictly satisfies the full schema.
     for (const candidate of candidates) {
         try {
             return validateCortexAnalysis(candidate);
@@ -190,6 +364,22 @@ function extractStructuredAnalysis(assistantMessage) {
             if (error.code !== "BOB_INVALID_ANALYSIS_SCHEMA") throw error;
         }
     }
+
+    // Second pass: pick the candidate with the most matching Cortex fields,
+    // then coerce the rest to defaults rather than failing.
+    const ranked = candidates
+        .map((c) => ({ candidate: c, score: scoreCortexCandidate(c) }))
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score);
+
+    if (ranked.length) {
+        console.warn("IBM Bob analysis required lenient schema coercion", {
+            bestScore: ranked[0].score,
+            totalFields: Object.keys(CORTEX_ANALYSIS_SCHEMA).length,
+        });
+        return validateCortexAnalysis(ranked[0].candidate, { lenient: true });
+    }
+
     throw createBobError("IBM Bob returned analysis JSON that does not match the Cortex schema.", 502, "BOB_INVALID_ANALYSIS_SCHEMA");
 }
 
@@ -442,7 +632,11 @@ function buildBobRunArgs(workspace, prompt, options = {}) {
     const args = [
         "run",
         "--format",
-        options.format || "json",
+        // Always use stream-json for analysis runs. This is the most robust
+        // format: each event is a self-contained NDJSON line, so partial output
+        // from a large run is still parseable. The health check already uses
+        // stream-json. Options can override for special cases.
+        options.format || "stream-json",
         "--mode",
         "ask",
         "--workspace",
@@ -726,16 +920,48 @@ async function runBob(prompt, workspace, workspaceId, options = {}) {
             workspace,
             workspaceId,
         }));
-        const { events, resultEvent } = extractBobResultEvent(execution.stdout);
-        const assistantMessage = extractAssistantMessage(resultEvent, events);
+
+        // Parse the event stream. For large outputs Bob may stream many events.
+        // We use the robust getBobEvents() which prefers NDJSON line-by-line
+        // parsing and falls back to balanced-brace scanning.
+        let events;
+        let resultEvent;
+        try {
+            const extracted = extractBobResultEvent(execution.stdout);
+            events = extracted.events;
+            resultEvent = extracted.resultEvent;
+        } catch (parseError) {
+            // If there is no result event (e.g. very large output, output was
+            // partially truncated before the result line) but the process exited
+            // with code 0, we attempt to recover the assistant message from
+            // whatever events were captured. A missing result event does not
+            // automatically mean failure when the process succeeded.
+            if (parseError.code === "BOB_MISSING_RESULT_EVENT") {
+                events = getBobEvents(execution.stdout);
+                resultEvent = null;
+                console.warn("IBM Bob completed without a result event — attempting message recovery", {
+                    workspaceId, operation, eventCount: events.length,
+                    eventTypes: [...new Set(events.map((e) => e.type).filter(Boolean))],
+                });
+            } else {
+                throw parseError;
+            }
+        }
+
+        // Build a synthetic result event stub when the real one is absent so
+        // that extractAssistantMessage can always receive a non-null first arg.
+        const safeResultEvent = resultEvent || { type: "result", status: "success" };
+        const assistantMessage = extractAssistantMessage(safeResultEvent, events);
+
         console.log("IBM Bob analysis completed", {
             workspaceId,
             operation,
-            taskId: resultEvent.stats?.task_id,
+            taskId: resultEvent?.stats?.task_id,
             elapsedMs: execution.diagnostics.elapsedMs,
             eventTypes: [...new Set(events.map((event) => event.type).filter(Boolean))],
+            hadResultEvent: Boolean(resultEvent),
         });
-        return { assistantMessage, bobResult: resultEvent, diagnostics: execution.diagnostics };
+        return { assistantMessage, bobResult: safeResultEvent, diagnostics: execution.diagnostics };
     } catch (error) {
         const bobError = error.statusCode ? error : createBobExecutionError(error, operation);
         console.error("IBM Bob analysis failed", {
@@ -816,8 +1042,12 @@ module.exports = {
     extractJsonValues,
     extractStructuredAnalysis,
     generateDocumentation,
+    getBobEvents,
+    parseBobStreamJson,
     runBob,
     runBobHealthCheck,
+    scoreCortexCandidate,
+    stripFencedCodeBlocks,
     validateBobProcessExecution,
     validateCortexAnalysis,
     writeRepositoryContext,
