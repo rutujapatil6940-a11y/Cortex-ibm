@@ -571,16 +571,12 @@ if (!resultEvent) {
     );
 }
 
-console.log("IBM Bob HEALTH RESULT EVENT:", JSON.stringify(resultEvent));
-
-const result =
-    typeof resultEvent.last_message === "string"
-        ? resultEvent.last_message
-        : "";
-
-if (!result) {
+// In stream-json mode, IBM Bob's final result event may not include
+// last_message. A successful result event is sufficient to prove
+// that Bob executed successfully in the configured workspace.
+if (resultEvent.status !== "success") {
     throw createBobError(
-        "IBM Bob health check returned an empty response.",
+        "IBM Bob health check did not complete successfully.",
         502
     );
 }
