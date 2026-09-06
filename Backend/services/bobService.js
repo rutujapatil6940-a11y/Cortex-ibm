@@ -1110,7 +1110,7 @@ function buildBobRunArgs(
     const args = [
         "run",
         "--format",
-        options.format || "stream-json",
+        options.format || "json",
         "--mode",
         "ask",
         "--workspace",
