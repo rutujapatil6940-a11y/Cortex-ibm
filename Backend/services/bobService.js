@@ -576,9 +576,9 @@ const result =
         ? resultEvent.last_message
         : "";
 
-if (!result || result.type !== "result" || result.status !== "success") {
+if (!result) {
     throw createBobError(
-        "IBM Bob health check did not complete successfully.",
+        "IBM Bob health check returned an empty response.",
         502
     );
 }
