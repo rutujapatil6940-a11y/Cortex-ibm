@@ -571,6 +571,8 @@ if (!resultEvent) {
     );
 }
 
+console.log("IBM Bob HEALTH RESULT EVENT:", JSON.stringify(resultEvent));
+
 const result =
     typeof resultEvent.last_message === "string"
         ? resultEvent.last_message
