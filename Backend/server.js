@@ -5,6 +5,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const connectDB = require("./database/db");
+const { connectCortexDB } = require("./services/cortexDb");
+
 const authRoutes = require("./routes/authRoutes");
 const analysisRoutes = require("./routes/analysisRoutes");
 
@@ -12,6 +14,11 @@ const app = express();
 
 // Connect MongoDB
 connectDB();
+
+// Connect Cortex MongoDB
+connectCortexDB().catch((error) => {
+    console.error("Cortex MongoDB initialization failed:", error.message);
+});
 
 // Middleware
 app.use(cors());
