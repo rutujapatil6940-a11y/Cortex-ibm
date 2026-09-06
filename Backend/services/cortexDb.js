@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
+let cortexConnection = null;
 let connectionPromise = null;
 
 async function connectCortexDB() {
-    if (mongoose.connection.readyState === 1) {
-        return mongoose.connection;
+    if (cortexConnection && cortexConnection.readyState === 1) {
+        return cortexConnection;
     }
 
     if (connectionPromise) {
@@ -17,21 +18,40 @@ async function connectCortexDB() {
         throw new Error("CORTEX_MONGODB_URI is not configured");
     }
 
-    connectionPromise = mongoose.connect(uri, {
-        dbName: "cortex"
-    });
+    connectionPromise = mongoose
+        .createConnection(uri, {
+            dbName: "cortex"
+        })
+        .asPromise();
 
     try {
-        await connectionPromise;
+        cortexConnection = await connectionPromise;
+
         console.log("Cortex MongoDB connected");
-        return mongoose.connection;
+
+        return cortexConnection;
     } catch (error) {
         connectionPromise = null;
-        console.error("Cortex MongoDB connection failed:", error.message);
+        cortexConnection = null;
+
+        console.error(
+            "Cortex MongoDB connection failed:",
+            error.message
+        );
+
         throw error;
     }
 }
 
+function getCortexDB() {
+    if (!cortexConnection || cortexConnection.readyState !== 1) {
+        throw new Error("Cortex MongoDB is not connected");
+    }
+
+    return cortexConnection;
+}
+
 module.exports = {
-    connectCortexDB
+    connectCortexDB,
+    getCortexDB
 };
