@@ -1003,7 +1003,7 @@ function shouldNormalizeAnalysis(error) {
     return ["BOB_STRUCTURED_ANALYSIS_PARSE_FAILED", "BOB_INVALID_ANALYSIS_SCHEMA"].includes(error?.code);
 }
 
-async function async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
+async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
     const inputLimit = getPositiveInteger(
         "BOB_NORMALIZATION_MAX_INPUT_CHARS",
         80_000
