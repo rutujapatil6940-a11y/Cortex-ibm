@@ -77,12 +77,13 @@ function parseBobStreamResult(stdout) {
 }
 
 function parseAnalysis(lastMessage) {
-    const content = lastMessage.trim().replace(/^```json\s*|\s*```$/g, "");
-    let analysis;
-    try {
-        analysis = JSON.parse(content);
-    } catch {
-        throw createBobError("IBM Bob completed, but did not return the requested structured analysis JSON.", 502);
+    const raw = String(lastMessage || "").trim();
+
+    if (!raw) {
+        throw createBobError(
+            "IBM Bob returned an empty repository analysis.",
+            502
+        );
     }
 
     const requiredFields = [
@@ -97,11 +98,85 @@ function parseAnalysis(lastMessage) {
         "importantDependencies",
     ];
 
-    if (!analysis || typeof analysis !== "object" || Array.isArray(analysis) || requiredFields.some((field) => !(field in analysis))) {
-        throw createBobError("IBM Bob returned an incomplete structured analysis.", 502);
+    const candidates = [];
+
+    // 1. Try the complete response directly.
+    candidates.push(raw);
+
+    // 2. Try Markdown JSON code blocks.
+    const fencedMatches = raw.matchAll(
+        /```(?:json)?\s*([\s\S]*?)\s*```/gi
+    );
+
+    for (const match of fencedMatches) {
+        if (match[1]) {
+            candidates.push(match[1].trim());
+        }
     }
 
-    return analysis;
+    // 3. Extract balanced JSON objects from prose.
+    // This handles responses such as:
+    // "Here is the analysis:\n{ ... }"
+    for (let start = 0; start < raw.length; start++) {
+        if (raw[start] !== "{") continue;
+
+        let depth = 0;
+        let inString = false;
+        let escaped = false;
+
+        for (let i = start; i < raw.length; i++) {
+            const char = raw[i];
+
+            if (inString) {
+                if (escaped) {
+                    escaped = false;
+                } else if (char === "\\") {
+                    escaped = true;
+                } else if (char === '"') {
+                    inString = false;
+                }
+                continue;
+            }
+
+            if (char === '"') {
+                inString = true;
+                continue;
+            }
+
+            if (char === "{") {
+                depth++;
+            } else if (char === "}") {
+                depth--;
+
+                if (depth === 0) {
+                    candidates.push(raw.slice(start, i + 1));
+                    break;
+                }
+            }
+        }
+    }
+
+    for (const candidate of candidates) {
+        try {
+            const analysis = JSON.parse(candidate);
+
+            if (
+                analysis &&
+                typeof analysis === "object" &&
+                !Array.isArray(analysis) &&
+                requiredFields.every((field) => field in analysis)
+            ) {
+                return analysis;
+            }
+        } catch {
+            // Try the next possible JSON candidate.
+        }
+    }
+
+    throw createBobError(
+        "IBM Bob completed the repository analysis, but no valid structured analysis JSON could be extracted.",
+        502
+    );
 }
 
 function createBobExecutionError(error, operation = "repository analysis") {
