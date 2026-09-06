@@ -73,6 +73,11 @@ const cortexRepositorySchema = new mongoose.Schema(
             default: null,
         },
 
+        repositoryContext: {
+            type: mongoose.Schema.Types.Mixed,
+            default: null,
+        },
+
         error: {
             type: String,
             default: null,
