@@ -1032,13 +1032,11 @@ async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
             }
         );
 
-        console.warn(
-            "IBM Bob analysis requires schema normalization",
-            {
-                workspaceId,
-                inputChars: normalizationInput.length,
-            }
-        );
+        console.warn("IBM Bob analysis requires schema normalization", {
+            workspaceId,
+            inputChars: normalizationInput.length,
+            maxInputChars: inputLimit,
+        });
 
         const normalized = await runBob(
             buildAnalysisNormalizationPrompt(),
@@ -1047,45 +1045,39 @@ async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
             {
                 operation: "analysis schema normalization",
 
-                // Give normalization enough room to read the input
-                // and produce the schema.
+                // Give Bob enough budget to read the preliminary
+                // analysis and produce the complete Cortex schema.
                 maxCost:
-                    process.env.BOB_NORMALIZATION_MAX_COST || "0.20",
+                    process.env.BOB_NORMALIZATION_MAX_COST || "0.30",
 
                 maxTurns:
-                    process.env.BOB_NORMALIZATION_MAX_TURNS || "4",
+                    process.env.BOB_NORMALIZATION_MAX_TURNS || "6",
 
                 logLevel:
                     process.env.BOB_NORMALIZATION_LOG_LEVEL || "warn",
 
                 timeoutMs: getTimeout(
                     "BOB_NORMALIZATION_TIMEOUT_MS",
-                    180_000
+                    240_000
                 ),
             }
         );
 
-        console.log(
-            "IBM Bob normalization response received",
-            {
-                workspaceId,
-                assistantMessageChars:
-                    normalized.assistantMessage?.length || 0,
-            }
-        );
+        console.log("IBM Bob normalization response received", {
+            workspaceId,
+            assistantMessageChars:
+                normalized.assistantMessage?.length || 0,
+        });
 
         try {
             const analysis = extractStructuredAnalysis(
                 normalized.assistantMessage
             );
 
-            console.log(
-                "IBM Bob normalization successful",
-                {
-                    workspaceId,
-                    fields: Object.keys(analysis),
-                }
-            );
+            console.log("IBM Bob normalization successful", {
+                workspaceId,
+                fields: Object.keys(analysis),
+            });
 
             return analysis;
         } catch (error) {
@@ -1095,10 +1087,12 @@ async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
                     workspaceId,
                     errorCode: error.code,
                     message: error.message,
+                    assistantMessageChars:
+                        normalized.assistantMessage?.length || 0,
                     assistantMessagePreview:
                         String(
                             normalized.assistantMessage || ""
-                        ).slice(0, 1000),
+                        ).slice(0, 2000),
                 }
             );
 
@@ -1108,16 +1102,37 @@ async function normalizeAnalysisWithBob(assistantMessage, workspaceId) {
                 "BOB_ANALYSIS_NORMALIZATION_FAILED"
             );
         }
-    } finally {
-        await fs.rm(workspace, {
-            recursive: true,
-            force: true,
+    } catch (error) {
+        console.error("IBM Bob normalization failed", {
+            workspaceId,
+            errorCode: error.code,
+            message: error.message,
+            diagnostics: error.diagnostics,
+            stdoutPreview: error.outputPreview?.stdout,
+            stderrPreview: error.outputPreview?.stderr,
         });
 
-        console.log(
-            "IBM Bob normalization workspace cleanup completed",
-            { workspaceId }
-        );
+        throw error;
+    } finally {
+        try {
+            await fs.rm(workspace, {
+                recursive: true,
+                force: true,
+            });
+
+            console.log(
+                "IBM Bob normalization workspace cleanup completed",
+                { workspaceId }
+            );
+        } catch (cleanupError) {
+            console.error(
+                "IBM Bob normalization workspace cleanup failed",
+                {
+                    workspaceId,
+                    message: cleanupError.message,
+                }
+            );
+        }
     }
 }
 
