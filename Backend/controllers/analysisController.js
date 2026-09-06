@@ -216,33 +216,36 @@ async function analyzeRepositoryWorkspace(req, res) {
         const CortexRepository = getCortexRepositoryModel();
 
         await CortexRepository.create({
-            userId: req.user.userId,
-            name: record.name,
-            owner: record.owner,
-            repositoryUrl: record.repositoryUrl,
-            sourceType: record.sourceType,
-            status: "processed",
+        userId: req.user.userId,
+        name: record.name,
+        owner: record.owner,
+        repositoryUrl: record.repositoryUrl,
+        sourceType: record.sourceType,
+        status: "processed",
 
-            metadata: {
-                defaultBranch:
-                    record.metadata?.defaultBranch,
+        metadata: {
+            defaultBranch:
+                record.metadata?.defaultBranch,
 
-                fileCount:
-                    record.metadata.fileCount,
+            fileCount:
+                record.metadata.fileCount,
 
-                sourceFileCount:
-                    record.metadata.sourceFileCount,
+            sourceFileCount:
+                record.metadata.sourceFileCount,
 
-                sourceBytes:
-                    record.metadata.sourceBytes,
+            sourceBytes:
+                record.metadata.sourceBytes,
 
-                skippedFiles:
-                    record.metadata.skippedFiles,
-            },
+            skippedFiles:
+                record.metadata.skippedFiles,
+        },
 
-            analysis: analysis,
-            error: null,
-        });
+        analysis: analysis,
+
+        repositoryContext: repositoryContext,
+
+        error: null,
+    });
 
         console.log("Cortex repository saved", {
             repositoryName: record.name,
