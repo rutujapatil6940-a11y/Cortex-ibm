@@ -1,11 +1,6 @@
 const Repository = require("../Models/repository");
 const { parseGitHubRepositoryUrl } = require("../services/githubService");
-const {
-    generateDocumentation,
-    isRemoteBobConfigured,
-    runBobHealthCheck,
-    runRemoteBobHealthCheck,
-} = require("../services/bobService");
+const { generateDocumentation, runBobHealthCheck } = require("../services/bobService");
 const {
     cleanupRepositoryWorkspace,
     getRepositoryWorkspacePath,
@@ -115,14 +110,7 @@ async function analyzeRepositoryWorkspace(req, res) {
         await record.save();
 
         await verifyRepositoryWorkspace(workspace);
-        const remoteBobConfigured = isRemoteBobConfigured();
-        console.log("Repository analysis Bob mode selected", {
-            workspaceId: analysisId,
-            mode: remoteBobConfigured ? "remote" : "local",
-        });
-        const bobHealth = remoteBobConfigured
-            ? await runRemoteBobHealthCheck()
-            : await runBobHealthCheck();
+        const bobHealth = await runBobHealthCheck();
         console.log("IBM Bob preflight completed", {
             workspaceId: analysisId,
             bobVersion: bobHealth.bobVersion,

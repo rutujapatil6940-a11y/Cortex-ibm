@@ -5,6 +5,7 @@
     "build:render": "npm ci && npm run install:bob-shell",
     "install:bob-shell": "bash scripts/install-bob-shell.sh",
     "test:bob": "node test-bob-documentation.js",
+    "test:analysis-pipeline": "node test-repository-analysis-pipeline.js",
     "test:github-workspace": "node test-github-workspace.js"
   },
   "engines": {
