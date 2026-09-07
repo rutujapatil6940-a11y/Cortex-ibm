@@ -143,6 +143,7 @@
 
 .analysis-title {
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .analysis-label {
@@ -197,6 +198,10 @@
 ===================================================== */
 
 .analysis-score-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   padding: 20px;
 
   background: #ffffff;
@@ -204,6 +209,8 @@
   border: 1px solid #e3e8ef;
 
   border-radius: 14px;
+
+  text-align: center;
 
   transition:
     transform 0.2s ease,
@@ -280,6 +287,7 @@
 ===================================================== */
 
 .score-bar {
+  align-self: stretch;
   width: 100%;
   height: 5px;
 
@@ -347,10 +355,13 @@
 .analysis-card-heading {
   display: flex;
   align-items: flex-start;
+  justify-content: center;
 
   gap: 12px;
 
   margin-bottom: 22px;
+
+  text-align: center;
 }
 
 .card-heading-icon {
@@ -403,7 +414,7 @@
 
 .finding-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   gap: 11px;
 
@@ -417,13 +428,22 @@
 }
 
 .finding-item p {
-  margin: 1px 0 0;
+  flex: 1;
+  margin: 0;
 
   color: #4d5868;
 
   font-size: 13px;
 
   line-height: 1.5;
+
+  text-align: center;
+}
+
+.finding-item::after {
+  width: 23px;
+  flex: 0 0 23px;
+  content: "";
 }
 
 
@@ -473,7 +493,7 @@
 
 .recommendation-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   gap: 11px;
 
@@ -506,13 +526,22 @@
 }
 
 .recommendation-item p {
-  margin: 4px 0 0;
+  flex: 1;
+  margin: 0;
 
   color: #4d5868;
 
   font-size: 13px;
 
   line-height: 1.45;
+
+  text-align: center;
+}
+
+.recommendation-item::after {
+  width: 25px;
+  flex: 0 0 25px;
+  content: "";
 }
 
 
@@ -574,6 +603,12 @@
   font-size: 13px;
 
   line-height: 1.6;
+}
+
+.overall-analysis > div:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+  text-align: center;
 }
 
 
@@ -706,6 +741,10 @@
     padding: 18px;
   }
 
+  .overall-analysis > div:nth-child(2) {
+    width: 100%;
+  }
+
   .overall-score {
     min-width: 55px;
   }
@@ -776,86 +815,4 @@
     margin-left: 0;
     text-align: left;
   }
-}
-
-/* =====================================================
-   CENTER TEXT ALIGNMENT
-===================================================== */
-
-.ai-analysis-page {
-  text-align: center;
-}
-
-.analysis-title {
-  text-align: center;
-}
-
-.analysis-title h1,
-.analysis-title p,
-.analysis-label {
-  text-align: center;
-}
-
-.analysis-score-card {
-  text-align: center;
-}
-
-.analysis-score-card .score-icon {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.analysis-score-card span,
-.analysis-score-card strong {
-  text-align: center;
-}
-
-.analysis-card {
-  text-align: center;
-}
-
-.analysis-card-heading {
-  justify-content: center;
-  text-align: center;
-}
-
-.analysis-card-heading > div:last-child {
-  text-align: center;
-}
-
-.finding-item {
-  justify-content: center;
-  text-align: center;
-}
-
-.finding-item p {
-  text-align: center;
-}
-
-.recommendation-item {
-  justify-content: center;
-  text-align: center;
-}
-
-.recommendation-item p {
-  text-align: center;
-}
-
-.overall-analysis {
-  justify-content: center;
-  text-align: center;
-}
-
-.overall-analysis > div:nth-child(2) {
-  text-align: center;
-}
-
-.overall-analysis h2,
-.overall-analysis p {
-  text-align: center;
-}
-
-.overall-score {
-  margin-left: 0;
-  text-align: center;
 }
