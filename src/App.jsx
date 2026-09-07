@@ -40,6 +40,12 @@ function readPersistedSession() {
     return { isLoggedIn: false, user: { name: "", email: "" } };
   }
 
+  if (localStorage.getItem("rememberMe") === "false") {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    return { isLoggedIn: false, user: { name: "", email: "" } };
+  }
+
   try {
     const parsedUser = JSON.parse(savedUser);
     return {
@@ -122,6 +128,7 @@ function App() {
 
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
+    const rememberMe = e.target.rememberMe.checked;
 
     if (!email || !password) {
       alert("Please enter email and password.");
@@ -175,6 +182,8 @@ function App() {
         "user",
         JSON.stringify(loggedInUser)
       );
+
+      localStorage.setItem("rememberMe", String(rememberMe));
 
       setUser(loggedInUser);
 
@@ -363,6 +372,8 @@ function App() {
 
     // Remove user
     localStorage.removeItem("user");
+
+    localStorage.removeItem("rememberMe");
 
     // Reset application
     setIsLoggedIn(false);
@@ -1099,7 +1110,7 @@ function App() {
 
               <label className="remember-label">
 
-                <input type="checkbox" />
+                <input type="checkbox" name="rememberMe" />
 
                 <span>
                   Remember me
