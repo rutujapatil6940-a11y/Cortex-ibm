@@ -200,46 +200,7 @@ function BobChat({ onBack, projectId }) {
 
   return (
     <div className="bob-chat-page">
-
-      {/* HEADER */}
-
-      <header className="bob-chat-header">
-
-        <div className="bob-header-inner">
-
-          <button
-            type="button"
-            className="bob-back-button"
-            onClick={onBack}
-          >
-            ← Back to Dashboard
-          </button>
-
-          <div className="bob-brand">
-
-            <div className="bob-brand-icon">
-              ✦
-            </div>
-
-            <div>
-              <strong>Bob Chat</strong>
-              <span>AI Code Assistant</span>
-            </div>
-
-          </div>
-
-          <div className="bob-status">
-            <span className="bob-status-dot"></span>
-
-            {sending
-              ? "Thinking..."
-              : "Ready"}
-          </div>
-
-        </div>
-
-      </header>
-
+      
       {/* MAIN */}
 
       <main className="bob-chat-main">
