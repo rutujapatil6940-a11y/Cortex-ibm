@@ -1,30 +1,211 @@
-
 import "./DetailedAnalysis.css";
 
 function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
-  const asText = (item) => typeof item === "string" ? item : item?.text || item?.description || item?.note || item?.purpose || "Not found in the repository.";
-  const importantFiles = Array.isArray(repositoryAnalysis?.importantFiles) ? repositoryAnalysis.importantFiles : [];
-  const analysis = {
-    projectName: repositoryAnalysis?.projectName || repositoryAnalysis?.repository?.name || "Repository",
-    score: null,
-    metrics: [
-      { name: "Files scanned", value: repositoryAnalysis?.repository?.metadata?.fileCount ?? "—", percentage: 0 },
-      { name: "Source files", value: repositoryAnalysis?.repository?.metadata?.sourceFileCount ?? "—", percentage: 0 },
-      { name: "Source size", value: repositoryAnalysis?.repository?.metadata?.sourceBytes ? `${Math.round(repositoryAnalysis.repository.metadata.sourceBytes / 1024)} KB` : "—", percentage: 0 },
-      { name: "Important files", value: importantFiles.length, percentage: 0 },
-    ],
-    strengths: (Array.isArray(repositoryAnalysis?.howTheProjectWorks) ? repositoryAnalysis.howTheProjectWorks : []).map(asText),
-    warnings: (Array.isArray(repositoryAnalysis?.potentialImportantNotes) ? repositoryAnalysis.potentialImportantNotes : []).map(asText),
-    files: importantFiles.map((item) => ({
-      file: typeof item === "string" ? item : item?.path || item?.file || "Repository file",
-      type: typeof item === "object" ? item?.purpose || "Important file" : "Important file",
-      score: null,
-      status: "Analyzed",
-    })),
+  const asText = (item) =>
+    typeof item === "string"
+      ? item
+      : item?.text ||
+        item?.description ||
+        item?.note ||
+        item?.purpose ||
+        "Not found in the repository.";
+
+  const importantFiles = Array.isArray(
+    repositoryAnalysis?.importantFiles
+  )
+    ? repositoryAnalysis.importantFiles
+    : [];
+
+  // =========================================
+  // HEALTH SCORE
+  // =========================================
+
+  const rawScore =
+    repositoryAnalysis?.score ??
+    repositoryAnalysis?.healthScore ??
+    repositoryAnalysis?.overallScore ??
+    repositoryAnalysis?.projectHealth?.score ??
+    null;
+
+  const parsedScore =
+    rawScore !== null &&
+    rawScore !== undefined &&
+    !Number.isNaN(Number(rawScore))
+      ? Math.max(0, Math.min(100, Number(rawScore)))
+      : null;
+
+  const getHealthText = () => {
+    if (parsedScore === null) {
+      return "Overall project health based on the available AI analysis.";
+    }
+
+    if (parsedScore >= 80) {
+      return "The repository has a strong structure and good overall project quality.";
+    }
+
+    if (parsedScore >= 60) {
+      return "The repository has a solid foundation with some areas that can be improved.";
+    }
+
+    if (parsedScore >= 40) {
+      return "The repository is functional but several areas could benefit from improvement.";
+    }
+
+    return "The analysis identified several areas that should be improved for better project quality.";
   };
 
   // =========================================
-  // BUTTON HANDLERS
+  // METRIC VALUES
+  // =========================================
+
+  const fileCount =
+    repositoryAnalysis?.repository?.metadata?.fileCount ??
+    repositoryAnalysis?.metadata?.fileCount ??
+    0;
+
+  const sourceFileCount =
+    repositoryAnalysis?.repository?.metadata?.sourceFileCount ??
+    repositoryAnalysis?.metadata?.sourceFileCount ??
+    0;
+
+  const sourceBytes =
+    repositoryAnalysis?.repository?.metadata?.sourceBytes ??
+    repositoryAnalysis?.metadata?.sourceBytes ??
+    0;
+
+  const sourceSize =
+    sourceBytes > 0
+      ? sourceBytes >= 1024 * 1024
+        ? `${(sourceBytes / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(sourceBytes / 1024)} KB`
+      : "—";
+
+  const metrics = [
+    {
+      name: "Files scanned",
+      value: fileCount || "—",
+      percentage:
+        fileCount > 0
+          ? Math.min(100, Math.max(15, fileCount / 2))
+          : 0,
+    },
+    {
+      name: "Source files",
+      value: sourceFileCount || "—",
+      percentage:
+        sourceFileCount > 0
+          ? Math.min(100, Math.max(15, sourceFileCount / 2))
+          : 0,
+    },
+    {
+      name: "Source size",
+      value: sourceSize,
+      percentage:
+        sourceBytes > 0
+          ? Math.min(
+              100,
+              Math.max(
+                15,
+                (sourceBytes / (1024 * 1024)) * 20
+              )
+            )
+          : 0,
+    },
+    {
+      name: "Important files",
+      value:
+        importantFiles.length > 0
+          ? importantFiles.length
+          : "—",
+      percentage:
+        importantFiles.length > 0
+          ? Math.min(
+              100,
+              Math.max(15, importantFiles.length * 10)
+            )
+          : 0,
+    },
+  ];
+
+  // =========================================
+  // FINDINGS
+  // =========================================
+
+  const strengths = Array.isArray(
+    repositoryAnalysis?.howTheProjectWorks
+  )
+    ? repositoryAnalysis.howTheProjectWorks
+        .map(asText)
+        .filter(Boolean)
+    : [];
+
+  const warnings = Array.isArray(
+    repositoryAnalysis?.potentialImportantNotes
+  )
+    ? repositoryAnalysis.potentialImportantNotes
+        .map(asText)
+        .filter(Boolean)
+    : [];
+
+  // =========================================
+  // FILE ANALYSIS
+  // =========================================
+
+  const files = importantFiles.map((item) => {
+    if (typeof item === "string") {
+      return {
+        file: item,
+        type: "Important file",
+        score: null,
+        status: "Analyzed",
+      };
+    }
+
+    return {
+      file:
+        item?.path ||
+        item?.file ||
+        item?.name ||
+        "Repository file",
+
+      type:
+        item?.type ||
+        item?.purpose ||
+        "Important file",
+
+      score:
+        item?.score ??
+        item?.quality ??
+        item?.qualityScore ??
+        null,
+
+      status:
+        item?.status ||
+        "Analyzed",
+    };
+  });
+
+  // =========================================
+  // RECOMMENDATION
+  // =========================================
+
+  const recommendation =
+    repositoryAnalysis?.recommendation ||
+    repositoryAnalysis?.recommendations ||
+    repositoryAnalysis?.summary ||
+    repositoryAnalysis?.overallAssessment ||
+    null;
+
+  const recommendationText =
+    typeof recommendation === "string"
+      ? recommendation
+      : recommendation?.text ||
+        recommendation?.description ||
+        recommendation?.note ||
+        "The analysis provides a useful overview of the repository structure, important files, strengths, and areas that can be improved.";
+
+  // =========================================
+  // BUTTON HANDLER
   // =========================================
 
   const handleReAnalyze = () => {
@@ -74,20 +255,20 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
         <section className="analysis-title">
 
           <div>
+
             <h1>
               𝑫𝒆𝒕𝒂𝒊𝒍𝒆𝒅 𝑨𝑰 𝑨𝒏𝒂𝒍𝒚𝒔𝒊𝒔
             </h1>
+
+            <p className="analysis-project-name">
+              {repositoryAnalysis?.projectName ||
+                repositoryAnalysis?.repository?.name ||
+                "Repository"}
+            </p>
+
           </div>
 
-
-          {/* RIGHT SIDE:
-              Analysis Complete + Re-analyze
-          */}
-
           <div className="analysis-actions">
-
-            
-
 
             <button
               type="button"
@@ -111,7 +292,9 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
           <div className="score-circle">
 
             <strong>
-              —
+              {parsedScore !== null
+                ? parsedScore
+                : "—"}
             </strong>
 
             <span>
@@ -128,8 +311,7 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             </h2>
 
             <p>
-              Your repository has a strong overall structure
-              with some areas that can be improved.
+              {getHealthText()}
             </p>
 
             <div className="score-progress">
@@ -137,7 +319,10 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
               <div
                 className="score-progress-fill"
                 style={{
-                  width: "0%",
+                  width:
+                    parsedScore !== null
+                      ? `${parsedScore}%`
+                      : "0%",
                 }}
               />
 
@@ -154,7 +339,7 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
         <section className="analysis-metrics">
 
-          {analysis.metrics.map((metric, index) => (
+          {metrics.map((metric, index) => (
 
             <div
               className="analysis-metric-card"
@@ -219,8 +404,8 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
             <div className="finding-list">
 
-              {analysis.strengths.map(
-                (item, index) => (
+              {strengths.length > 0 ? (
+                strengths.map((item, index) => (
 
                   <div
                     className="finding-item"
@@ -237,7 +422,14 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
                   </div>
 
-                )
+                ))
+              ) : (
+
+                <div className="finding-empty">
+                  No specific strengths were returned
+                  by the analysis.
+                </div>
+
               )}
 
             </div>
@@ -272,8 +464,8 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
             <div className="finding-list">
 
-              {analysis.warnings.map(
-                (item, index) => (
+              {warnings.length > 0 ? (
+                warnings.map((item, index) => (
 
                   <div
                     className="finding-item"
@@ -290,7 +482,14 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
                   </div>
 
-                )
+                ))
+              ) : (
+
+                <div className="finding-empty">
+                  No specific improvement areas were
+                  returned by the analysis.
+                </div>
+
               )}
 
             </div>
@@ -350,47 +549,78 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             </div>
 
 
-            {analysis.files.map(
-              (file, index) => (
+            {files.length > 0 ? (
 
-                <div
-                  className="file-table-row"
-                  key={index}
-                >
+              files.map((file, index) => {
 
-                  <span>
-                    {file.file}
-                  </span>
+                const fileScore =
+                  file.score !== null &&
+                  !Number.isNaN(
+                    Number(file.score)
+                  )
+                    ? Math.max(
+                        0,
+                        Math.min(
+                          100,
+                          Number(file.score)
+                        )
+                      )
+                    : null;
 
-                  <span>
-                    {file.type}
-                  </span>
+                return (
 
-                  <div className="file-score">
+                  <div
+                    className="file-table-row"
+                    key={index}
+                  >
 
                     <span>
-                      —
+                      {file.file}
                     </span>
 
-                    <div>
+                    <span>
+                      {file.type}
+                    </span>
 
-                      <div
-                        style={{
-                        width: "0%",
-                        }}
-                      />
+                    <div className="file-score">
+
+                      <span>
+                        {fileScore !== null
+                          ? fileScore
+                          : "—"}
+                      </span>
+
+                      <div>
+
+                        <div
+                          style={{
+                            width:
+                              fileScore !== null
+                                ? `${fileScore}%`
+                                : "0%",
+                          }}
+                        />
+
+                      </div>
 
                     </div>
 
+                    <span className="file-status">
+                      ✓ {file.status}
+                    </span>
+
                   </div>
 
-                  <span className="file-status">
-                    ✓ {file.status}
-                  </span>
+                );
+              })
 
-                </div>
+            ) : (
 
-              )
+              <div className="finding-empty">
+                No important files were identified
+                in the repository analysis.
+              </div>
+
             )}
 
           </div>
@@ -415,11 +645,7 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             </h2>
 
             <p>
-              The project has a good foundation and a
-              well-organized architecture. Focus on improving
-              documentation, optimizing repeated components,
-              and adding automated testing to further improve
-              project quality and maintainability.
+              {recommendationText}
             </p>
 
           </div>
