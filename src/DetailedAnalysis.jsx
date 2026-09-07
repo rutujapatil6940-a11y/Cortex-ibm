@@ -1,14 +1,52 @@
 import "./DetailedAnalysis.css";
 
 function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
-  const asText = (item) =>
-    typeof item === "string"
-      ? item
-      : item?.text ||
-        item?.description ||
-        item?.note ||
-        item?.purpose ||
-        "Not found in the repository.";
+  // =========================================
+  // HELPERS
+  // =========================================
+
+  const asText = (item) => {
+    if (typeof item === "string") {
+      return item.trim();
+    }
+
+    if (!item || typeof item !== "object") {
+      return "";
+    }
+
+    return (
+      item.text ||
+      item.description ||
+      item.note ||
+      item.purpose ||
+      item.reason ||
+      item.explanation ||
+      ""
+    ).trim();
+  };
+
+  const getArray = (...values) => {
+    for (const value of values) {
+      if (Array.isArray(value) && value.length > 0) {
+        return value.map(asText).filter(Boolean);
+      }
+    }
+
+    return [];
+  };
+
+  // =========================================
+  // PROJECT NAME
+  // =========================================
+
+  const projectName =
+    repositoryAnalysis?.projectName ||
+    repositoryAnalysis?.repository?.name ||
+    "Repository";
+
+  // =========================================
+  // IMPORTANT FILES
+  // =========================================
 
   const importantFiles = Array.isArray(
     repositoryAnalysis?.importantFiles
@@ -30,55 +68,134 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
   const parsedScore =
     rawScore !== null &&
     rawScore !== undefined &&
+    rawScore !== "" &&
     !Number.isNaN(Number(rawScore))
-      ? Math.max(0, Math.min(100, Number(rawScore)))
+      ? Math.max(
+          0,
+          Math.min(100, Number(rawScore))
+        )
       : null;
 
-  const getHealthText = () => {
-    if (parsedScore === null) {
-      return "Overall project health based on the available AI analysis.";
-    }
+  // =========================================
+  // PROJECT OVERVIEW
+  // =========================================
 
-    if (parsedScore >= 80) {
-      return "The repository has a strong structure and good overall project quality.";
-    }
-
-    if (parsedScore >= 60) {
-      return "The repository has a solid foundation with some areas that can be improved.";
-    }
-
-    if (parsedScore >= 40) {
-      return "The repository is functional but several areas could benefit from improvement.";
-    }
-
-    return "The analysis identified several areas that should be improved for better project quality.";
-  };
+  const projectOverview =
+    repositoryAnalysis?.projectOverview ||
+    repositoryAnalysis?.overview ||
+    repositoryAnalysis?.summary ||
+    repositoryAnalysis?.projectDescription ||
+    "";
 
   // =========================================
-  // METRIC VALUES
+  // WORKFLOW
+  // =========================================
+
+  const howTheProjectWorks = getArray(
+    repositoryAnalysis?.howTheProjectWorks,
+    repositoryAnalysis?.workflow,
+    repositoryAnalysis?.applicationFlow
+  );
+
+  // =========================================
+  // KEY STRENGTHS
+  // =========================================
+
+  let strengths = getArray(
+    repositoryAnalysis?.keyStrengths,
+    repositoryAnalysis?.strengths,
+    repositoryAnalysis?.positiveFindings
+  );
+
+  /*
+   * howTheProjectWorks contains workflow steps,
+   * not strengths.
+   *
+   * So only use it to derive meaningful architectural
+   * strengths when explicit strengths are unavailable.
+   */
+
+  if (strengths.length === 0) {
+    const derivedStrengths = [];
+
+    if (importantFiles.length > 0) {
+      derivedStrengths.push(
+        `The project has ${importantFiles.length} important files identified by Bob AI, indicating a defined application structure.`
+      );
+    }
+
+    if (howTheProjectWorks.length > 0) {
+      derivedStrengths.push(
+        "The application follows a defined processing workflow from input handling through final results."
+      );
+    }
+
+    const filePurposes = importantFiles
+      .map((item) =>
+        typeof item === "object"
+          ? asText(item)
+          : ""
+      )
+      .filter(Boolean);
+
+    if (filePurposes.length > 0) {
+      derivedStrengths.push(
+        "Project responsibilities are separated across dedicated files and modules."
+      );
+    }
+
+    strengths = derivedStrengths;
+  }
+
+  // =========================================
+  // AREAS FOR IMPROVEMENT
+  // =========================================
+
+  const warnings = getArray(
+    repositoryAnalysis?.potentialImportantNotes,
+    repositoryAnalysis?.areasForImprovement,
+    repositoryAnalysis?.improvements,
+    repositoryAnalysis?.warnings
+  );
+
+  // =========================================
+  // METADATA
   // =========================================
 
   const fileCount =
-    repositoryAnalysis?.repository?.metadata?.fileCount ??
+    repositoryAnalysis?.repository?.metadata
+      ?.fileCount ??
     repositoryAnalysis?.metadata?.fileCount ??
     0;
 
   const sourceFileCount =
-    repositoryAnalysis?.repository?.metadata?.sourceFileCount ??
-    repositoryAnalysis?.metadata?.sourceFileCount ??
+    repositoryAnalysis?.repository?.metadata
+      ?.sourceFileCount ??
+    repositoryAnalysis?.metadata
+      ?.sourceFileCount ??
     0;
 
   const sourceBytes =
-    repositoryAnalysis?.repository?.metadata?.sourceBytes ??
+    repositoryAnalysis?.repository?.metadata
+      ?.sourceBytes ??
     repositoryAnalysis?.metadata?.sourceBytes ??
     0;
 
   const sourceSize =
     sourceBytes > 0
       ? sourceBytes >= 1024 * 1024
-        ? `${(sourceBytes / (1024 * 1024)).toFixed(1)} MB`
-        : `${Math.round(sourceBytes / 1024)} KB`
+        ? `${(
+            sourceBytes /
+            (1024 * 1024)
+          ).toFixed(1)} MB`
+        : `${Math.round(
+            sourceBytes / 1024
+          )} KB`
       : "—";
+
+  // =========================================
+  // METRICS
+  // =========================================
 
   const metrics = [
     {
@@ -86,17 +203,31 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
       value: fileCount || "—",
       percentage:
         fileCount > 0
-          ? Math.min(100, Math.max(15, fileCount / 2))
+          ? Math.min(
+              100,
+              Math.max(
+                15,
+                fileCount * 3
+              )
+            )
           : 0,
     },
+
     {
       name: "Source files",
       value: sourceFileCount || "—",
       percentage:
         sourceFileCount > 0
-          ? Math.min(100, Math.max(15, sourceFileCount / 2))
+          ? Math.min(
+              100,
+              Math.max(
+                15,
+                sourceFileCount * 5
+              )
+            )
           : 0,
     },
+
     {
       name: "Source size",
       value: sourceSize,
@@ -106,11 +237,14 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
               100,
               Math.max(
                 15,
-                (sourceBytes / (1024 * 1024)) * 20
+                (sourceBytes /
+                  (1024 * 1024)) *
+                  20
               )
             )
           : 0,
     },
+
     {
       name: "Important files",
       value:
@@ -121,69 +255,81 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
         importantFiles.length > 0
           ? Math.min(
               100,
-              Math.max(15, importantFiles.length * 10)
+              Math.max(
+                15,
+                importantFiles.length * 10
+              )
             )
           : 0,
     },
   ];
 
   // =========================================
-  // FINDINGS
+  // HEALTH DESCRIPTION
   // =========================================
 
-  const strengths = Array.isArray(
-    repositoryAnalysis?.howTheProjectWorks
-  )
-    ? repositoryAnalysis.howTheProjectWorks
-        .map(asText)
-        .filter(Boolean)
-    : [];
+  const getHealthText = () => {
+    if (projectOverview) {
+      return projectOverview;
+    }
 
-  const warnings = Array.isArray(
-    repositoryAnalysis?.potentialImportantNotes
-  )
-    ? repositoryAnalysis.potentialImportantNotes
-        .map(asText)
-        .filter(Boolean)
-    : [];
+    if (
+      strengths.length > 0 &&
+      warnings.length > 0
+    ) {
+      return `Bob AI identified ${strengths.length} positive findings and ${warnings.length} areas for improvement in ${projectName}.`;
+    }
+
+    if (strengths.length > 0) {
+      return `Bob AI identified ${strengths.length} positive findings in ${projectName}.`;
+    }
+
+    if (warnings.length > 0) {
+      return `Bob AI identified ${warnings.length} areas that could be improved in ${projectName}.`;
+    }
+
+    return `The repository has been analyzed using the available source and project information.`;
+  };
 
   // =========================================
   // FILE ANALYSIS
   // =========================================
 
-  const files = importantFiles.map((item) => {
-    if (typeof item === "string") {
+  const files = importantFiles.map(
+    (item) => {
+      if (typeof item === "string") {
+        return {
+          file: item,
+          type: "Important file",
+          score: null,
+          status: "Analyzed",
+        };
+      }
+
       return {
-        file: item,
-        type: "Important file",
-        score: null,
-        status: "Analyzed",
+        file:
+          item?.path ||
+          item?.file ||
+          item?.name ||
+          "Repository file",
+
+        type:
+          item?.type ||
+          item?.purpose ||
+          "Important file",
+
+        score:
+          item?.score ??
+          item?.quality ??
+          item?.qualityScore ??
+          null,
+
+        status:
+          item?.status ||
+          "Analyzed",
       };
     }
-
-    return {
-      file:
-        item?.path ||
-        item?.file ||
-        item?.name ||
-        "Repository file",
-
-      type:
-        item?.type ||
-        item?.purpose ||
-        "Important file",
-
-      score:
-        item?.score ??
-        item?.quality ??
-        item?.qualityScore ??
-        null,
-
-      status:
-        item?.status ||
-        "Analyzed",
-    };
-  });
+  );
 
   // =========================================
   // RECOMMENDATION
@@ -191,18 +337,31 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
   const recommendation =
     repositoryAnalysis?.recommendation ||
-    repositoryAnalysis?.recommendations ||
-    repositoryAnalysis?.summary ||
+    repositoryAnalysis?.aiRecommendation ||
     repositoryAnalysis?.overallAssessment ||
-    null;
+    "";
 
-  const recommendationText =
+  let recommendationText =
     typeof recommendation === "string"
-      ? recommendation
-      : recommendation?.text ||
-        recommendation?.description ||
-        recommendation?.note ||
-        "The analysis provides a useful overview of the repository structure, important files, strengths, and areas that can be improved.";
+      ? recommendation.trim()
+      : asText(recommendation);
+
+  if (!recommendationText) {
+    if (warnings.length > 0) {
+      recommendationText =
+        `The project has a workable foundation. The main focus should be on addressing the ${warnings.length} identified improvement area${
+          warnings.length === 1
+            ? ""
+            : "s"
+        } while maintaining the strengths already identified by Bob AI.`;
+    } else if (strengths.length > 0) {
+      recommendationText =
+        "The project has a solid foundation based on the analyzed repository structure. The existing strengths should be maintained while continuing to improve documentation, testing, and maintainability where applicable.";
+    } else {
+      recommendationText =
+        "Bob AI did not provide a specific recommendation for this repository.";
+    }
+  }
 
   // =========================================
   // BUTTON HANDLER
@@ -261,9 +420,10 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             </h1>
 
             <p className="analysis-project-name">
-              {repositoryAnalysis?.projectName ||
-                repositoryAnalysis?.repository?.name ||
-                "Repository"}
+              AI-generated analysis for{" "}
+              <strong>
+                {projectName}
+              </strong>
             </p>
 
           </div>
@@ -294,11 +454,13 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             <strong>
               {parsedScore !== null
                 ? parsedScore
-                : "—"}
+                : "AI"}
             </strong>
 
             <span>
-              / 100
+              {parsedScore !== null
+                ? "/ 100"
+                : "Analysis"}
             </span>
 
           </div>
@@ -339,34 +501,36 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
         <section className="analysis-metrics">
 
-          {metrics.map((metric, index) => (
+          {metrics.map(
+            (metric, index) => (
 
-            <div
-              className="analysis-metric-card"
-              key={index}
-            >
+              <div
+                className="analysis-metric-card"
+                key={index}
+              >
 
-              <span>
-                {metric.name}
-              </span>
+                <span>
+                  {metric.name}
+                </span>
 
-              <strong>
-                {metric.value}
-              </strong>
+                <strong>
+                  {metric.value}
+                </strong>
 
-              <div className="metric-bar">
+                <div className="metric-bar">
 
-                <div
-                  style={{
-                    width: `${metric.percentage}%`,
-                  }}
-                />
+                  <div
+                    style={{
+                      width: `${metric.percentage}%`,
+                    }}
+                  />
+
+                </div>
 
               </div>
 
-            </div>
-
-          ))}
+            )
+          )}
 
         </section>
 
@@ -377,7 +541,9 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
         <section className="analysis-grid">
 
-          {/* STRENGTHS */}
+          {/* =====================================
+              STRENGTHS
+          ===================================== */}
 
           <div className="analysis-card">
 
@@ -405,29 +571,33 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             <div className="finding-list">
 
               {strengths.length > 0 ? (
-                strengths.map((item, index) => (
 
-                  <div
-                    className="finding-item"
-                    key={index}
-                  >
+                strengths.map(
+                  (item, index) => (
 
-                    <div className="finding-check">
-                      ✓
+                    <div
+                      className="finding-item"
+                      key={index}
+                    >
+
+                      <div className="finding-check">
+                        ✓
+                      </div>
+
+                      <p>
+                        {item}
+                      </p>
+
                     </div>
 
-                    <p>
-                      {item}
-                    </p>
+                  )
+                )
 
-                  </div>
-
-                ))
               ) : (
 
                 <div className="finding-empty">
-                  No specific strengths were returned
-                  by the analysis.
+                  No specific strengths were
+                  returned by Bob AI.
                 </div>
 
               )}
@@ -437,7 +607,9 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
           </div>
 
 
-          {/* WARNINGS */}
+          {/* =====================================
+              WARNINGS
+          ===================================== */}
 
           <div className="analysis-card">
 
@@ -465,29 +637,33 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             <div className="finding-list">
 
               {warnings.length > 0 ? (
-                warnings.map((item, index) => (
 
-                  <div
-                    className="finding-item"
-                    key={index}
-                  >
+                warnings.map(
+                  (item, index) => (
 
-                    <div className="finding-warning">
-                      !
+                    <div
+                      className="finding-item"
+                      key={index}
+                    >
+
+                      <div className="finding-warning">
+                        !
+                      </div>
+
+                      <p>
+                        {item}
+                      </p>
+
                     </div>
 
-                    <p>
-                      {item}
-                    </p>
+                  )
+                )
 
-                  </div>
-
-                ))
               ) : (
 
                 <div className="finding-empty">
-                  No specific improvement areas were
-                  returned by the analysis.
+                  No specific improvement areas
+                  were returned by Bob AI.
                 </div>
 
               )}
@@ -551,68 +727,71 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
 
             {files.length > 0 ? (
 
-              files.map((file, index) => {
+              files.map(
+                (file, index) => {
 
-                const fileScore =
-                  file.score !== null &&
-                  !Number.isNaN(
-                    Number(file.score)
-                  )
-                    ? Math.max(
-                        0,
-                        Math.min(
-                          100,
-                          Number(file.score)
+                  const fileScore =
+                    file.score !== null &&
+                    file.score !== undefined &&
+                    !Number.isNaN(
+                      Number(file.score)
+                    )
+                      ? Math.max(
+                          0,
+                          Math.min(
+                            100,
+                            Number(file.score)
+                          )
                         )
-                      )
-                    : null;
+                      : null;
 
-                return (
+                  return (
 
-                  <div
-                    className="file-table-row"
-                    key={index}
-                  >
-
-                    <span>
-                      {file.file}
-                    </span>
-
-                    <span>
-                      {file.type}
-                    </span>
-
-                    <div className="file-score">
+                    <div
+                      className="file-table-row"
+                      key={index}
+                    >
 
                       <span>
-                        {fileScore !== null
-                          ? fileScore
-                          : "—"}
+                        {file.file}
                       </span>
 
-                      <div>
+                      <span>
+                        {file.type}
+                      </span>
 
-                        <div
-                          style={{
-                            width:
-                              fileScore !== null
-                                ? `${fileScore}%`
-                                : "0%",
-                          }}
-                        />
+                      <div className="file-score">
+
+                        <span>
+                          {fileScore !== null
+                            ? fileScore
+                            : "—"}
+                        </span>
+
+                        <div>
+
+                          <div
+                            style={{
+                              width:
+                                fileScore !== null
+                                  ? `${fileScore}%`
+                                  : "0%",
+                            }}
+                          />
+
+                        </div>
 
                       </div>
 
+                      <span className="file-status">
+                        ✓ {file.status}
+                      </span>
+
                     </div>
 
-                    <span className="file-status">
-                      ✓ {file.status}
-                    </span>
-
-                  </div>
-
-                );
-              })
+                  );
+                }
+              )
 
             ) : (
 

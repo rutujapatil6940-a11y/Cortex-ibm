@@ -952,3 +952,18 @@
   }
 
 }
+
+.analysis-project-name {
+  margin: 7px 0 0 !important;
+
+  color: #681a75 !important;
+
+  font-size: 14px !important;
+  line-height: 1.4;
+
+  text-align: left;
+}
+
+.analysis-project-name strong {
+  font-weight: 700;
+}
