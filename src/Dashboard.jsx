@@ -698,7 +698,7 @@ function Dashboard({
               type="button"
               onClick={() =>
                 navigate(
-                  "projects"
+                  "upload"
                 )
               }
             >
