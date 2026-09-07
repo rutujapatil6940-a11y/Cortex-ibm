@@ -832,8 +832,6 @@
 
 /* ================= PROJECT SELECTOR ================= */
 
-/* ================= PROJECT SELECTOR ================= */
-
 .documentation-project-selector {
   margin-top: 18px;
   width: 575px;
@@ -842,7 +840,6 @@
 .documentation-project-selector label {
   display: block;
   margin-bottom: 9px;
-
   color: #27233a;
   font-size: 13px;
   font-weight: 600;
@@ -855,11 +852,9 @@
   padding: 0 48px 0 18px;
 
   border-radius: 12px;
-
   border: 1.5px solid #c8bfff;
 
   background: #ffffff;
-
   color: #17152a;
 
   font-family: inherit;
@@ -868,34 +863,45 @@
 
   outline: none;
   cursor: pointer;
-
   appearance: none;
 
   background-image:
-    linear-gradient(45deg, transparent 50%, #342fdf 50%),
-    linear-gradient(135deg, #342fdf 50%, transparent 50%);
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #342fdf 50%
+    ),
+    linear-gradient(
+      135deg,
+      #342fdf 50%,
+      transparent 50%
+    );
+
   background-position:
     calc(100% - 23px) 23px,
     calc(100% - 17px) 23px;
+
   background-size:
     6px 6px,
     6px 6px;
+
   background-repeat: no-repeat;
 
   box-shadow:
-    0 4px 14px rgba(52, 47, 223, 0.06);
+    0 4px 14px
+    rgba(52, 47, 223, 0.06);
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    box-shadow 0.2s ease;
 }
 
 .documentation-project-selector select:hover {
   border-color: #9d8fff;
 
   box-shadow:
-    0 6px 18px rgba(52, 47, 223, 0.1);
+    0 6px 18px
+    rgba(52, 47, 223, 0.1);
 }
 
 .documentation-project-selector select:focus {
@@ -909,13 +915,12 @@
 .documentation-project-selector select option {
   background: #ffffff;
   color: #17152a;
-
   font-size: 14px;
   font-weight: 500;
 }
 
 
-/* Mobile */
+/* ================= RESPONSIVE ================= */
 
 @media (max-width: 600px) {
   .documentation-project-selector {
@@ -924,69 +929,5 @@
 
   .documentation-project-selector select {
     height: 52px;
-  }
-}
-
-.documentation-project-selector label {
-  display: block;
-
-  margin-bottom: 7px;
-
-  color: #c5bdcc;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.documentation-project-selector select {
-  width: 100%;
-
-  padding: 12px 40px 12px 14px;
-
-  border-radius: 10px;
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.14);
-
-  background: rgba(255, 255, 255, 0.07);
-
-  color: #ffffff;
-
-  font-size: 13px;
-
-  outline: none;
-
-  cursor: pointer;
-
-  appearance: auto;
-
-  transition: 0.2s ease;
-}
-
-.documentation-project-selector select:hover {
-  border-color: rgba(125, 100, 255, 0.5);
-
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.documentation-project-selector select:focus {
-  border-color: #7c5cff;
-
-  box-shadow:
-    0 0 0 3px
-    rgba(82, 39, 255, 0.15);
-}
-
-.documentation-project-selector select option {
-  background: #120b20;
-
-  color: #ffffff;
-}
-
-
-/* Mobile */
-@media (max-width: 600px) {
-  .documentation-project-selector {
-    width: 100%;
   }
 }
