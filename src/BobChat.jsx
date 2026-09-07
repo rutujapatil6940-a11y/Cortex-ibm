@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./BobChat.css";
 import ReactMarkdown from "react-markdown";
 import "./BobChat.css";
 const API_URL = (
@@ -405,21 +404,6 @@ function BobChat({ onBack, projectId }) {
               </div>
             )}
 
-          </div>
-          <div
-            className={`bob-message ${
-              item.type === "user"
-                ? "user-message"
-                : "assistant-message"
-            }`}
-          >
-            {item.type === "user" ? (
-              item.text
-            ) : (
-              <ReactMarkdown>
-                {item.text}
-              </ReactMarkdown>
-            )}
           </div>
 
           {/* QUICK QUESTIONS */}
