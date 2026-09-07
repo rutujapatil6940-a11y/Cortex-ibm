@@ -1,23 +1,216 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import "./Documentation.css";
+
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
 
 function Documentation({ onBack, analysis }) {
   const [copied, setCopied] = useState(false);
 
-  const array = (value) => Array.isArray(value) ? value : [];
-  const text = (value) => typeof value === "string" ? value : value?.name || value?.technology || value?.package || value?.description || value?.purpose || "Not found in the repository.";
-  const technologies = array(analysis?.technologiesUsed).map(text);
-  const modules = array(analysis?.importantFunctionsAndComponents).map((item) => ({ name: text(item), description: typeof item === "object" ? item?.purpose || item?.behavior || "Not found in the repository." : "Not found in the repository." }));
-  const documentation = {
-    projectName: analysis?.projectName || analysis?.repository?.name || "Repository",
-    repository: analysis?.repository?.repositoryUrl || "",
-    overview: analysis?.projectOverview || "Not found in the repository.",
-    architecture: array(analysis?.dataFlow).map(text),
-    modules,
-    technologies: technologies.map((name, index, all) => ({ name, percentage: Math.round(100 / all.length) })),
-    features: array(analysis?.howTheProjectWorks).map(text),
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(
+    analysis?.id || ""
+  );
+  const [selectedAnalysis, setSelectedAnalysis] = useState(
+    analysis
+  );
+  const [projectsLoading, setProjectsLoading] = useState(true);
+
+  const array = (value) =>
+    Array.isArray(value) ? value : [];
+    useEffect(() => {
+    const fetchProjects = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setProjectsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_URL}/api/projects`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.message || "Failed to load projects."
+          );
+        }
+
+        const fetchedProjects = Array.isArray(
+          data.projects
+        )
+          ? data.projects
+          : [];
+
+        setProjects(fetchedProjects);
+
+        if (fetchedProjects.length === 0) {
+          return;
+        }
+
+        const currentProject =
+          fetchedProjects.find(
+            (project) =>
+              project._id === analysis?.id
+          ) || fetchedProjects[0];
+
+        setSelectedProjectId(currentProject._id);
+
+        if (currentProject.analysis) {
+          setSelectedAnalysis({
+            ...currentProject.analysis,
+            id: currentProject._id,
+            status: currentProject.status,
+            repository: {
+              name: currentProject.name,
+              owner: currentProject.owner,
+              repositoryUrl:
+                currentProject.repositoryUrl,
+              status: currentProject.status,
+              metadata: currentProject.metadata,
+            },
+            repositoryContext:
+              currentProject.repositoryContext,
+          });
+        }
+      } catch (error) {
+        console.error(
+          "Documentation projects fetch error:",
+          error
+        );
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [analysis?.id]);
+
+  const handleProjectChange = (event) => {
+    const projectId = event.target.value;
+
+    setSelectedProjectId(projectId);
+
+    const project = projects.find(
+      (item) => item._id === projectId
+    );
+
+    if (!project?.analysis) {
+      return;
+    }
+
+    setSelectedAnalysis({
+      ...project.analysis,
+      id: project._id,
+      status: project.status,
+      repository: {
+        name: project.name,
+        owner: project.owner,
+        repositoryUrl: project.repositoryUrl,
+        status: project.status,
+        metadata: project.metadata,
+      },
+      repositoryContext:
+        project.repositoryContext,
+    });
+
+    setCopied(false);
   };
+
+  const text = (value) =>
+  typeof value === "string"
+    ? value
+    : value?.name ||
+      value?.technology ||
+      value?.package ||
+      value?.description ||
+      value?.purpose ||
+      "Not found in the repository.";
+
+const formatDisplayName = (value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  if (
+    value.includes(".py") ||
+    value.includes(".js") ||
+    value.includes(".jsx") ||
+    value.includes(".ts") ||
+    value.includes(".tsx") ||
+    value.includes(".html") ||
+    value.includes(".css") ||
+    value.includes(".json") ||
+    value.includes(".md") ||
+    value.includes(".csv") ||
+    value.includes(".txt")
+  ) {
+    return value;
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1);
+};
+
+const technologies = array(
+  selectedAnalysis?.technologiesUsed
+).map(text);
+
+const modules = array(
+  selectedAnalysis?.importantFunctionsAndComponents
+).map((item) => ({
+  name: formatDisplayName(text(item)),
+  description:
+    typeof item === "object"
+      ? item?.purpose ||
+        item?.behavior ||
+        "Not found in the repository."
+      : "Not found in the repository.",
+}));
+
+const documentation = {
+  projectName:
+    selectedAnalysis?.projectName ||
+    selectedAnalysis?.repository?.name ||
+    "Repository",
+
+  repository:
+    selectedAnalysis?.repository?.repositoryUrl || "",
+
+  overview:
+    selectedAnalysis?.projectOverview ||
+    "Not found in the repository.",
+
+  architecture: array(
+    selectedAnalysis?.dataFlow
+  ).map(text),
+
+  modules,
+
+  technologies: technologies.map(
+    (name, index, all) => ({
+      name,
+      percentage: Math.round(
+        100 / all.length
+      ),
+    })
+  ),
+
+  features: array(
+    selectedAnalysis?.howTheProjectWorks
+  ).map(text),
+};
 
   // COPY DOCUMENTATION
   const handleCopy = async () => {
@@ -286,6 +479,7 @@ const handleDownload = () => {
     );
   };
 
+  
   return (
     <div className="documentation-page">
 
@@ -319,22 +513,50 @@ const handleDownload = () => {
         {/* TITLE */}
         <section className="documentation-title">
 
-          <div>
-            
+  <div>
+    <h1>
+      𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑫𝒐𝒄𝒖𝒎𝒆𝒏𝒕𝒂𝒕𝒊𝒐𝒏
+    </h1>
 
-            <h1>
-              𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑫𝒐𝒄𝒖𝒎𝒆𝒏𝒕𝒂𝒕𝒊𝒐𝒏 
-            </h1>
+    <div className="documentation-project-selector">
+      <label htmlFor="project-select">
+        Select Project
+      </label>
 
-         
-          </div>
+      <select
+        id="project-select"
+        value={selectedProjectId}
+        onChange={handleProjectChange}
+        disabled={projectsLoading || projects.length === 0}
+      >
+        {projectsLoading ? (
+          <option value="">
+            Loading projects...
+          </option>
+        ) : projects.length === 0 ? (
+          <option value="">
+            No projects available
+          </option>
+        ) : (
+          projects.map((project) => (
+            <option
+              key={project._id}
+              value={project._id}
+            >
+              {project.name}
+            </option>
+          ))
+        )}
+      </select>
+    </div>
+  </div>
 
-          <div className="documentation-status">
-            <span></span>
-            Documentation Generated
-          </div>
+  <div className="documentation-status">
+    <span></span>
+    Documentation Generated
+  </div>
 
-        </section>
+</section>
 
 
         {/* PROJECT CARD */}

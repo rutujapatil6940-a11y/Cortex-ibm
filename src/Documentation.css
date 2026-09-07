@@ -829,3 +829,74 @@
 .documentation-ai-note p {
   text-align: left;
 }
+
+/* ================= PROJECT SELECTOR ================= */
+
+.documentation-project-selector {
+  margin-top: 18px;
+  width: 320px;
+}
+
+.documentation-project-selector label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #c5bdcc;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.documentation-project-selector select {
+  width: 100%;
+
+  padding: 12px 40px 12px 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.14);
+
+  background: rgba(255, 255, 255, 0.07);
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: auto;
+
+  transition: 0.2s ease;
+}
+
+.documentation-project-selector select:hover {
+  border-color: rgba(125, 100, 255, 0.5);
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.documentation-project-selector select:focus {
+  border-color: #7c5cff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(82, 39, 255, 0.15);
+}
+
+.documentation-project-selector select option {
+  background: #120b20;
+
+  color: #ffffff;
+}
+
+
+/* Mobile */
+@media (max-width: 600px) {
+  .documentation-project-selector {
+    width: 100%;
+  }
+}
