@@ -28,6 +28,8 @@
   width: 100%;
   min-height: 72px;
 
+  position: relative;
+
   background: #ffffff;
 
   border-bottom: 1px solid #e3e8ef;
@@ -157,7 +159,8 @@
 ===================================================== */
 
 .bob-status {
-  justify-self: end;
+  position: absolute;
+  right: 30px;
 
   display: flex;
 
@@ -977,7 +980,7 @@
   }
 
   .bob-status {
-    display: none;
+      right: 16px;
   }
 
   .bob-back-button {
