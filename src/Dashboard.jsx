@@ -734,13 +734,11 @@ function Dashboard({
                 navigate("projects")
               }
             >
-
               <div className="stat-icon">
                 ✓
               </div>
 
               <div>
-
                 <span className="stat-title">
                   Last Scan
                 </span>
@@ -748,17 +746,17 @@ function Dashboard({
                 <h2>
                   {projectsLoading
                     ? "—"
-                    : lastScanDuration}
+                    : latestProject
+                      ? `${lastScanAgo} ago`
+                      : "—"}
                 </h2>
 
                 <span className="stat-change">
                   {latestProject
-                    ? `${lastScanAgo} ago`
+                    ? "Completed"
                     : "No scan yet"}
                 </span>
-
               </div>
-
             </button>
 
           </div>
