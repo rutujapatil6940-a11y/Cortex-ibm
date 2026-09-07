@@ -1,4 +1,3 @@
-
 /* =====================================================
    PROJECT OVERVIEW — CORTEX LIGHT THEME
 ===================================================== */
@@ -244,7 +243,13 @@
 .project-info-left {
   display: flex;
   align-items: center;
+  justify-content: center;
+
+  flex: 1;
+
   gap: 15px;
+
+  text-align: center;
 }
 
 .repo-large-icon {
@@ -255,6 +260,8 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   border-radius: 13px;
 
   background: rgba(52, 47, 223, 0.09);
@@ -262,6 +269,10 @@
   color: #342fdf;
 
   font-size: 24px;
+}
+
+.project-info-left > div:last-child {
+  text-align: center;
 }
 
 .project-info-card h2 {
@@ -278,12 +289,16 @@
   color: #77738c;
 
   font-size: 13px;
+
+  line-height: 1.5;
 }
 
 .repository-url {
   color: #342fdf;
 
   font-size: 12px;
+
+  text-align: center;
 }
 
 
@@ -293,6 +308,8 @@
 
 .reanalyze-button {
   padding: 10px 16px;
+
+  flex-shrink: 0;
 
   border: 1px solid rgba(52, 47, 223, 0.18);
 
@@ -334,9 +351,12 @@
 
 .overview-stat-card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
 
-  gap: 13px;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
 
   padding: 19px;
 
@@ -348,6 +368,8 @@
 
   box-shadow:
     0 8px 22px rgba(52, 47, 223, 0.05);
+
+  text-align: center;
 
   transition: 0.2s ease;
 }
@@ -386,12 +408,16 @@
   color: #77738c;
 
   font-size: 12px;
+
+  text-align: center;
 }
 
 .overview-stat-card strong {
   color: #100f1e;
 
   font-size: 22px;
+
+  text-align: center;
 }
 
 
@@ -425,6 +451,8 @@
     0 8px 26px rgba(52, 47, 223, 0.05);
 
   box-sizing: border-box;
+
+  text-align: center;
 }
 
 
@@ -434,11 +462,16 @@
 
 .overview-card-heading {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
 
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
 
   margin-bottom: 20px;
+
+  text-align: center;
 }
 
 .heading-symbol {
@@ -462,6 +495,8 @@
   color: #100f1e;
 
   font-size: 17px;
+
+  text-align: center;
 }
 
 .overview-card-heading p {
@@ -470,6 +505,8 @@
   color: #77738c;
 
   font-size: 12px;
+
+  text-align: center;
 }
 
 
@@ -485,6 +522,8 @@
   font-size: 14px;
 
   line-height: 1.75;
+
+  text-align: center;
 }
 
 .summary-text:last-child {
@@ -507,21 +546,29 @@
 .technology-row {
   display: flex;
 
-  justify-content: space-between;
+  flex-direction: column;
 
+  justify-content: center;
   align-items: center;
+
+  gap: 8px;
 
   color: #5f5b72;
 
   font-size: 13px;
+
+  text-align: center;
 }
 
 .technology-name {
   display: flex;
 
   align-items: center;
+  justify-content: center;
 
   gap: 9px;
+
+  text-align: center;
 }
 
 .tech-icon {
@@ -595,11 +642,15 @@
 }
 
 .module-item {
+  width: 100%;
+
   display: flex;
+  flex-direction: column;
 
   align-items: center;
+  justify-content: center;
 
-  gap: 12px;
+  gap: 7px;
 
   padding: 11px;
 
@@ -608,6 +659,10 @@
   background: #f7f6fc;
 
   border: 1px solid rgba(52, 47, 223, 0.07);
+
+  text-align: center;
+
+  cursor: pointer;
 }
 
 .module-icon {
@@ -625,12 +680,18 @@
   color: #342fdf;
 }
 
+.module-item > div:nth-child(2) {
+  text-align: center;
+}
+
 .module-item strong {
   display: block;
 
   color: #292638;
 
   font-size: 13px;
+
+  text-align: center;
 }
 
 .module-item span {
@@ -641,6 +702,16 @@
   color: #858096;
 
   font-size: 11px;
+
+  text-align: center;
+}
+
+.module-item b {
+  margin-left: 0;
+
+  color: #8a8699;
+
+  text-align: center;
 }
 
 
@@ -650,10 +721,16 @@
 
 .insight-item {
   display: flex;
+  flex-direction: column;
 
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
 
   margin-bottom: 14px;
+
+  text-align: center;
 }
 
 .insight-item p {
@@ -664,6 +741,8 @@
   font-size: 13px;
 
   line-height: 1.5;
+
+  text-align: center;
 }
 
 .insight-check,
@@ -749,6 +828,8 @@
 
   box-shadow:
     0 8px 26px rgba(52, 47, 223, 0.05);
+
+  text-align: center;
 }
 
 .next-actions h2 {
@@ -757,6 +838,8 @@
   color: #100f1e;
 
   font-size: 18px;
+
+  text-align: center;
 }
 
 .next-actions > p {
@@ -765,6 +848,8 @@
   color: #77738c;
 
   font-size: 13px;
+
+  text-align: center;
 }
 
 .next-action-buttons {
@@ -779,6 +864,7 @@
   display: flex;
 
   align-items: center;
+  justify-content: center;
 
   gap: 10px;
 
@@ -794,7 +880,7 @@
 
   cursor: pointer;
 
-  text-align: left;
+  text-align: center;
 
   transition: 0.2s ease;
 }
@@ -814,7 +900,7 @@
 }
 
 .next-action b {
-  margin-left: auto;
+  margin-left: 0;
 
   color: #8a8699;
 }
@@ -825,6 +911,7 @@
 ===================================================== */
 
 @media (max-width: 900px) {
+
   .overview-stats {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -840,6 +927,7 @@
 
 
 @media (max-width: 600px) {
+
   .project-header {
     padding: 0 16px;
   }
@@ -863,11 +951,15 @@
   }
 
   .project-info-card {
-    align-items: flex-start;
+    align-items: center;
 
     flex-direction: column;
 
     gap: 15px;
+  }
+
+  .project-info-left {
+    width: 100%;
   }
 
   .reanalyze-button {
@@ -877,279 +969,4 @@
   .overview-stats {
     grid-template-columns: 1fr;
   }
-}
-
-/* =====================================================
-   CENTER TEXT ALIGNMENT
-===================================================== */
-
-.project-overview-page {
-  text-align: center;
-}
-
-.project-title-section,
-.project-title-section > div {
-  text-align: center;
-}
-
-.project-info-card,
-.project-info-left,
-.project-info-left > div {
-  text-align: center;
-}
-
-.project-info-left {
-  justify-content: center;
-}
-
-.project-info-card p,
-.project-info-card h2,
-.repository-url {
-  text-align: center;
-}
-
-.overview-stat-card {
-  justify-content: center;
-  text-align: center;
-}
-
-.overview-stat-card > div:last-child {
-  text-align: center;
-}
-
-.overview-card {
-  text-align: center;
-}
-
-.overview-card-heading {
-  justify-content: center;
-  text-align: center;
-}
-
-.overview-card-heading > div:last-child {
-  text-align: center;
-}
-
-.summary-text {
-  text-align: center;
-}
-
-.technology-row {
-  text-align: center;
-}
-
-.technology-name {
-  justify-content: center;
-}
-
-.technology-row > span:last-child {
-  text-align: center;
-}
-
-.module-item {
-  justify-content: center;
-  text-align: center;
-}
-
-.module-item > div:nth-child(2) {
-  text-align: center;
-}
-
-.module-item b {
-  margin-left: 0;
-}
-
-.insight-item {
-  justify-content: center;
-  text-align: center;
-}
-
-.insight-item p {
-  text-align: center;
-}
-
-.next-actions {
-  text-align: center;
-}
-
-.next-action-buttons {
-  text-align: center;
-}
-
-.next-action {
-  justify-content: center;
-  text-align: center;
-}
-
-.next-action b {
-  margin-left: 0;
-}
-
-/* ================= FINAL CENTER ALIGNMENT ================= */
-
-.project-overview-page {
-  text-align: center !important;
-}
-
-.project-overview-page .project-title-section,
-.project-overview-page .project-title-section > div,
-.project-overview-page .project-info-card,
-.project-overview-page .project-info-left,
-.project-overview-page .project-info-left > div,
-.project-overview-page .overview-stat-card,
-.project-overview-page .overview-card,
-.project-overview-page .overview-card-heading,
-.project-overview-page .overview-card-heading > div,
-.project-overview-page .summary-text,
-.project-overview-page .technology-row,
-.project-overview-page .module-item,
-.project-overview-page .module-item > div,
-.project-overview-page .insight-item,
-.project-overview-page .insight-item p,
-.project-overview-page .next-actions,
-.project-overview-page .next-action,
-.project-overview-page .next-action div {
-  text-align: center !important;
-}
-
-.project-overview-page .overview-card-heading {
-  justify-content: center !important;
-}
-
-.project-overview-page .project-info-left {
-  justify-content: center !important;
-}
-
-.project-overview-page .technology-name {
-  justify-content: center !important;
-}
-
-.project-overview-page .module-item {
-  justify-content: center !important;
-}
-
-.project-overview-page .insight-item {
-  justify-content: center !important;
-}
-
-.project-overview-page .next-action {
-  justify-content: center !important;
-}
-
-/* =====================================================
-   ACTUAL CENTERED CONTENT
-===================================================== */
-
-/* Project information */
-/* ================= PROJECT INFO FIX ================= */
-
-.project-info-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between !important;
-  position: static;
-}
-
-.project-info-left {
-  display: flex;
-  align-items: center;
-  justify-content: center !important;
-  flex: 1;
-  text-align: center !important;
-}
-
-.project-info-left > div:last-child {
-  text-align: center !important;
-}
-
-.reanalyze-button {
-  position: static;
-  flex-shrink: 0;
-}
-
-/* Statistics */
-.overview-stat-card {
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-}
-
-.overview-stat-card > div {
-  text-align: center !important;
-}
-
-
-/* Card headings */
-.overview-card-heading {
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.overview-card-heading > div {
-  text-align: center !important;
-}
-
-
-/* Technologies */
-.technology-row {
-  flex-direction: column !important;
-  justify-content: center !important;
-  gap: 8px !important;
-}
-
-.technology-name {
-  justify-content: center !important;
-}
-
-
-/* Modules */
-.module-item {
-  width: 100%;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-.module-item > div {
-  text-align: center !important;
-}
-
-.module-item b {
-  margin-left: 0 !important;
-}
-
-
-/* AI Insights */
-.insight-item {
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-.insight-item p {
-  text-align: center !important;
-}
-
-
-/* Continue Exploring */
-.next-actions {
-  text-align: center !important;
-}
-
-.next-action-buttons {
-  justify-items: center !important;
-}
-
-.next-action {
-  width: 100%;
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-.next-action b {
-  margin-left: 0 !important;
 }
