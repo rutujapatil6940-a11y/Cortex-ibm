@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./Projects.css";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000"
@@ -17,7 +18,9 @@ function Projects({
       const token = localStorage.getItem("token");
 
       if (!token) {
-        setError("Your session has expired. Please sign in again.");
+        setError(
+          "Your session has expired. Please sign in again."
+        );
         setLoading(false);
         return;
       }
@@ -48,6 +51,7 @@ function Projects({
         );
       } catch (err) {
         console.error("Projects fetch error:", err);
+
         setError(
           err.message || "Unable to load projects."
         );
@@ -65,112 +69,314 @@ function Projects({
     }
   };
 
+  const getStatusClass = (status) => {
+    const normalizedStatus = String(
+      status || "unknown"
+    ).toLowerCase();
+
+    return normalizedStatus.replace(/\s+/g, "_");
+  };
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: "40px",
-        boxSizing: "border-box",
-      }}
-    >
-      <button
-        type="button"
-        onClick={onBack}
-        style={{
-          marginBottom: "30px",
-          cursor: "pointer",
-        }}
-      >
-        ← Back to Dashboard
-      </button>
+    <div className="projects-page">
 
-      <div>
-        <h1>Projects</h1>
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
-        <p>
-          Your analyzed repositories and AI-generated
-          project intelligence.
-        </p>
-      </div>
+      <header className="projects-header">
 
-      {loading && (
-        <div style={{ marginTop: "40px" }}>
-          Loading projects...
-        </div>
-      )}
-
-      {!loading && error && (
-        <div style={{ marginTop: "40px" }}>
-          <strong>Unable to load projects</strong>
-          <p>{error}</p>
-        </div>
-      )}
-
-      {!loading && !error && projects.length === 0 && (
-        <div style={{ marginTop: "40px" }}>
-          <h2>No projects yet</h2>
-
-          <p>
-            Analyze a GitHub repository to create your
-            first project.
-          </p>
-        </div>
-      )}
-
-      {!loading && !error && projects.length > 0 && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "20px",
-            marginTop: "40px",
-          }}
+        <button
+          className="projects-back-button"
+          type="button"
+          onClick={onBack}
         >
-          {projects.map((project) => (
-            <button
-              key={project._id}
-              type="button"
-              onClick={() =>
-                handleProjectClick(project)
-              }
-              style={{
-                textAlign: "left",
-                padding: "24px",
-                cursor: "pointer",
-              }}
-            >
+          ← Back to Dashboard
+        </button>
+
+        <div className="projects-brand">
+
+          <div className="projects-brand-icon">
+            ◇
+          </div>
+
+          <span>
+            Cortex
+          </span>
+
+        </div>
+
+      </header>
+
+
+      {/* =================================================
+          MAIN
+      ================================================= */}
+
+      <main className="projects-main">
+
+        {/* =================================================
+            TITLE
+        ================================================= */}
+
+        <section className="projects-title-section">
+
+          <div>
+
+            <h1>
+              𝑷𝒓𝒐𝒋𝒆𝒄𝒕𝒔
+            </h1>
+
+            <p>
+              Your analyzed repositories and AI-generated
+              project intelligence.
+            </p>
+
+          </div>
+
+          {!loading && !error && projects.length > 0 && (
+            <div className="projects-count">
+              {projects.length}{" "}
+              {projects.length === 1
+                ? "Project"
+                : "Projects"}
+            </div>
+          )}
+
+        </section>
+
+
+        {/* =================================================
+            LOADING
+        ================================================= */}
+
+        {loading && (
+          <div className="projects-loading">
+            Loading your projects...
+          </div>
+        )}
+
+
+        {/* =================================================
+            ERROR
+        ================================================= */}
+
+        {!loading && error && (
+          <div className="projects-state-card">
+
+            <div className="projects-state-icon">
+              !
+            </div>
+
+            <h2>
+              Unable to load projects
+            </h2>
+
+            <p>
+              {error}
+            </p>
+
+          </div>
+        )}
+
+
+        {/* =================================================
+            EMPTY
+        ================================================= */}
+
+        {!loading &&
+          !error &&
+          projects.length === 0 && (
+            <div className="projects-state-card">
+
+              <div className="projects-state-icon">
+                ◇
+              </div>
+
               <h2>
-                {project.name || "Unnamed Project"}
+                No projects yet
               </h2>
 
               <p>
-                {project.analysis?.projectOverview ||
-                  "No project overview available."}
+                Analyze a GitHub repository to create
+                your first Cortex project.
               </p>
 
-              <div>
-                <strong>Status:</strong>{" "}
-                {project.status || "unknown"}
-              </div>
+            </div>
+          )}
 
-              <div>
-                <strong>Repository:</strong>{" "}
-                {project.owner || "Unknown"}
-              </div>
 
-              <div>
-                <strong>Files:</strong>{" "}
-                {project.metadata?.fileCount || 0}
-              </div>
+        {/* =================================================
+            PROJECT GRID
+        ================================================= */}
 
-              <div style={{ marginTop: "15px" }}>
-                Open Project →
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
+        {!loading &&
+          !error &&
+          projects.length > 0 && (
+
+            <section className="projects-grid">
+
+              {projects.map((project) => {
+
+                const status =
+                  project.status || "unknown";
+
+                const description =
+                  project.analysis?.projectOverview ||
+                  "No project overview available.";
+
+                const fileCount =
+                  project.metadata?.fileCount || 0;
+
+                const sourceFileCount =
+                  project.metadata?.sourceFileCount || 0;
+
+                const defaultBranch =
+                  project.metadata?.defaultBranch ||
+                  "Not specified";
+
+                const owner =
+                  project.owner ||
+                  "Unknown";
+
+                return (
+                  <button
+                    key={project._id}
+                    type="button"
+                    className="project-card"
+                    onClick={() =>
+                      handleProjectClick(project)
+                    }
+                  >
+
+                    {/* CARD TOP */}
+
+                    <div className="project-card-top">
+
+                      <div className="project-card-identity">
+
+                        <div className="project-card-icon">
+                          ◈
+                        </div>
+
+                        <div className="project-card-name">
+
+                          <h2>
+                            {project.name ||
+                              "Unnamed Project"}
+                          </h2>
+
+                          <span>
+                            {owner}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        className={`project-status ${getStatusClass(
+                          status
+                        )}`}
+                      >
+                        {status.replace(/_/g, " ")}
+                      </span>
+
+                    </div>
+
+
+                    {/* DESCRIPTION */}
+
+                    <p className="project-card-description">
+                      {description}
+                    </p>
+
+
+                    {/* METADATA */}
+
+                    <div className="project-card-meta">
+
+                      <div className="project-meta-item">
+
+                        <span>
+                          Files
+                        </span>
+
+                        <strong>
+                          {fileCount}
+                        </strong>
+
+                      </div>
+
+
+                      <div className="project-meta-item">
+
+                        <span>
+                          Source Files
+                        </span>
+
+                        <strong>
+                          {sourceFileCount}
+                        </strong>
+
+                      </div>
+
+
+                      <div className="project-meta-item">
+
+                        <span>
+                          Branch
+                        </span>
+
+                        <strong>
+                          {defaultBranch}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    {/* REPOSITORY */}
+
+                    <div className="project-repository">
+
+                      <span className="project-repository-icon">
+                        ◇
+                      </span>
+
+                      <span>
+                        {project.repositoryUrl ||
+                          "Repository URL unavailable"}
+                      </span>
+
+                    </div>
+
+
+                    {/* ACTION */}
+
+                    <div className="project-card-action">
+
+                      <span>
+                        Open Project
+                      </span>
+
+                      <span>
+                        →
+                      </span>
+
+                    </div>
+
+                  </button>
+                );
+              })}
+
+            </section>
+          )}
+
+      </main>
+
     </div>
   );
 }
