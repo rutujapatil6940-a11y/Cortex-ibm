@@ -524,7 +524,7 @@ function Dashboard({
                   </strong>
 
                   <small>
-                    Upload a ZIP file
+                    Upload a GitHub repository for analysis
                   </small>
 
                 </div>
