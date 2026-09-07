@@ -412,17 +412,11 @@
 
 .dependency-info {
   min-width: 0;
-
   flex: 1;
-
   display: flex;
-
   flex-direction: column;
-
-  align-items: center;
-
+  align-items: flex-start;
   gap: 4px;
-
   text-align: left;
 }
 
