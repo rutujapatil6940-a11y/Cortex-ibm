@@ -61,7 +61,9 @@ function safeAnalysisError(error) {
 }
 
 async function analyzeGitHubRepository(req, res) {
-    const repository = parseGitHubRepositoryUrl(req.body?.repositoryUrl);
+    const repository = parseGitHubRepositoryUrl(
+        req.body?.repositoryUrl
+    );
 
     if (!repository) {
         return res.status(400).json({
@@ -83,39 +85,54 @@ async function analyzeGitHubRepository(req, res) {
     try {
         const {
             repositoryRecord: processed,
-        } = await processGitHubRepository(record, repository);
+        } = await processGitHubRepository(
+            record,
+            repository
+        );
 
         return res.status(200).json({
             success: true,
-            message: "Repository cloned and ready for analysis.",
+            message:
+                "Repository cloned and ready for analysis.",
             analysisId: processed._id,
             status: "workspace_ready",
-            repository: serializeRepository(processed),
+            repository:
+                serializeRepository(processed),
             analysis: {
                 id: processed._id,
                 status: "workspace_ready",
             },
         });
     } catch (error) {
-        return res.status(error.statusCode || 502).json({
+        return res.status(
+            error.statusCode || 502
+        ).json({
             success: false,
             repository: {
                 id: record._id,
                 status: "failed",
                 sourceType: "github",
             },
-            message: error.message || "Repository analysis failed.",
+            message:
+                error.message ||
+                "Repository analysis failed.",
         });
     }
 }
 
-async function analyzeRepositoryWorkspace(req, res) {
-    const analysisId = String(req.params.analysisId || "");
+async function analyzeRepositoryWorkspace(
+    req,
+    res
+) {
+    const analysisId = String(
+        req.params.analysisId || ""
+    );
 
     if (!/^[a-f\d]{24}$/i.test(analysisId)) {
         return res.status(400).json({
             success: false,
-            message: "A valid analysis ID is required.",
+            message:
+                "A valid analysis ID is required.",
         });
     }
 
@@ -127,36 +144,48 @@ async function analyzeRepositoryWorkspace(req, res) {
     if (!record) {
         return res.status(404).json({
             success: false,
-            message: "Repository analysis not found.",
+            message:
+                "Repository analysis not found.",
         });
     }
 
-    if (record.status === "processed" && record.analysis) {
+    if (
+        record.status === "processed" &&
+        record.analysis
+    ) {
         return res.status(200).json({
             success: true,
-            message: "Repository analysis is already complete.",
+            message:
+                "Repository analysis is already complete.",
             analysisId: record._id,
             status: record.status,
-            repository: serializeRepository(record),
-            analysis: serializeAnalysis(record),
+            repository:
+                serializeRepository(record),
+            analysis:
+                serializeAnalysis(record),
         });
     }
 
     if (record.status === "analyzing") {
         return res.status(409).json({
             success: false,
-            message: "Repository analysis is already in progress.",
+            message:
+                "Repository analysis is already in progress.",
         });
     }
 
     if (record.status !== "workspace_ready") {
         return res.status(409).json({
             success: false,
-            message: "Repository workspace is not ready for analysis.",
+            message:
+                "Repository workspace is not ready for analysis.",
         });
     }
 
-    const workspace = getRepositoryWorkspacePath(analysisId);
+    const workspace =
+        getRepositoryWorkspacePath(
+            analysisId
+        );
 
     try {
         record.status = "analyzing";
@@ -164,27 +193,46 @@ async function analyzeRepositoryWorkspace(req, res) {
 
         await record.save();
 
-        await verifyRepositoryWorkspace(workspace);
+        await verifyRepositoryWorkspace(
+            workspace
+        );
 
-        const bobHealth = await runBobHealthCheck();
+        const bobHealth =
+            await runBobHealthCheck();
 
-        console.log("IBM Bob preflight completed", {
-            workspaceId: analysisId,
-            bobVersion: bobHealth.bobVersion,
-            inferenceElapsedMs: bobHealth.inferenceElapsedMs,
-        });
+        console.log(
+            "IBM Bob preflight completed",
+            {
+                workspaceId: analysisId,
+                bobVersion:
+                    bobHealth.bobVersion,
+                inferenceElapsedMs:
+                    bobHealth.inferenceElapsedMs,
+            }
+        );
 
         const repository = {
             owner: record.owner,
             repository: record.name,
-            repositoryUrl: record.repositoryUrl,
-            branch: record.metadata?.defaultBranch,
+            repositoryUrl:
+                record.repositoryUrl,
+            branch:
+                record.metadata
+                    ?.defaultBranch,
         };
 
-        const repositoryContext = await buildRepositoryContext(
-            workspace,
-            repository
-        );
+        const repositoryContext =
+            await buildRepositoryContext(
+                workspace,
+                repository
+            );
+
+        // =========================================
+        // START ANALYSIS TIMER
+        // =========================================
+
+        const analysisStartedAt =
+            Date.now();
 
         const {
             analysis,
@@ -194,7 +242,27 @@ async function analyzeRepositoryWorkspace(req, res) {
             analysisId
         );
 
-        // Existing repository record
+        // =========================================
+        // END ANALYSIS TIMER
+        // =========================================
+
+        const analysisDurationMs =
+            Date.now() -
+            analysisStartedAt;
+
+        console.log(
+            "Repository analysis duration",
+            {
+                workspaceId: analysisId,
+                durationMs:
+                    analysisDurationMs,
+            }
+        );
+
+        // =========================================
+        // EXISTING REPOSITORY RECORD
+        // =========================================
+
         record.analysis = analysis;
         record.status = "processed";
 
@@ -202,91 +270,147 @@ async function analyzeRepositoryWorkspace(req, res) {
             repositoryContext.scan.fileCount;
 
         record.metadata.sourceFileCount =
-            repositoryContext.scan.sourceFileCount;
+            repositoryContext.scan
+                .sourceFileCount;
 
         record.metadata.sourceBytes =
             repositoryContext.scan.sourceBytes;
 
         record.metadata.skippedFiles =
-            repositoryContext.scan.skippedFiles;
+            repositoryContext.scan
+                .skippedFiles;
+
+        record.metadata.analysisDurationMs =
+            analysisDurationMs;
 
         await record.save();
 
-        // Save the completed analysis in Cortex MongoDB
-        const CortexRepository = getCortexRepositoryModel();
+        // =========================================
+        // SAVE COMPLETED ANALYSIS IN CORTEX DB
+        // =========================================
+
+        const CortexRepository =
+            getCortexRepositoryModel();
 
         await CortexRepository.create({
-        userId: req.user.userId,
-        name: record.name,
-        owner: record.owner,
-        repositoryUrl: record.repositoryUrl,
-        sourceType: record.sourceType,
-        status: "processed",
+            userId: req.user.userId,
 
-        metadata: {
-            defaultBranch:
-                record.metadata?.defaultBranch,
+            name: record.name,
 
-            fileCount:
-                record.metadata.fileCount,
+            owner: record.owner,
 
-            sourceFileCount:
-                record.metadata.sourceFileCount,
+            repositoryUrl:
+                record.repositoryUrl,
 
-            sourceBytes:
-                record.metadata.sourceBytes,
+            sourceType:
+                record.sourceType,
 
-            skippedFiles:
-                record.metadata.skippedFiles,
-        },
+            status: "processed",
 
-        analysis: analysis,
+            metadata: {
+                defaultBranch:
+                    record.metadata
+                        ?.defaultBranch,
 
-        repositoryContext: repositoryContext,
+                fileCount:
+                    record.metadata.fileCount,
 
-        error: null,
-    });
+                sourceFileCount:
+                    record.metadata
+                        .sourceFileCount,
 
-        console.log("Cortex repository saved", {
-            repositoryName: record.name,
-            repositoryUrl: record.repositoryUrl,
+                sourceBytes:
+                    record.metadata
+                        .sourceBytes,
+
+                skippedFiles:
+                    record.metadata
+                        .skippedFiles,
+
+                analysisDurationMs:
+                    analysisDurationMs,
+            },
+
+            analysis: analysis,
+
+            repositoryContext:
+                repositoryContext,
+
+            error: null,
         });
+
+        console.log(
+            "Cortex repository saved",
+            {
+                repositoryName:
+                    record.name,
+
+                repositoryUrl:
+                    record.repositoryUrl,
+
+                analysisDurationMs:
+                    analysisDurationMs,
+            }
+        );
 
         return res.status(200).json({
             success: true,
-            message: "Repository analysis completed.",
+            message:
+                "Repository analysis completed.",
+
             analysisId: record._id,
+
             status: record.status,
-            repository: serializeRepository(record),
-            analysis: serializeAnalysis(record),
+
+            repository:
+                serializeRepository(record),
+
+            analysis:
+                serializeAnalysis(record),
         });
     } catch (error) {
-        const analysisError = safeAnalysisError(error);
+        const analysisError =
+            safeAnalysisError(error);
 
         record.status = "failed";
-        record.error = analysisError.message;
+
+        record.error =
+            analysisError.message;
 
         await record.save();
 
-        console.error("Repository analysis failed", {
-            workspaceId: analysisId,
-            message: analysisError.message,
-        });
+        console.error(
+            "Repository analysis failed",
+            {
+                workspaceId: analysisId,
+                message:
+                    analysisError.message,
+            }
+        );
 
-        return res.status(analysisError.statusCode).json({
+        return res.status(
+            analysisError.statusCode
+        ).json({
             success: false,
             analysisId: record._id,
             status: record.status,
-            message: analysisError.message,
+            message:
+                analysisError.message,
         });
     } finally {
         try {
-            await cleanupRepositoryWorkspace(analysisId);
+            await cleanupRepositoryWorkspace(
+                analysisId
+            );
         } catch (cleanupError) {
-            console.error("Repository workspace cleanup failed", {
-                workspaceId: analysisId,
-                message: cleanupError.message,
-            });
+            console.error(
+                "Repository workspace cleanup failed",
+                {
+                    workspaceId: analysisId,
+                    message:
+                        cleanupError.message,
+                }
+            );
         }
     }
 }
