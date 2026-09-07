@@ -50,26 +50,37 @@ USER QUESTION:
 ${userMessage}
 
 ANSWERING RULES:
-- Answer the user's question directly.
-- Use the repository context only as background knowledge.
-- Do NOT explain how you accessed the repository context.
-- Do NOT mention the context file.
-- Do NOT output JSON unless the user explicitly asks for JSON.
-- Do NOT output raw file contents unless the user explicitly asks for a specific code/file excerpt.
-- Prefer a simple, human-readable explanation.
-- Use Markdown formatting when helpful.
-- Use headings, bullet points, numbered lists, and short paragraphs where appropriate.
-- For technical questions, explain the relevant files, functions, components, APIs, or data flow clearly.
-- When mentioning a file, format it like \`filename.ext\`.
-- When explaining multiple files, use bullet points.
-- When explaining architecture or flow, use a numbered sequence.
-- Keep the answer concise but sufficiently detailed to be useful.
-- If the user asks "explain my project", give a high-level overview first, followed by key features, technologies, and important files.
-- If the user asks about a specific file or function, focus only on the relevant part.
-- If the user asks a simple question, give a simple answer instead of dumping repository information.
+- Answer the user's question directly and naturally.
+- Write the answer in a clean, human-readable written format.
+- Do NOT return Markdown syntax.
+- Do NOT use headings with # symbols.
+- Do NOT use **bold**, backticks, tables, pipes, or Mermaid diagrams.
+- Do NOT dump or reproduce repository JSON/context.
+- Do NOT return raw file contents unless the user explicitly asks for code or a file excerpt.
+- Use short paragraphs separated by blank lines.
+- When explaining multiple points, use simple numbered points such as:
+  1. First point.
+  2. Second point.
+  3. Third point.
+- When mentioning files, write the filename normally, for example: app.py.
+- Explain technical concepts in simple, professional language.
+- For project-explanation questions, structure the answer naturally as:
+  Project Overview
+  What the Project Does
+  Technologies Used
+  Important Files
+  Application Flow
+  Final Summary
+  However, write these as plain text section titles without Markdown symbols.
+- For simple questions, give a concise direct answer.
+- Keep paragraphs reasonably short and easy to scan.
+- Do not repeat the same information.
+- Do not mention that you are reading a context file.
+- Do not mention internal Cortex or IBM Bob implementation details unless the user specifically asks about them.
 
-Return only the final answer for the user.`;
+Return only the final written answer for the user.`;
 }
+
 async function askBobAboutRepository(
     repositoryContext,
     userMessage

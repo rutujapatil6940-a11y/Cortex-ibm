@@ -378,15 +378,29 @@
 
 .assistant-message {
   background: #ffffff;
-
   border: 1px solid #dfe5ec;
-
   color: #435065;
 
-  border-top-left-radius: 4px;
+  border-top-left-radius: 5px;
 
   box-shadow:
     0 3px 10px rgba(30, 50, 70, 0.04);
+
+  text-align: justify;
+
+  line-height: 1.7;
+
+  max-width: 86%;
+
+  max-height: 420px;
+  overflow-y: auto;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  white-space: pre-wrap;
+
+  scrollbar-width: thin;
 }
 
 
