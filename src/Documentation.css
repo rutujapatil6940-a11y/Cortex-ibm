@@ -832,9 +832,99 @@
 
 /* ================= PROJECT SELECTOR ================= */
 
+/* ================= PROJECT SELECTOR ================= */
+
 .documentation-project-selector {
   margin-top: 18px;
-  width: 320px;
+  width: 575px;
+}
+
+.documentation-project-selector label {
+  display: block;
+  margin-bottom: 9px;
+
+  color: #27233a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.documentation-project-selector select {
+  width: 100%;
+  height: 56px;
+
+  padding: 0 48px 0 18px;
+
+  border-radius: 12px;
+
+  border: 1.5px solid #c8bfff;
+
+  background: #ffffff;
+
+  color: #17152a;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+
+  outline: none;
+  cursor: pointer;
+
+  appearance: none;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #342fdf 50%),
+    linear-gradient(135deg, #342fdf 50%, transparent 50%);
+  background-position:
+    calc(100% - 23px) 23px,
+    calc(100% - 17px) 23px;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+
+  box-shadow:
+    0 4px 14px rgba(52, 47, 223, 0.06);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.documentation-project-selector select:hover {
+  border-color: #9d8fff;
+
+  box-shadow:
+    0 6px 18px rgba(52, 47, 223, 0.1);
+}
+
+.documentation-project-selector select:focus {
+  border-color: #6f5cff;
+
+  box-shadow:
+    0 0 0 4px rgba(82, 39, 255, 0.1),
+    0 6px 18px rgba(52, 47, 223, 0.1);
+}
+
+.documentation-project-selector select option {
+  background: #ffffff;
+  color: #17152a;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .documentation-project-selector {
+    width: 100%;
+  }
+
+  .documentation-project-selector select {
+    height: 52px;
+  }
 }
 
 .documentation-project-selector label {
