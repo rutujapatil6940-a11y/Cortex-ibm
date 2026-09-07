@@ -758,3 +758,74 @@
     width: 100%;
   }
 }
+
+/* ================= FORCE LEFT ALIGNMENT ================= */
+
+.documentation-page {
+  text-align: left;
+}
+
+.documentation-project-card,
+.documentation-card,
+.documentation-ai-note {
+  text-align: left;
+}
+
+.documentation-heading,
+.documentation-heading > div,
+.documentation-text {
+  text-align: left;
+}
+
+
+/* Architecture */
+.architecture-item {
+  text-align: left;
+}
+
+.architecture-item p {
+  text-align: left;
+}
+
+
+/* Project Modules */
+.documentation-module {
+  text-align: left;
+}
+
+.documentation-module h3,
+.documentation-module p {
+  text-align: left;
+}
+
+
+/* Technologies */
+.documentation-technology {
+  text-align: left;
+}
+
+.technology-top {
+  text-align: left;
+}
+
+.technology-top span,
+.technology-top strong {
+  text-align: left;
+}
+
+
+/* Key Features */
+.feature-item {
+  text-align: left;
+}
+
+.feature-item p {
+  text-align: left;
+}
+
+
+/* AI Note */
+.documentation-ai-note h2,
+.documentation-ai-note p {
+  text-align: left;
+}

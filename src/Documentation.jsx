@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { jsPDF } from "jspdf";
 import "./Documentation.css";
 
 function Documentation({ onBack, analysis }) {
@@ -56,57 +57,227 @@ ${documentation.features.join("\n")}
   };
 
   // DOWNLOAD DOCUMENTATION
-  const handleDownload = () => {
-    const text = `
-CORTEX AI PROJECT
-=================
+  // DOWNLOAD DOCUMENTATION AS PDF
+const handleDownload = () => {
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
 
-PROJECT OVERVIEW
-${documentation.overview}
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
 
-ARCHITECTURE
-${documentation.architecture
-  .map((item) => "- " + item)
-  .join("\n")}
+  const margin = 18;
+  const contentWidth = pageWidth - margin * 2;
+  const bottomMargin = 18;
 
-PROJECT MODULES
-${documentation.modules
-  .map(
-    (module) =>
-      `${module.name}\n${module.description}\n`
-  )
-  .join("\n")}
+  let y = 20;
 
-TECHNOLOGIES
-${documentation.technologies
-  .map(
-    (technology) =>
-      `${technology.name}: ${technology.percentage}%`
-  )
-  .join("\n")}
+  const checkPageBreak = (requiredHeight = 10) => {
+    if (y + requiredHeight > pageHeight - bottomMargin) {
+      pdf.addPage();
+      y = 20;
+    }
+  };
 
-KEY FEATURES
-${documentation.features
-  .map((feature) => "- " + feature)
-  .join("\n")}
-`;
+  const addSectionTitle = (title) => {
+    checkPageBreak(14);
 
-    const blob = new Blob([text], {
-      type: "text/plain",
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(15);
+    pdf.text(title, margin, y);
+
+    y += 9;
+  };
+
+  const addParagraph = (value) => {
+    const content =
+      value || "Not found in the repository.";
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10.5);
+
+    const lines = pdf.splitTextToSize(
+      String(content),
+      contentWidth
+    );
+
+    lines.forEach((line) => {
+      checkPageBreak(6);
+      pdf.text(line, margin, y);
+      y += 5;
     });
 
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Cortex-AI-Documentation.txt";
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+    y += 4;
   };
+
+  const addBullet = (value) => {
+    checkPageBreak(8);
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10.5);
+
+    const lines = pdf.splitTextToSize(
+      String(value),
+      contentWidth - 7
+    );
+
+    lines.forEach((line, index) => {
+      checkPageBreak(6);
+
+      pdf.text(
+        index === 0 ? `- ${line}` : `  ${line}`,
+        margin,
+        y
+      );
+
+      y += 5;
+    });
+  };
+
+  // HEADER
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(22);
+
+  pdf.text(
+    "CORTEX AI PROJECT DOCUMENTATION",
+    margin,
+    y
+  );
+
+  y += 10;
+
+  pdf.setFontSize(16);
+
+  pdf.text(
+    documentation.projectName,
+    margin,
+    y
+  );
+
+  y += 7;
+
+  if (documentation.repository) {
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+
+    const repositoryLines = pdf.splitTextToSize(
+      documentation.repository,
+      contentWidth
+    );
+
+    pdf.text(repositoryLines, margin, y);
+
+    y += repositoryLines.length * 4 + 8;
+  } else {
+    y += 5;
+  }
+
+  // PROJECT OVERVIEW
+  addSectionTitle("PROJECT OVERVIEW");
+  addParagraph(documentation.overview);
+
+  // ARCHITECTURE
+  addSectionTitle("ARCHITECTURE");
+
+  if (documentation.architecture.length > 0) {
+    documentation.architecture.forEach((item) => {
+      addBullet(item);
+    });
+  } else {
+    addParagraph("Not found in the repository.");
+  }
+
+  y += 5;
+
+  // PROJECT MODULES
+  addSectionTitle("PROJECT MODULES");
+
+  if (documentation.modules.length > 0) {
+    documentation.modules.forEach(
+      (module, index) => {
+        checkPageBreak(14);
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11);
+
+        pdf.text(
+          `${index + 1}. ${module.name}`,
+          margin,
+          y
+        );
+
+        y += 6;
+
+        addParagraph(module.description);
+      }
+    );
+  } else {
+    addParagraph("Not found in the repository.");
+  }
+
+  // TECHNOLOGIES
+  addSectionTitle("TECHNOLOGIES");
+
+  if (documentation.technologies.length > 0) {
+    documentation.technologies.forEach(
+      (technology) => {
+        addBullet(
+          `${technology.name} - ${technology.percentage}%`
+        );
+      }
+    );
+  } else {
+    addParagraph("Not found in the repository.");
+  }
+
+  y += 5;
+
+  // KEY FEATURES
+  addSectionTitle("KEY FEATURES");
+
+  if (documentation.features.length > 0) {
+    documentation.features.forEach((feature) => {
+      addBullet(feature);
+    });
+  } else {
+    addParagraph("Not found in the repository.");
+  }
+
+  // FOOTER ON EVERY PAGE
+  const totalPages =
+    pdf.internal.getNumberOfPages();
+
+  for (
+    let pageNumber = 1;
+    pageNumber <= totalPages;
+    pageNumber++
+  ) {
+    pdf.setPage(pageNumber);
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8);
+
+    pdf.text(
+      `Generated by Cortex using Bob AI | Page ${pageNumber} of ${totalPages}`,
+      pageWidth / 2,
+      pageHeight - 8,
+      {
+        align: "center",
+      }
+    );
+  }
+
+  const safeProjectName =
+    documentation.projectName
+      .replace(/[^a-z0-9-_]/gi, "-")
+      .replace(/-+/g, "-");
+
+  pdf.save(
+    `${safeProjectName}-Documentation.pdf`
+  );
+};
 
   // REGENERATE
   const handleRegenerate = () => {
@@ -476,11 +647,9 @@ ${documentation.features
             </h2>
 
             <p>
-              This documentation was generated by
-              analyzing the project structure, modules,
-              technologies and source code. Backend AI
-              integration will provide real repository-based
-              documentation in the future.
+              This documentation was generated by Bob AI
+              using the analyzed project structure, modules,
+              technologies, repository context and source code.
             </p>
 
           </div>
