@@ -695,11 +695,24 @@
     border-radius: 13px;
   }
 
-  .dependencies-card-heading {
-    padding: 18px;
+  .dependencies-card-heading > div:last-child {
+  text-align: left;
+}
 
-    gap: 11px;
-  }
+.dependencies-card-heading h2 {
+  margin: 0;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 650;
+  text-align: left;
+}
+
+.dependencies-card-heading p {
+  margin: 4px 0 0;
+  color: #5f5868;
+  font-size: 12px;
+  text-align: left;
+}
 
   .dependencies-heading-icon {
     width: 37px;
