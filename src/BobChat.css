@@ -765,3 +765,87 @@
     display: none;
   }
 }
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.bob-message {
+  max-width: 86%;
+
+  padding: 14px 17px;
+
+  border-radius: 13px;
+
+  font-size: 13.5px;
+  line-height: 1.65;
+
+  box-sizing: border-box;
+
+  text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  white-space: pre-wrap;
+}
+
+
+/* =====================================================
+   ASSISTANT MESSAGE
+===================================================== */
+
+.assistant-message {
+  background: #ffffff;
+
+  border: 1px solid #dfe5ec;
+
+  color: #435065;
+
+  border-top-left-radius: 5px;
+
+  box-shadow:
+    0 3px 10px rgba(30, 50, 70, 0.04);
+
+  text-align: left;
+
+  /* Better for long repository responses */
+  max-height: 420px;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+}
+
+
+/* Clean scrollbar for long Bob responses */
+
+.assistant-message::-webkit-scrollbar {
+  width: 6px;
+}
+
+.assistant-message::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.assistant-message::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+
+/* =====================================================
+   USER MESSAGE
+===================================================== */
+
+.user-message {
+  max-width: 70%;
+
+  background: #e5f1fb;
+
+  border: 1px solid #c9e1f3;
+
+  color: #245577;
+
+  border-top-right-radius: 5px;
+
+  text-align: left;
+}
