@@ -278,7 +278,7 @@
 
 .dependencies-card-heading {
   display: flex;
-  align-items: left;
+  align-items: flex-start;
 
   gap: 14px;
 
@@ -288,6 +288,57 @@
 
   border-bottom:
     1px solid #ddd5ea;
+
+  text-align: left;
+}
+
+.dependencies-heading-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #d5cbe5;
+
+  color: #681a75;
+
+  font-size: 19px;
+}
+
+.dependencies-card-heading > div:last-child {
+  flex: 1;
+
+  text-align: left !important;
+}
+
+.dependencies-card-heading h2 {
+  margin: 0;
+
+  color: #000000;
+
+  font-size: 18px;
+  font-weight: 650;
+
+  text-align: left !important;
+}
+
+.dependencies-card-heading p {
+  margin: 4px 0 0;
+
+  color: #5f5868;
+
+  font-size: 12px;
+
+  text-align: left !important;
 }
 
 .dependencies-heading-icon {
@@ -694,25 +745,6 @@
   .dependencies-card {
     border-radius: 13px;
   }
-
-  .dependencies-card-heading > div:last-child {
-  text-align: left;
-}
-
-.dependencies-card-heading h2 {
-  margin: 0;
-  color: #000000;
-  font-size: 18px;
-  font-weight: 650;
-  text-align: left;
-}
-
-.dependencies-card-heading p {
-  margin: 4px 0 0;
-  color: #5f5868;
-  font-size: 12px;
-  text-align: left;
-}
 
   .dependencies-heading-icon {
     width: 37px;
