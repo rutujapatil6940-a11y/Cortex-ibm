@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+import AppSidebar from "./AppSidebar";
 import BobChat from "./BobChat";
 import Dashboard from "./Dashboard";
 import Projects from "./Projects";
@@ -520,7 +521,7 @@ function App() {
   // LOGGED-IN APPLICATION
   // =====================================================
 
-  if (isLoggedIn) {
+  const renderAuthenticatedPage = () => {
     switch (page) {
 
       // =================================================
@@ -992,6 +993,17 @@ function App() {
           />
         );
     }
+  };
+
+  if (isLoggedIn) {
+    return (
+      <div className="authenticated-app">
+        <AppSidebar page={page} onNavigate={navigate} />
+        <div className="authenticated-page">
+          {renderAuthenticatedPage()}
+        </div>
+      </div>
+    );
   }
 
   // =====================================================

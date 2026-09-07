@@ -20,6 +20,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.authenticated-app {
+  min-height: 100vh;
+
+  padding-left: 260px;
+
+  background: #f0eefc;
+}
+
+.authenticated-page {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+@media (max-width: 800px) {
+  .authenticated-app {
+    padding-left: 210px;
+  }
+}
+
+@media (max-width: 650px) {
+  .authenticated-app {
+    padding-left: 0;
+  }
+}
+
 button,
 input {
   font-family: inherit;

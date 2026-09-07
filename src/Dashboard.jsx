@@ -2,7 +2,6 @@
 import { useState } from "react";
 import DecryptedText from "./DecryptedText";
 import "./Dashboard.css";
-import logo from "./logo.jpg";
 
 function Dashboard({
   user,
@@ -63,68 +62,6 @@ function Dashboard({
 
   return (
     <div className="dashboard">
-
-      {/* ================= SIDEBAR ================= */}
-      <aside className="sidebar">
-
-        {/* LOGO */}
-        <div className="brand">
-          <img
-            src={logo}
-            alt="Cortex Logo"
-            className="brand-logo"
-          />
-
-          <span className="brand-name">
-            Cortex
-          </span>
-        </div>
-
-        {/* NAVIGATION */}
-        <nav className="sidebar-nav">
-
-          <button
-            className="nav-item active"
-            type="button"
-            onClick={() => navigate("dashboard")}
-          >
-            <span>⌂</span>
-            Dashboard
-          </button>
-
-          <button
-            className="nav-item"
-            type="button"
-            onClick={() => navigate("projects")}
-          >
-            <span>▣</span>
-            Projects
-          </button>
-
-          <button
-            className="nav-item"
-            type="button"
-            onClick={() => navigate("bob")}
-          >
-            <span>✦</span>
-            Bob Chat
-          </button>
-
-          <button
-            className="nav-item"
-            type="button"
-            onClick={() => navigate("documentation")}
-          >
-            <span>▤</span>
-            Documentation
-          </button>
-
-        </nav>
-
-        <div className="sidebar-bottom"></div>
-      </aside>
-
-
       {/* ================= MAIN ================= */}
       <main className="dashboard-main">
 

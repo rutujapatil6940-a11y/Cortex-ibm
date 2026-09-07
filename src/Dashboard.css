@@ -176,7 +176,7 @@ body {
 .dashboard-main {
   position: relative;
 
-  margin-left: 260px;
+  margin-left: 0;
 
   min-height: 100vh;
 
@@ -1129,14 +1129,6 @@ body {
 
 @media (max-width: 800px) {
 
-  .sidebar {
-    width: 210px;
-  }
-
-  .dashboard-main {
-    margin-left: 210px;
-  }
-
   .topbar {
     padding: 0 20px;
   }
@@ -1156,14 +1148,6 @@ body {
 
 
 @media (max-width: 650px) {
-
-  .sidebar {
-    display: none;
-  }
-
-  .dashboard-main {
-    margin-left: 0;
-  }
 
   .topbar {
     height: auto;
