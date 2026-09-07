@@ -264,13 +264,57 @@ function Dashboard({
     return `${years}y`;
   };
 
-  const lastScanTime =
-    latestProject
-      ? formatRelativeTime(
-          latestProject.updatedAt ||
-            latestProject.createdAt
-        )
-      : "—";
+  const formatDuration = (milliseconds) => {
+      if (
+        !milliseconds ||
+        milliseconds <= 0
+      ) {
+        return "—";
+      }
+
+      const totalSeconds = Math.floor(
+        milliseconds / 1000
+      );
+
+      const hours = Math.floor(
+        totalSeconds / 3600
+      );
+
+      const minutes = Math.floor(
+        (totalSeconds % 3600) / 60
+      );
+
+      const seconds =
+        totalSeconds % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+      }
+
+      if (minutes > 0) {
+        return `${minutes}m ${String(
+          seconds
+        ).padStart(2, "0")}s`;
+      }
+
+      return `${seconds}s`;
+    };
+
+    const lastScanDuration =
+      latestProject
+        ? formatDuration(
+            latestProject.metadata
+              ?.analysisDurationMs
+          )
+        : "—";
+
+    const lastScanAgo =
+      latestProject
+        ? formatRelativeTime(
+            latestProject.updatedAt ||
+              latestProject.createdAt
+          )
+        : "—";
 
   // =========================================
   // CURRENT / RECENT REPOSITORIES
@@ -579,18 +623,16 @@ function Dashboard({
 
               <div>
 
-                <span className="stat-title">
-                  Projects
-                </span>
-
                 <h2>
                   {projectsLoading
                     ? "—"
-                    : totalProjects}
+                    : lastScanDuration}
                 </h2>
 
                 <span className="stat-change">
-                  Total analyzed projects
+                  {latestProject
+                    ? `${lastScanAgo} ago`
+                    : "No scan yet"}
                 </span>
 
               </div>
@@ -685,7 +727,7 @@ function Dashboard({
               <div>
 
                 <span className="stat-title">
-                  Last Scan
+                  Last Scan 
                 </span>
 
                 <h2>
