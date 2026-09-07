@@ -1041,21 +1041,31 @@
 ===================================================== */
 
 /* Project information */
+/* ================= PROJECT INFO FIX ================= */
+
 .project-info-card {
-  justify-content: center !important;
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between !important;
+  position: static;
 }
 
 .project-info-left {
+  display: flex;
+  align-items: center;
   justify-content: center !important;
+  flex: 1;
+  text-align: center !important;
+}
+
+.project-info-left > div:last-child {
   text-align: center !important;
 }
 
 .reanalyze-button {
-  position: absolute;
-  right: 24px;
+  position: static;
+  flex-shrink: 0;
 }
-
 
 /* Statistics */
 .overview-stat-card {
