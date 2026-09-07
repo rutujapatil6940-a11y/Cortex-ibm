@@ -193,6 +193,10 @@ function Dashboard({
   const latestProject =
     getLatestProject();
 
+  // =========================================
+  // RELATIVE TIME
+  // =========================================
+
   const formatRelativeTime = (dateValue) => {
     if (!dateValue) {
       return "—";
@@ -264,57 +268,61 @@ function Dashboard({
     return `${years}y`;
   };
 
+  // =========================================
+  // ANALYSIS DURATION
+  // =========================================
+
   const formatDuration = (milliseconds) => {
-      if (
-        !milliseconds ||
-        milliseconds <= 0
-      ) {
-        return "—";
-      }
+    if (
+      !milliseconds ||
+      milliseconds <= 0
+    ) {
+      return "—";
+    }
 
-      const totalSeconds = Math.floor(
-        milliseconds / 1000
-      );
+    const totalSeconds = Math.floor(
+      milliseconds / 1000
+    );
 
-      const hours = Math.floor(
-        totalSeconds / 3600
-      );
+    const hours = Math.floor(
+      totalSeconds / 3600
+    );
 
-      const minutes = Math.floor(
-        (totalSeconds % 3600) / 60
-      );
+    const minutes = Math.floor(
+      (totalSeconds % 3600) / 60
+    );
 
-      const seconds =
-        totalSeconds % 60;
+    const seconds =
+      totalSeconds % 60;
 
-      if (hours > 0) {
-        return `${hours}h ${minutes}m`;
-      }
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
 
-      if (minutes > 0) {
-        return `${minutes}m ${String(
-          seconds
-        ).padStart(2, "0")}s`;
-      }
+    if (minutes > 0) {
+      return `${minutes}m ${String(
+        seconds
+      ).padStart(2, "0")}s`;
+    }
 
-      return `${seconds}s`;
-    };
+    return `${seconds}s`;
+  };
 
-    const lastScanDuration =
-      latestProject
-        ? formatDuration(
-            latestProject.metadata
-              ?.analysisDurationMs
-          )
-        : "—";
+  const lastScanDuration =
+    latestProject
+      ? formatDuration(
+          latestProject.metadata
+            ?.analysisDurationMs
+        )
+      : "—";
 
-    const lastScanAgo =
-      latestProject
-        ? formatRelativeTime(
-            latestProject.updatedAt ||
-              latestProject.createdAt
-          )
-        : "—";
+  const lastScanAgo =
+    latestProject
+      ? formatRelativeTime(
+          latestProject.updatedAt ||
+            latestProject.createdAt
+        )
+      : "—";
 
   // =========================================
   // CURRENT / RECENT REPOSITORIES
@@ -623,16 +631,18 @@ function Dashboard({
 
               <div>
 
+                <span className="stat-title">
+                  Projects
+                </span>
+
                 <h2>
                   {projectsLoading
                     ? "—"
-                    : lastScanDuration}
+                    : totalProjects}
                 </h2>
 
                 <span className="stat-change">
-                  {latestProject
-                    ? `${lastScanAgo} ago`
-                    : "No scan yet"}
+                  Total analyzed projects
                 </span>
 
               </div>
@@ -727,18 +737,18 @@ function Dashboard({
               <div>
 
                 <span className="stat-title">
-                  Last Scan 
+                  Last Scan
                 </span>
 
                 <h2>
                   {projectsLoading
                     ? "—"
-                    : lastScanTime}
+                    : lastScanDuration}
                 </h2>
 
                 <span className="stat-change">
                   {latestProject
-                    ? "Completed"
+                    ? `${lastScanAgo} ago`
                     : "No scan yet"}
                 </span>
 
