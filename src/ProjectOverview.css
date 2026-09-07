@@ -292,7 +292,7 @@
 }
 
 .project-info-left > div:last-child {
-  text-align: center;
+  text-align: left;
 }
 
 .project-info-card h2 {
@@ -318,7 +318,7 @@
 
   font-size: 12px;
 
-  text-align: center;
+  text-align: left;
 }
 
 
