@@ -491,7 +491,7 @@
 
   margin-bottom: 20px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .heading-symbol {
@@ -516,7 +516,7 @@
 
   font-size: 17px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .overview-card-heading p {
@@ -526,7 +526,7 @@
 
   font-size: 12px;
 
-  text-align: center;
+  text-align: left;
 }
 
 
@@ -543,7 +543,7 @@
 
   line-height: 1.75;
 
-  text-align: center;
+  text-align: left;
 }
 
 .summary-text:last-child {
@@ -574,7 +574,7 @@
 
   font-size: 13px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .technology-name {
@@ -585,7 +585,7 @@
 
   gap: 9px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .tech-icon {
@@ -675,7 +675,7 @@
 
   border: 1px solid rgba(52, 47, 223, 0.07);
 
-  text-align: center;
+  text-align: left;
 
   cursor: pointer;
 }
@@ -697,7 +697,7 @@
 
 .module-item > div:nth-child(2) {
   flex: 1;
-  text-align: center;
+  text-align: left;
 }
 
 .module-item strong {
@@ -707,7 +707,7 @@
 
   font-size: 13px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .module-item span {
@@ -719,7 +719,7 @@
 
   font-size: 11px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .module-item b {
@@ -744,7 +744,7 @@
 
   margin-bottom: 14px;
 
-  text-align: center;
+  text-align: left;
 }
 
 .insight-item p {
@@ -757,7 +757,7 @@
 
   line-height: 1.5;
 
-  text-align: center;
+  text-align: left;
 }
 
 .insight-item::after {
@@ -850,7 +850,7 @@
   box-shadow:
     0 8px 26px rgba(52, 47, 223, 0.05);
 
-  text-align: center;
+  text-align: left;
 }
 
 .next-actions h2 {
