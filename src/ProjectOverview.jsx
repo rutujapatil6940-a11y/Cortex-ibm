@@ -8,39 +8,122 @@ function ProjectOverview({
   analysis,
 }) {
   const emptyProject = {
-    name: "Analysis unavailable", description: "No repository analysis has been returned.", repository: "",
-    files: 0, lines: "—", languages: 0, moduleCount: 0, technologies: [], modules: [], summary: [], insights: [],
+    name: "Analysis unavailable",
+    description: "No repository analysis has been returned.",
+    repository: "",
+    files: 0,
+    lines: "—",
+    languages: 0,
+    moduleCount: 0,
+    technologies: [],
+    modules: [],
+    summary: [],
+    insights: [],
   };
 
   const list = (value) => (Array.isArray(value) ? value : []);
-  const values = (items, keys) => list(items).map((item) => {
-    if (typeof item === "string") return item;
-    return keys.map((key) => item?.[key]).find(Boolean) || "Not found in the repository.";
-  });
 
-  const analyzedTechnologies = values(analysis?.technologiesUsed, ["name", "technology", "package"]);
-  const analyzedModules = list(analysis?.importantFunctionsAndComponents).map((item) => ({
-    name: typeof item === "string" ? item : item?.name || item?.component || "Component",
-    description: typeof item === "string" ? "No component description was returned." : item?.purpose || item?.behavior || "No component description was returned.",
+  const values = (items, keys) =>
+    list(items).map((item) => {
+      if (typeof item === "string") return item;
+
+      return (
+        keys.map((key) => item?.[key]).find(Boolean) ||
+        "Not found in the repository."
+      );
+    });
+
+  const analyzedTechnologies = values(
+    analysis?.technologiesUsed,
+    ["name", "technology", "package"]
+  );
+
+  const analyzedModules = list(
+    analysis?.importantFunctionsAndComponents
+  ).map((item) => ({
+    name:
+      typeof item === "string"
+        ? item
+        : item?.name ||
+          item?.component ||
+          "Component",
+
+    description:
+      typeof item === "string"
+        ? "No component description was returned."
+        : item?.purpose ||
+          item?.behavior ||
+          "No component description was returned.",
   }));
-  const project = analysis ? {
-    ...emptyProject,
-    name: analysis.projectName || analysis.repository?.name || "Not found in the repository.",
-    description: analysis.projectOverview || "Not found in the repository.",
-    repository: analysis.repository?.repositoryUrl || "",
-    files: analysis.repository?.metadata?.fileCount || 0,
-    lines: analysis.repository?.metadata?.sourceBytes ? `${Math.round(analysis.repository.metadata.sourceBytes / 1024)} KB` : "—",
-    languages: analyzedTechnologies.length,
-    moduleCount: analyzedModules.length,
-    technologies: analyzedTechnologies.map((name, index, all) => ({
-      name,
-      percentage: Math.round(100 / all.length),
-      type: "js",
-    })),
-    modules: analyzedModules,
-    summary: [analysis.projectOverview, ...values(analysis.howTheProjectWorks, ["description", "purpose"])].filter(Boolean).slice(0, 3),
-    insights: values(analysis.potentialImportantNotes, ["text", "note", "description"]).slice(0, 3).map((text) => ({ type: "success", text })),
-  } : emptyProject;
+
+  const project = analysis
+    ? {
+        ...emptyProject,
+
+        name:
+          analysis.projectName ||
+          analysis.repository?.name ||
+          "Not found in the repository.",
+
+        description:
+          analysis.projectOverview ||
+          "Not found in the repository.",
+
+        repository:
+          analysis.repository?.repositoryUrl || "",
+
+        files:
+          analysis.repository?.metadata?.fileCount || 0,
+
+        lines:
+          analysis.repository?.metadata?.sourceBytes
+            ? `${Math.round(
+                analysis.repository.metadata.sourceBytes / 1024
+              )} KB`
+            : "—",
+
+        languages:
+          analyzedTechnologies.length,
+
+        moduleCount:
+          analyzedModules.length,
+
+        technologies:
+          analyzedTechnologies.map(
+            (name, index, all) => ({
+              name,
+              percentage: Math.round(
+                100 / all.length
+              ),
+              type: "js",
+            })
+          ),
+
+        modules:
+          analyzedModules,
+
+        summary: [
+          analysis.projectOverview,
+          ...values(
+            analysis.howTheProjectWorks,
+            ["description", "purpose"]
+          ),
+        ]
+          .filter(Boolean)
+          .slice(0, 3),
+
+        insights:
+          values(
+            analysis.potentialImportantNotes,
+            ["text", "note", "description"]
+          )
+            .slice(0, 3)
+            .map((text) => ({
+              type: "success",
+              text,
+            })),
+      }
+    : emptyProject;
 
   const handleReAnalyze = onBack;
 
@@ -76,7 +159,6 @@ function ProjectOverview({
           <span>Cortex</span>
         </div>
 
-      
       </header>
 
       {/* MAIN */}
@@ -85,10 +167,10 @@ function ProjectOverview({
         {/* TITLE */}
         <section className="project-title-section">
 
-          <div>
-            <h1>𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑶𝒗𝒆𝒓𝒗𝒊𝒆𝒘</h1>
-
-            
+          <div className="project-title-content">
+            <h1>
+              𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑶𝒗𝒆𝒓𝒗𝒊𝒆𝒘
+            </h1>
           </div>
 
           <div className="analysis-status">
@@ -122,7 +204,9 @@ function ProjectOverview({
                 target="_blank"
                 rel="noreferrer"
                 className="repository-url"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
               >
                 {project.repository}
               </a>
@@ -145,38 +229,54 @@ function ProjectOverview({
         <section className="overview-stats">
 
           <div className="overview-stat-card">
-            <div className="overview-stat-icon">◫</div>
+            <div className="overview-stat-icon">
+              ◫
+            </div>
 
             <div>
               <span>Files</span>
-              <strong>{project.files}</strong>
+              <strong>
+                {project.files}
+              </strong>
             </div>
           </div>
 
           <div className="overview-stat-card">
-            <div className="overview-stat-icon">#</div>
+            <div className="overview-stat-icon">
+              #
+            </div>
 
             <div>
               <span>Lines of Code</span>
-              <strong>{project.lines}</strong>
+              <strong>
+                {project.lines}
+              </strong>
             </div>
           </div>
 
           <div className="overview-stat-card">
-            <div className="overview-stat-icon">◉</div>
+            <div className="overview-stat-icon">
+              ◉
+            </div>
 
             <div>
               <span>Languages</span>
-              <strong>{project.languages}</strong>
+              <strong>
+                {project.languages}
+              </strong>
             </div>
           </div>
 
           <div className="overview-stat-card">
-            <div className="overview-stat-icon">⬡</div>
+            <div className="overview-stat-icon">
+              ⬡
+            </div>
 
             <div>
               <span>Modules</span>
-              <strong>{project.moduleCount}</strong>
+              <strong>
+                {project.moduleCount}
+              </strong>
             </div>
           </div>
 
@@ -195,7 +295,9 @@ function ProjectOverview({
               </div>
 
               <div>
-                <h2>Project Summary</h2>
+                <h2>
+                  Project Summary
+                </h2>
 
                 <p>
                   AI-generated project understanding
@@ -205,14 +307,16 @@ function ProjectOverview({
             </div>
 
             <div>
-              {project.summary.map((text, index) => (
-                <p
-                  className="summary-text"
-                  key={index}
-                >
-                  {text}
-                </p>
-              ))}
+              {project.summary.map(
+                (text, index) => (
+                  <p
+                    className="summary-text"
+                    key={index}
+                  >
+                    {text}
+                  </p>
+                )
+              )}
             </div>
 
           </div>
@@ -227,7 +331,9 @@ function ProjectOverview({
               </div>
 
               <div>
-                <h2>Technologies</h2>
+                <h2>
+                  Technologies
+                </h2>
 
                 <p>
                   Detected technologies
@@ -295,7 +401,9 @@ function ProjectOverview({
               </div>
 
               <div>
-                <h2>Project Modules</h2>
+                <h2>
+                  Project Modules
+                </h2>
 
                 <p>
                   Main components detected
@@ -333,7 +441,9 @@ function ProjectOverview({
                       </span>
                     </div>
 
-                    <b>→</b>
+                    <b>
+                      →
+                    </b>
 
                   </button>
                 )
@@ -353,7 +463,9 @@ function ProjectOverview({
               </div>
 
               <div>
-                <h2>AI Insights</h2>
+                <h2>
+                  AI Insights
+                </h2>
 
                 <p>
                   Bob AI findings
@@ -418,13 +530,17 @@ function ProjectOverview({
               }}
             >
 
-              <span>◫</span>
+              <span>
+                ◫
+              </span>
 
               <div>
                 Generate Documentation
               </div>
 
-              <b>→</b>
+              <b>
+                →
+              </b>
 
             </button>
 
@@ -439,13 +555,17 @@ function ProjectOverview({
               }}
             >
 
-              <span>◈</span>
+              <span>
+                ◈
+              </span>
 
               <div>
                 Explore Code Structure
               </div>
 
-              <b>→</b>
+              <b>
+                →
+              </b>
 
             </button>
 
@@ -456,13 +576,17 @@ function ProjectOverview({
               onClick={handleDependencies}
             >
 
-              <span>⬡</span>
+              <span>
+                ⬡
+              </span>
 
               <div>
                 View Dependencies
               </div>
 
-              <b>→</b>
+              <b>
+                →
+              </b>
 
             </button>
 

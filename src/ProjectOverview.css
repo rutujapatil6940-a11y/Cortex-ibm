@@ -151,9 +151,11 @@
   gap: 20px;
 
   margin-bottom: 28px;
+
+  text-align: left;
 }
 
-.project-title-section > div:first-child {
+.project-title-content {
   align-self: stretch;
   text-align: left;
 }
@@ -164,6 +166,8 @@
   color: #77738c;
 
   font-size: 13px;
+
+  text-align: left;
 }
 
 .project-title-section h1 {
@@ -175,6 +179,8 @@
   font-weight: 700;
 
   letter-spacing: -0.8px;
+
+  text-align: left;
 }
 
 .project-title-section p {
@@ -183,8 +189,9 @@
   color: #716d83;
 
   font-size: 15px;
-}
 
+  text-align: left;
+}
 
 /* =====================================================
    STATUS
@@ -959,10 +966,17 @@
   }
 
   .project-title-section {
-    align-items: center;
+  align-items: flex-start;
 
-    flex-direction: column;
-  }
+  flex-direction: column;
+
+  text-align: left;
+}
+
+.project-title-content {
+  width: 100%;
+  text-align: left;
+}
 
   .analysis-status {
     position: static;
