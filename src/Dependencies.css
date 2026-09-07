@@ -167,7 +167,7 @@
   display: flex;
   position: relative;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
   gap: 20px;
 
@@ -175,7 +175,8 @@
 }
 
 .dependencies-title > div:first-child {
-  text-align: center;
+  align-self: stretch;
+  text-align: left;
 }
 
 

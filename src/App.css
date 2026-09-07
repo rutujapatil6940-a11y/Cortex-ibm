@@ -44,6 +44,11 @@ body {
   display: none;
 }
 
+.authenticated-page .temporary-card > h1,
+.authenticated-page .temporary-card > h1 + p {
+  text-align: left;
+}
+
 @media (max-width: 800px) {
   .authenticated-app {
     padding-left: 210px;
