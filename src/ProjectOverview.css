@@ -156,7 +156,10 @@
 }
 
 .project-title-content {
+  width: 100%;
+
   align-self: stretch;
+
   text-align: left;
 }
 
@@ -192,6 +195,7 @@
 
   text-align: left;
 }
+
 
 /* =====================================================
    STATUS
@@ -966,24 +970,27 @@
   }
 
   .project-title-section {
-  align-items: flex-start;
+    align-items: flex-start;
 
-  flex-direction: column;
+    flex-direction: column;
 
-  text-align: left;
-}
+    text-align: left;
+  }
 
-.project-title-content {
-  width: 100%;
-  text-align: left;
-}
+  .project-title-content {
+    width: 100%;
 
-  .analysis-status {
-    position: static;
+    text-align: left;
   }
 
   .project-title-section h1 {
     font-size: 30px;
+
+    text-align: left;
+  }
+
+  .analysis-status {
+    position: static;
   }
 
   .project-info-card {

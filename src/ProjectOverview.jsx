@@ -21,7 +21,8 @@ function ProjectOverview({
     insights: [],
   };
 
-  const list = (value) => (Array.isArray(value) ? value : []);
+  const list = (value) =>
+    Array.isArray(value) ? value : [];
 
   const values = (items, keys) =>
     list(items).map((item) => {
