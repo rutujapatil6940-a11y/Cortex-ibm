@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./BobChat.css";
-
+import ReactMarkdown from "react-markdown";
+import "./BobChat.css";
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000"
 ).replace(/\/+$/, "");
@@ -378,7 +379,13 @@ function BobChat({ onBack, projectId }) {
                         : "assistant-message"
                     }`}
                   >
-                    {item.text}
+                    {item.type === "user" ? (
+                      item.text
+                    ) : (
+                      <ReactMarkdown>
+                        {item.text}
+                      </ReactMarkdown>
+                    )}
                   </div>
 
                 </div>
@@ -398,6 +405,21 @@ function BobChat({ onBack, projectId }) {
               </div>
             )}
 
+          </div>
+          <div
+            className={`bob-message ${
+              item.type === "user"
+                ? "user-message"
+                : "assistant-message"
+            }`}
+          >
+            {item.type === "user" ? (
+              item.text
+            ) : (
+              <ReactMarkdown>
+                {item.text}
+              </ReactMarkdown>
+            )}
           </div>
 
           {/* QUICK QUESTIONS */}

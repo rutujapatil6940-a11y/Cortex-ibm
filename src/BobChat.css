@@ -402,7 +402,222 @@
 
   scrollbar-width: thin;
 }
+/* =====================================================
+   BOB MARKDOWN CONTENT
+===================================================== */
 
+.assistant-message {
+  text-align: left;
+  line-height: 1.7;
+}
+
+.assistant-message > *:first-child {
+  margin-top: 0;
+}
+
+.assistant-message > *:last-child {
+  margin-bottom: 0;
+}
+
+
+/* HEADINGS */
+
+.assistant-message h1,
+.assistant-message h2,
+.assistant-message h3,
+.assistant-message h4 {
+  margin: 18px 0 8px;
+
+  color: #172033;
+
+  line-height: 1.35;
+
+  font-weight: 700;
+}
+
+.assistant-message h1 {
+  font-size: 20px;
+}
+
+.assistant-message h2 {
+  font-size: 17px;
+}
+
+.assistant-message h3 {
+  font-size: 15px;
+}
+
+.assistant-message h4 {
+  font-size: 14px;
+}
+
+
+/* PARAGRAPHS */
+
+.assistant-message p {
+  margin: 0 0 12px;
+
+  color: #435065;
+
+  line-height: 1.7;
+
+  text-align: left;
+}
+
+
+/* BOLD */
+
+.assistant-message strong {
+  color: #172033;
+  font-weight: 700;
+}
+
+
+/* LISTS */
+
+.assistant-message ul,
+.assistant-message ol {
+  margin: 8px 0 14px;
+
+  padding-left: 24px;
+
+  text-align: left;
+}
+
+.assistant-message li {
+  margin: 5px 0;
+
+  padding-left: 3px;
+
+  line-height: 1.6;
+}
+
+
+/* INLINE CODE */
+
+.assistant-message code {
+  padding: 2px 6px;
+
+  border-radius: 5px;
+
+  background: #f1f5f9;
+
+  color: #315a78;
+
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+
+  font-size: 12px;
+}
+
+
+/* CODE BLOCK */
+
+.assistant-message pre {
+  margin: 12px 0;
+
+  padding: 14px;
+
+  border-radius: 9px;
+
+  background: #f6f8fa;
+
+  border: 1px solid #e1e7ee;
+
+  overflow-x: auto;
+
+  text-align: left;
+}
+
+.assistant-message pre code {
+  padding: 0;
+
+  background: transparent;
+
+  color: #26364a;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+
+  white-space: pre;
+}
+
+
+/* LINKS */
+
+.assistant-message a {
+  color: #1976b8;
+
+  text-decoration: underline;
+}
+
+
+/* BLOCKQUOTE */
+
+.assistant-message blockquote {
+  margin: 12px 0;
+
+  padding: 8px 14px;
+
+  border-left: 3px solid #9bbbd3;
+
+  background: #f7fafc;
+
+  color: #5d6b7d;
+}
+
+
+/* HORIZONTAL LINE */
+
+.assistant-message hr {
+  margin: 16px 0;
+
+  border: 0;
+
+  border-top: 1px solid #e3e8ee;
+}
+
+
+/* TABLE */
+
+.assistant-message table {
+  width: 100%;
+
+  margin: 14px 0;
+
+  border-collapse: collapse;
+
+  font-size: 12.5px;
+
+  text-align: left;
+}
+
+.assistant-message th,
+.assistant-message td {
+  padding: 8px 10px;
+
+  border: 1px solid #dfe5ec;
+
+  text-align: left;
+
+  vertical-align: top;
+}
+
+.assistant-message th {
+  background: #f5f8fb;
+
+  color: #172033;
+
+  font-weight: 700;
+}
+
+.assistant-message td {
+  color: #435065;
+}
 
 /* =====================================================
    USER MESSAGE
