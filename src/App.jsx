@@ -4,6 +4,7 @@ import "./App.css";
 
 import BobChat from "./BobChat";
 import Dashboard from "./Dashboard";
+import Projects from "./Projects";
 import AnalyzeRepository from "./AnalyzeRepository";
 import ProjectOverview from "./ProjectOverview";
 import AIAnalysis from "./AIAnalysis";
@@ -559,37 +560,62 @@ function App() {
       // =================================================
 
       case "projects":
-        return (
-          <ProjectOverview
-            onBack={() => navigate("upload")}
-            analysis={analysis}
+      return (
+        <Projects
+          onBack={() => navigate("dashboard")}
+          onSelectProject={(selectedProject) => {
+            setAnalysis({
+              ...selectedProject.analysis,
+              id: selectedProject._id,
+              status: selectedProject.status,
+              repository: {
+                name: selectedProject.name,
+                owner: selectedProject.owner,
+                repositoryUrl: selectedProject.repositoryUrl,
+                status: selectedProject.status,
+                metadata: selectedProject.metadata,
+              },
+              repositoryContext:
+                selectedProject.repositoryContext,
+            });
 
-            onDocumentation={() =>
-              navigate("documentation")
-            }
+            navigate("project-overview");
+          }}
+        />
+      );
 
-            onDetailedAnalysis={() =>
-              navigate("detailed-analysis")
-            }
+      case "project-overview":
+      return (
+        <ProjectOverview
+          onBack={() => navigate("projects")}
+          analysis={analysis}
 
-            onCodeStructure={() =>
-              navigate("code-structure")
-            }
+          onDocumentation={() =>
+            navigate("documentation")
+          }
 
-            onDependencies={() =>
-              navigate("dependencies")
-            }
+          onDetailedAnalysis={() =>
+            navigate("detailed-analysis")
+          }
 
-            onAIAnalysis={() =>
-              navigate("ai-analysis")
-            }
+          onCodeStructure={() =>
+            navigate("code-structure")
+          }
 
-            onBobChat={() =>
-              navigate("bob")
-            }
-          />
-        );
+          onDependencies={() =>
+            navigate("dependencies")
+          }
 
+          onAIAnalysis={() =>
+            navigate("ai-analysis")
+          }
+
+          onBobChat={() =>
+            navigate("bob")
+          }
+        />
+      );
+      
       // =================================================
       // AI ANALYSIS
       // =================================================
