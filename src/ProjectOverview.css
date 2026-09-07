@@ -984,3 +984,54 @@
 .next-action b {
   margin-left: 0;
 }
+
+/* ================= FINAL CENTER ALIGNMENT ================= */
+
+.project-overview-page {
+  text-align: center !important;
+}
+
+.project-overview-page .project-title-section,
+.project-overview-page .project-title-section > div,
+.project-overview-page .project-info-card,
+.project-overview-page .project-info-left,
+.project-overview-page .project-info-left > div,
+.project-overview-page .overview-stat-card,
+.project-overview-page .overview-card,
+.project-overview-page .overview-card-heading,
+.project-overview-page .overview-card-heading > div,
+.project-overview-page .summary-text,
+.project-overview-page .technology-row,
+.project-overview-page .module-item,
+.project-overview-page .module-item > div,
+.project-overview-page .insight-item,
+.project-overview-page .insight-item p,
+.project-overview-page .next-actions,
+.project-overview-page .next-action,
+.project-overview-page .next-action div {
+  text-align: center !important;
+}
+
+.project-overview-page .overview-card-heading {
+  justify-content: center !important;
+}
+
+.project-overview-page .project-info-left {
+  justify-content: center !important;
+}
+
+.project-overview-page .technology-name {
+  justify-content: center !important;
+}
+
+.project-overview-page .module-item {
+  justify-content: center !important;
+}
+
+.project-overview-page .insight-item {
+  justify-content: center !important;
+}
+
+.project-overview-page .next-action {
+  justify-content: center !important;
+}
