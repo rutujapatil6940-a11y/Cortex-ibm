@@ -273,7 +273,7 @@
 
 .dependencies-card-heading {
   display: flex;
-  align-items: center;
+  align-items: left;
 
   gap: 14px;
 
@@ -423,7 +423,7 @@
 
   gap: 4px;
 
-  text-align: center;
+  text-align: left;
 }
 
 
