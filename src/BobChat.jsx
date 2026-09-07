@@ -1,9 +1,20 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./BobChat.css";
 
-function BobChat({ onBack }) {
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
+
+function BobChat({ onBack, projectId }) {
   const [message, setMessage] = useState("");
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] =
+    useState(projectId || "");
+
+  const [projectsLoading, setProjectsLoading] =
+    useState(true);
+
+  const [sending, setSending] = useState(false);
 
   const [messages, setMessages] = useState([
     {
@@ -13,13 +24,84 @@ function BobChat({ onBack }) {
   ]);
 
   // =========================================
+  // LOAD PROJECTS
+  // =========================================
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const token =
+          localStorage.getItem("token");
+
+        const response = await fetch(
+          `${API_URL}/api/projects`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Failed to load projects"
+          );
+        }
+
+        const loadedProjects =
+          data.projects || [];
+
+        setProjects(loadedProjects);
+
+        if (
+          projectId &&
+          loadedProjects.some(
+            (project) =>
+              project._id === projectId
+          )
+        ) {
+          setSelectedProjectId(projectId);
+        } else if (loadedProjects.length > 0) {
+          setSelectedProjectId(
+            loadedProjects[0]._id
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Bob Chat project loading error:",
+          error
+        );
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, [projectId]);
+
+  // =========================================
   // SEND MESSAGE
   // =========================================
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = message.trim();
 
-    if (!text) return;
+    if (!text || sending) return;
+
+    if (!selectedProjectId) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "bob",
+          text: "Please select a project before asking Bob a question.",
+        },
+      ]);
+
+      return;
+    }
 
     setMessages((prev) => [
       ...prev,
@@ -27,13 +109,68 @@ function BobChat({ onBack }) {
         type: "user",
         text,
       },
-      {
-        type: "bob",
-        text: "Repository analysis is available from the Analyze Repository page. Use it first, then review the AI-generated results in Cortex.",
-      },
     ]);
 
     setMessage("");
+    setSending(true);
+
+    try {
+      const token =
+        localStorage.getItem("token");
+
+      const response = await fetch(
+        `${API_URL}/api/bob-chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            projectId:
+              selectedProjectId,
+            message: text,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Bob could not answer."
+        );
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "bob",
+          text:
+            data.answer ||
+            "Bob returned an empty response.",
+        },
+      ]);
+    } catch (error) {
+      console.error(
+        "Bob Chat request error:",
+        error
+      );
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "bob",
+          text:
+            error.message ||
+            "Something went wrong while contacting Bob.",
+        },
+      ]);
+    } finally {
+      setSending(false);
+    }
   };
 
   // =========================================
@@ -43,7 +180,10 @@ function BobChat({ onBack }) {
   // =========================================
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
       event.preventDefault();
       handleSend();
     }
@@ -60,9 +200,7 @@ function BobChat({ onBack }) {
   return (
     <div className="bob-chat-page">
 
-      {/* =========================================
-          HEADER
-      ========================================= */}
+      {/* HEADER */}
 
       <header className="bob-chat-header">
 
@@ -70,16 +208,9 @@ function BobChat({ onBack }) {
           type="button"
           className="bob-back-button"
           onClick={onBack}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              onBack();
-            }
-          }}
         >
           ← Back to Dashboard
         </button>
-
 
         <div className="bob-brand">
 
@@ -94,25 +225,21 @@ function BobChat({ onBack }) {
 
         </div>
 
-
         <div className="bob-status">
           <span className="bob-status-dot"></span>
-          Ready
+
+          {sending
+            ? "Thinking..."
+            : "Ready"}
         </div>
 
       </header>
 
-
-      {/* =========================================
-          MAIN
-      ========================================= */}
+      {/* MAIN */}
 
       <main className="bob-chat-main">
 
-
-        {/* =========================================
-            TITLE
-        ========================================= */}
+        {/* TITLE */}
 
         <div className="bob-chat-title">
 
@@ -121,7 +248,6 @@ function BobChat({ onBack }) {
           </div>
 
           <div>
-
             <h1>
               Bob Chat
             </h1>
@@ -129,18 +255,81 @@ function BobChat({ onBack }) {
             <p>
               Your AI code assistant is ready.
             </p>
-
           </div>
 
         </div>
 
-
-        {/* =========================================
-            CHAT CARD
-        ========================================= */}
+        {/* CHAT CARD */}
 
         <section className="bob-chat-card">
 
+          {/* PROJECT SELECTOR */}
+
+          <div
+            style={{
+              padding: "16px 22px",
+              background: "#ffffff",
+              borderBottom:
+                "1px solid #e4e9ef",
+            }}
+          >
+            <label
+              htmlFor="bob-project-select"
+              style={{
+                display: "block",
+                marginBottom: "7px",
+                color: "#536174",
+                fontSize: "12px",
+                fontWeight: "600",
+              }}
+            >
+              Repository
+            </label>
+
+            <select
+              id="bob-project-select"
+              value={selectedProjectId}
+              onChange={(event) =>
+                setSelectedProjectId(
+                  event.target.value
+                )
+              }
+              disabled={projectsLoading || sending}
+              style={{
+                width: "100%",
+                height: "42px",
+                padding: "0 12px",
+                borderRadius: "9px",
+                border:
+                  "1px solid #d5dde7",
+                background: "#fbfcfe",
+                color: "#263246",
+                fontFamily: "inherit",
+                fontSize: "13px",
+                fontWeight: "600",
+                outline: "none",
+              }}
+            >
+              {projectsLoading ? (
+                <option value="">
+                  Loading projects...
+                </option>
+              ) : projects.length > 0 ? (
+                projects.map((project) => (
+                  <option
+                    key={project._id}
+                    value={project._id}
+                  >
+                    {project.name}
+                  </option>
+                ))
+              ) : (
+                <option value="">
+                  No analyzed projects
+                </option>
+              )}
+            </select>
+          </div>
 
           {/* CHAT HEADER */}
 
@@ -164,47 +353,54 @@ function BobChat({ onBack }) {
 
           </div>
 
-
-          {/* =========================================
-              MESSAGES
-          ========================================= */}
+          {/* MESSAGES */}
 
           <div className="bob-messages">
 
-            {messages.map((item, index) => (
-
-              <div
-                key={index}
-                className={`bob-message-row ${item.type}`}
-              >
-
-                {item.type === "bob" && (
-                  <div className="message-avatar">
-                    ✦
-                  </div>
-                )}
-
+            {messages.map(
+              (item, index) => (
 
                 <div
-                  className={`bob-message ${
-                    item.type === "user"
-                      ? "user-message"
-                      : "assistant-message"
-                  }`}
+                  key={index}
+                  className={`bob-message-row ${item.type}`}
                 >
-                  {item.text}
+
+                  {item.type === "bob" && (
+                    <div className="message-avatar">
+                      ✦
+                    </div>
+                  )}
+
+                  <div
+                    className={`bob-message ${
+                      item.type === "user"
+                        ? "user-message"
+                        : "assistant-message"
+                    }`}
+                  >
+                    {item.text}
+                  </div>
+
                 </div>
 
-              </div>
+              )
+            )}
 
-            ))}
+            {sending && (
+              <div className="bob-message-row bob">
+                <div className="message-avatar">
+                  ✦
+                </div>
+
+                <div className="bob-message assistant-message">
+                  Bob is analyzing the repository...
+                </div>
+              </div>
+            )}
 
           </div>
 
-
-          {/* =========================================
-              QUICK QUESTIONS
-          ========================================= */}
+          {/* QUICK QUESTIONS */}
 
           <div className="bob-quick-actions">
 
@@ -215,19 +411,9 @@ function BobChat({ onBack }) {
                   "Explain my project."
                 )
               }
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-
-                  handleQuickQuestion(
-                    "Explain my project."
-                  );
-                }
-              }}
             >
               Explain my project
             </button>
-
 
             <button
               type="button"
@@ -236,19 +422,9 @@ function BobChat({ onBack }) {
                   "Explain the project architecture."
                 )
               }
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-
-                  handleQuickQuestion(
-                    "Explain the project architecture."
-                  );
-                }
-              }}
             >
               Explain architecture
             </button>
-
 
             <button
               type="button"
@@ -257,57 +433,50 @@ function BobChat({ onBack }) {
                   "What technologies are used?"
                 )
               }
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-
-                  handleQuickQuestion(
-                    "What technologies are used?"
-                  );
-                }
-              }}
             >
               Show technologies
             </button>
 
           </div>
 
-
-          {/* =========================================
-              INPUT
-          ========================================= */}
+          {/* INPUT */}
 
           <div className="bob-input-area">
 
             <textarea
               value={message}
               onChange={(event) =>
-                setMessage(event.target.value)
+                setMessage(
+                  event.target.value
+                )
               }
               onKeyDown={handleKeyDown}
               placeholder="Ask Bob about your code..."
               rows="1"
+              disabled={sending}
               aria-label="Ask Bob"
             />
-
 
             <button
               type="button"
               className="bob-send-button"
               onClick={handleSend}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleSend();
-                }
-              }}
+              disabled={
+                sending ||
+                !message.trim() ||
+                !selectedProjectId
+              }
             >
-              Send
-              <span>✦</span>
+              {sending
+                ? "Thinking..."
+                : "Send"}
+
+              {!sending && (
+                <span>✦</span>
+              )}
             </button>
 
           </div>
-
 
           <p className="bob-footer-text">
             Bob can explain your codebase, modules,
