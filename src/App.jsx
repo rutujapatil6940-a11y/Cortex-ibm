@@ -701,6 +701,7 @@ function App() {
         return (
           <BobChat
             onBack={() => navigate("dashboard")}
+            projectId={analysis?.id}
           />
         );
 
