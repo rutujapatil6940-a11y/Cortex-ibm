@@ -527,17 +527,13 @@ const handleDownload = () => {
         id="project-select"
         value={selectedProjectId}
         onChange={handleProjectChange}
-        disabled={projectsLoading || projects.length === 0}
+        disabled={projectsLoading}
       >
         {projectsLoading ? (
           <option value="">
             Loading projects...
           </option>
-        ) : projects.length === 0 ? (
-          <option value="">
-            No projects available
-          </option>
-        ) : (
+        ) : projects.length > 0 ? (
           projects.map((project) => (
             <option
               key={project._id}
@@ -546,6 +542,12 @@ const handleDownload = () => {
               {project.name}
             </option>
           ))
+        ) : (
+          <option value={selectedProjectId}>
+            {selectedAnalysis?.repository?.name ||
+              selectedAnalysis?.projectName ||
+              "Current Project"}
+          </option>
         )}
       </select>
     </div>
