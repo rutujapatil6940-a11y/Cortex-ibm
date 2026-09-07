@@ -10,7 +10,6 @@ import ProjectOverview from "./ProjectOverview";
 import AIAnalysis from "./AIAnalysis";
 import CodeStructure from "./CodeStructure";
 import Dependencies from "./Dependencies";
-import DetailedAnalysis from "./DetailedAnalysis";
 import Documentation from "./Documentation";
 import GenerateDocumentation from "./GenerateDocumentation";
 
@@ -594,10 +593,6 @@ function App() {
             navigate("documentation")
           }
 
-          onDetailedAnalysis={() =>
-            navigate("detailed-analysis")
-          }
-
           onCodeStructure={() =>
             navigate("code-structure")
           }
@@ -647,18 +642,6 @@ function App() {
       case "dependencies":
         return (
           <Dependencies
-            onBack={() => navigate("projects")}
-            analysis={analysis}
-          />
-        );
-
-      // =================================================
-      // DETAILED ANALYSIS
-      // =================================================
-
-      case "detailed-analysis":
-        return (
-          <DetailedAnalysis
             onBack={() => navigate("projects")}
             analysis={analysis}
           />

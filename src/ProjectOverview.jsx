@@ -3,7 +3,6 @@ import "./ProjectOverview.css";
 function ProjectOverview({
   onBack,
   onDocumentation,
-  onDetailedAnalysis,
   onCodeStructure,
   onDependencies,
   analysis,
@@ -389,18 +388,6 @@ function ProjectOverview({
                 </div>
               )
             )}
-
-            <button
-              className="view-analysis-button"
-              type="button"
-              onClick={() => {
-                if (onDetailedAnalysis) {
-                  onDetailedAnalysis();
-                }
-              }}
-            >
-              View Detailed Analysis →
-            </button>
 
           </div>
 
