@@ -821,3 +821,61 @@
     padding: 13px;
   }
 }
+
+/* =====================================================
+   CENTER TEXT ALIGNMENT
+===================================================== */
+
+.dependencies-page {
+  text-align: center;
+}
+
+.dependencies-title,
+.dependencies-title > div {
+  text-align: center;
+}
+
+.dependencies-title {
+  justify-content: center;
+}
+
+.dependencies-status {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dependencies-card-heading {
+  justify-content: center;
+  text-align: center;
+}
+
+.dependencies-card-heading > div:last-child {
+  text-align: center;
+}
+
+.dependency-item {
+  justify-content: center;
+  text-align: center;
+}
+
+.dependency-info {
+  align-items: center;
+  text-align: center;
+}
+
+.dependency-info strong,
+.dependency-info span {
+  text-align: center;
+}
+
+.dependency-type {
+  text-align: center;
+}
+
+.dependency-status {
+  text-align: center;
+}
+
+.dependencies-list > p {
+  text-align: center;
+}

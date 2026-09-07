@@ -878,3 +878,109 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =====================================================
+   CENTER TEXT ALIGNMENT
+===================================================== */
+
+.project-overview-page {
+  text-align: center;
+}
+
+.project-title-section,
+.project-title-section > div {
+  text-align: center;
+}
+
+.project-info-card,
+.project-info-left,
+.project-info-left > div {
+  text-align: center;
+}
+
+.project-info-left {
+  justify-content: center;
+}
+
+.project-info-card p,
+.project-info-card h2,
+.repository-url {
+  text-align: center;
+}
+
+.overview-stat-card {
+  justify-content: center;
+  text-align: center;
+}
+
+.overview-stat-card > div:last-child {
+  text-align: center;
+}
+
+.overview-card {
+  text-align: center;
+}
+
+.overview-card-heading {
+  justify-content: center;
+  text-align: center;
+}
+
+.overview-card-heading > div:last-child {
+  text-align: center;
+}
+
+.summary-text {
+  text-align: center;
+}
+
+.technology-row {
+  text-align: center;
+}
+
+.technology-name {
+  justify-content: center;
+}
+
+.technology-row > span:last-child {
+  text-align: center;
+}
+
+.module-item {
+  justify-content: center;
+  text-align: center;
+}
+
+.module-item > div:nth-child(2) {
+  text-align: center;
+}
+
+.module-item b {
+  margin-left: 0;
+}
+
+.insight-item {
+  justify-content: center;
+  text-align: center;
+}
+
+.insight-item p {
+  text-align: center;
+}
+
+.next-actions {
+  text-align: center;
+}
+
+.next-action-buttons {
+  text-align: center;
+}
+
+.next-action {
+  justify-content: center;
+  text-align: center;
+}
+
+.next-action b {
+  margin-left: 0;
+}

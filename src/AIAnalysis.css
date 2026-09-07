@@ -777,3 +777,85 @@
     text-align: left;
   }
 }
+
+/* =====================================================
+   CENTER TEXT ALIGNMENT
+===================================================== */
+
+.ai-analysis-page {
+  text-align: center;
+}
+
+.analysis-title {
+  text-align: center;
+}
+
+.analysis-title h1,
+.analysis-title p,
+.analysis-label {
+  text-align: center;
+}
+
+.analysis-score-card {
+  text-align: center;
+}
+
+.analysis-score-card .score-icon {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.analysis-score-card span,
+.analysis-score-card strong {
+  text-align: center;
+}
+
+.analysis-card {
+  text-align: center;
+}
+
+.analysis-card-heading {
+  justify-content: center;
+  text-align: center;
+}
+
+.analysis-card-heading > div:last-child {
+  text-align: center;
+}
+
+.finding-item {
+  justify-content: center;
+  text-align: center;
+}
+
+.finding-item p {
+  text-align: center;
+}
+
+.recommendation-item {
+  justify-content: center;
+  text-align: center;
+}
+
+.recommendation-item p {
+  text-align: center;
+}
+
+.overall-analysis {
+  justify-content: center;
+  text-align: center;
+}
+
+.overall-analysis > div:nth-child(2) {
+  text-align: center;
+}
+
+.overall-analysis h2,
+.overall-analysis p {
+  text-align: center;
+}
+
+.overall-score {
+  margin-left: 0;
+  text-align: center;
+}
