@@ -288,73 +288,8 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
       return `Bob AI identified ${warnings.length} areas that could be improved in ${projectName}.`;
     }
 
-    return `The repository has been analyzed using the available source and project information.`;
+    return "The repository has been analyzed using the available source and project information.";
   };
-
-  {/* =========================================
-    HOW THE PROJECT WORKS
-    ========================================= */}
-
-    <section className="analysis-card file-analysis">
-
-      <div className="analysis-card-heading">
-
-        <div className="analysis-heading-icon">
-          ⇢
-        </div>
-
-        <div>
-
-          <h2>
-            How the Project Works
-          </h2>
-
-          <p>
-            Application workflow identified by Bob AI
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div className="finding-list">
-
-        {howTheProjectWorks.length > 0 ? (
-
-          howTheProjectWorks.map(
-            (item, index) => (
-
-              <div
-                className="finding-item"
-                key={index}
-              >
-
-                <div className="finding-check">
-                  {index + 1}
-                </div>
-
-                <p>
-                  {item}
-                </p>
-
-              </div>
-
-            )
-          )
-
-        ) : (
-
-          <div className="finding-empty">
-            No application workflow information was
-            returned by Bob AI.
-          </div>
-
-        )}
-
-      </div>
-
-    </section>
 
   // =========================================
   // FILE ANALYSIS
@@ -414,7 +349,9 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
   if (!recommendationText) {
     if (warnings.length > 0) {
       recommendationText =
-        `The project has a workable foundation. The main focus should be on addressing the ${warnings.length} identified improvement area${
+        `The project has a workable foundation. The main focus should be on addressing the ${
+          warnings.length
+        } identified improvement area${
           warnings.length === 1
             ? ""
             : "s"
@@ -459,7 +396,9 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
             ◇
           </div>
 
-          <span>Cortex</span>
+          <span>
+            Cortex
+          </span>
 
         </div>
 
@@ -734,6 +673,72 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
               )}
 
             </div>
+
+          </div>
+
+        </section>
+
+
+        {/* =========================================
+            HOW THE PROJECT WORKS
+        ========================================= */}
+
+        <section className="analysis-card file-analysis">
+
+          <div className="analysis-card-heading">
+
+            <div className="analysis-heading-icon">
+              ⇢
+            </div>
+
+            <div>
+
+              <h2>
+                How the Project Works
+              </h2>
+
+              <p>
+                Application workflow identified by Bob AI
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="finding-list">
+
+            {howTheProjectWorks.length > 0 ? (
+
+              howTheProjectWorks.map(
+                (item, index) => (
+
+                  <div
+                    className="finding-item"
+                    key={index}
+                  >
+
+                    <div className="finding-check">
+                      {index + 1}
+                    </div>
+
+                    <p>
+                      {item}
+                    </p>
+
+                  </div>
+
+                )
+              )
+
+            ) : (
+
+              <div className="finding-empty">
+                No application workflow information
+                was returned by Bob AI.
+              </div>
+
+            )}
 
           </div>
 
