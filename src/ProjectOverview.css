@@ -1035,3 +1035,111 @@
 .project-overview-page .next-action {
   justify-content: center !important;
 }
+
+/* =====================================================
+   ACTUAL CENTERED CONTENT
+===================================================== */
+
+/* Project information */
+.project-info-card {
+  justify-content: center !important;
+  position: relative;
+}
+
+.project-info-left {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.reanalyze-button {
+  position: absolute;
+  right: 24px;
+}
+
+
+/* Statistics */
+.overview-stat-card {
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.overview-stat-card > div {
+  text-align: center !important;
+}
+
+
+/* Card headings */
+.overview-card-heading {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.overview-card-heading > div {
+  text-align: center !important;
+}
+
+
+/* Technologies */
+.technology-row {
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.technology-name {
+  justify-content: center !important;
+}
+
+
+/* Modules */
+.module-item {
+  width: 100%;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.module-item > div {
+  text-align: center !important;
+}
+
+.module-item b {
+  margin-left: 0 !important;
+}
+
+
+/* AI Insights */
+.insight-item {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.insight-item p {
+  text-align: center !important;
+}
+
+
+/* Continue Exploring */
+.next-actions {
+  text-align: center !important;
+}
+
+.next-action-buttons {
+  justify-items: center !important;
+}
+
+.next-action {
+  width: 100%;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.next-action b {
+  margin-left: 0 !important;
+}
