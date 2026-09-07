@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const projectsRoutes = require("./routes/projectsRoutes");
+const bobChatRoutes = require("./routes/bobChatRoutes");
 
 const connectDB = require("./database/db");
 const { connectCortexDB } = require("./services/cortexDb");
@@ -26,7 +27,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/projects", projectsRoutes);
-
+app.use("/api/bob-chat", bobChatRoutes);
 // Test route
 app.get("/", (req, res) => {
     res.json({
@@ -37,7 +38,7 @@ app.get("/", (req, res) => {
 // Authentication routes
 app.use("/api/auth", authRoutes);
 app.use("/api/analysis", analysisRoutes);
-
+app.use("/api/bob-chat", bobChatRoutes);
 // Start server
 const PORT = process.env.PORT || 5000;
 
