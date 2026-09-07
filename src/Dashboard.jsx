@@ -55,6 +55,11 @@ function Dashboard({
 
         const data = await response.json();
 
+        console.log(
+          "CORTEX PROJECTS:",
+          data.projects
+        );
+
         if (!response.ok) {
           throw new Error(
             data.message ||
