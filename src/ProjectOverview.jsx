@@ -292,7 +292,7 @@ function ProjectOverview({
             <div className="overview-card-heading">
 
               <div className="heading-symbol">
-                ✦
+                ◈
               </div>
 
               <div>
