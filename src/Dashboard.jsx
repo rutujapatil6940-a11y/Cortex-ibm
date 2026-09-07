@@ -55,11 +55,6 @@ function Dashboard({
 
         const data = await response.json();
 
-        console.log(
-          "CORTEX PROJECTS:",
-          data.projects
-        );
-
         if (!response.ok) {
           throw new Error(
             data.message ||
@@ -113,63 +108,33 @@ function Dashboard({
   // =========================================
   // DOCUMENT COUNT
   // =========================================
+  // Total source files across all analyzed
+  // projects.
 
-  const getDocumentCount = (project) => {
-    const projectAnalysis =
-      project?.analysis;
-
-    if (!projectAnalysis) {
-      return 0;
-    }
-
-    const possibleDocumentCollections = [
-      projectAnalysis.documents,
-      projectAnalysis.documentation,
-      projectAnalysis.documentationSections,
-      projectAnalysis.generatedDocumentation,
-    ];
-
-    for (
-      const collection of possibleDocumentCollections
-    ) {
-      if (Array.isArray(collection)) {
-        return collection.length;
-      }
-    }
-
-    if (
-      projectAnalysis.documentation &&
-      typeof projectAnalysis.documentation ===
-        "object"
-    ) {
-      const sections =
-        projectAnalysis.documentation.sections;
-
-      if (Array.isArray(sections)) {
-        return sections.length;
-      }
-    }
-
-    return 0;
-  };
+  const totalDocuments = projects.reduce(
+    (total, project) =>
+      total +
+      Number(
+        project?.metadata
+          ?.sourceFileCount || 0
+      ),
+    0
+  );
 
   // =========================================
   // DASHBOARD COUNTS
   // =========================================
 
-  const totalProjects = projects.length;
+  const totalProjects =
+    projects.length;
 
-  const totalAIAnalyses = projects.filter(
-    (project) =>
-      project?.analysis &&
-      typeof project.analysis === "object"
-  ).length;
-
-  const totalDocuments = projects.reduce(
-    (total, project) =>
-      total + getDocumentCount(project),
-    0
-  );
+  const totalAIAnalyses =
+    projects.filter(
+      (project) =>
+        project?.analysis &&
+        typeof project.analysis ===
+          "object"
+    ).length;
 
   // =========================================
   // LAST SCAN
@@ -202,7 +167,9 @@ function Dashboard({
   // RELATIVE TIME
   // =========================================
 
-  const formatRelativeTime = (dateValue) => {
+  const formatRelativeTime = (
+    dateValue
+  ) => {
     if (!dateValue) {
       return "—";
     }
@@ -219,7 +186,9 @@ function Dashboard({
 
     const seconds = Math.max(
       0,
-      Math.floor(difference / 1000)
+      Math.floor(
+        difference / 1000
+      )
     );
 
     if (seconds < 60) {
@@ -273,54 +242,6 @@ function Dashboard({
     return `${years}y`;
   };
 
-  // =========================================
-  // ANALYSIS DURATION
-  // =========================================
-
-  const formatDuration = (milliseconds) => {
-    if (
-      !milliseconds ||
-      milliseconds <= 0
-    ) {
-      return "—";
-    }
-
-    const totalSeconds = Math.floor(
-      milliseconds / 1000
-    );
-
-    const hours = Math.floor(
-      totalSeconds / 3600
-    );
-
-    const minutes = Math.floor(
-      (totalSeconds % 3600) / 60
-    );
-
-    const seconds =
-      totalSeconds % 60;
-
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-
-    if (minutes > 0) {
-      return `${minutes}m ${String(
-        seconds
-      ).padStart(2, "0")}s`;
-    }
-
-    return `${seconds}s`;
-  };
-
-  const lastScanDuration =
-    latestProject
-      ? formatDuration(
-          latestProject.metadata
-            ?.analysisDurationMs
-        )
-      : "—";
-
   const lastScanAgo =
     latestProject
       ? formatRelativeTime(
@@ -341,14 +262,18 @@ function Dashboard({
             {
               name:
                 analysis.repository.name,
+
               repositoryUrl:
                 analysis.repository
                   .repositoryUrl,
+
               status:
                 analysis.repository
                   .status ||
                 "processed",
+
               analysis,
+
               updatedAt:
                 new Date().toISOString(),
             },
@@ -358,11 +283,14 @@ function Dashboard({
     const projectAnalysis =
       project.analysis;
 
-    const technologies = Array.isArray(
-      projectAnalysis?.technologiesUsed
-    )
-      ? projectAnalysis.technologiesUsed
-      : [];
+    const technologies =
+      Array.isArray(
+        projectAnalysis
+          ?.technologiesUsed
+      )
+        ? projectAnalysis
+            .technologiesUsed
+        : [];
 
     const language =
       technologies.length > 0
@@ -370,8 +298,10 @@ function Dashboard({
           "string"
           ? technologies[0]
           : technologies[0]?.name ||
-            technologies[0]?.technology ||
-            technologies[0]?.package ||
+            technologies[0]
+              ?.technology ||
+            technologies[0]
+              ?.package ||
             "Not found"
         : "Not found";
 
@@ -382,7 +312,8 @@ function Dashboard({
     return {
       name:
         project.name ||
-        projectAnalysis?.projectName ||
+        projectAnalysis
+          ?.projectName ||
         "Unnamed Project",
 
       type: "GitHub",
@@ -394,42 +325,53 @@ function Dashboard({
       statusClass:
         status === "failed"
           ? "failed"
-          : status === "processing" ||
-              status === "analyzing"
-            ? "processing"
-            : "analyzed",
+          : status ===
+                "processing" ||
+            status ===
+                "analyzing"
+          ? "processing"
+          : "analyzed",
 
-      lastScan: formatRelativeTime(
-        project.updatedAt ||
-          project.createdAt
-      ),
+      lastScan:
+        formatRelativeTime(
+          project.updatedAt ||
+            project.createdAt
+        ),
     };
   });
 
+  // =========================================
+  // SEARCH
+  // =========================================
+
   const query =
-    searchQuery.trim().toLowerCase();
+    searchQuery
+      .trim()
+      .toLowerCase();
 
   const filteredRepositories =
-    repositories.filter((repo) => {
-      if (!query) {
-        return true;
-      }
+    repositories.filter(
+      (repo) => {
+        if (!query) {
+          return true;
+        }
 
-      return (
-        repo.name
-          .toLowerCase()
-          .includes(query) ||
-        repo.type
-          .toLowerCase()
-          .includes(query) ||
-        repo.language
-          .toLowerCase()
-          .includes(query) ||
-        repo.status
-          .toLowerCase()
-          .includes(query)
-      );
-    });
+        return (
+          repo.name
+            .toLowerCase()
+            .includes(query) ||
+          repo.type
+            .toLowerCase()
+            .includes(query) ||
+          repo.language
+            .toLowerCase()
+            .includes(query) ||
+          repo.status
+            .toLowerCase()
+            .includes(query)
+        );
+      }
+    );
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -452,13 +394,17 @@ function Dashboard({
 
           <form
             className="search-box"
-            onSubmit={handleSearch}
+            onSubmit={
+              handleSearch
+            }
           >
             <span>⌕</span>
 
             <input
               type="text"
-              value={searchQuery}
+              value={
+                searchQuery
+              }
               placeholder="Search projects..."
               onChange={(e) =>
                 setSearchQuery(
@@ -473,7 +419,9 @@ function Dashboard({
                 type="button"
                 className="search-clear"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
               >
                 ×
@@ -527,8 +475,12 @@ function Dashboard({
                   <button
                     type="button"
                     onClick={() => {
-                      setShowProfile(false);
-                      navigate("profile");
+                      setShowProfile(
+                        false
+                      );
+                      navigate(
+                        "profile"
+                      );
                     }}
                   >
                     👤 My Profile
@@ -537,8 +489,12 @@ function Dashboard({
                   <button
                     type="button"
                     onClick={() => {
-                      setShowProfile(false);
-                      navigate("settings");
+                      setShowProfile(
+                        false
+                      );
+                      navigate(
+                        "settings"
+                      );
                     }}
                   >
                     ⚙ Settings
@@ -547,7 +503,9 @@ function Dashboard({
                   <button
                     type="button"
                     onClick={() => {
-                      setShowProfile(false);
+                      setShowProfile(
+                        false
+                      );
                       navigate(
                         "notifications"
                       );
@@ -561,7 +519,9 @@ function Dashboard({
                   <button
                     type="button"
                     className="dropdown-logout"
-                    onClick={onLogout}
+                    onClick={
+                      onLogout
+                    }
                   >
                     ↪ Logout
                   </button>
@@ -626,7 +586,9 @@ function Dashboard({
               className="stat-card"
               type="button"
               onClick={() =>
-                navigate("projects")
+                navigate(
+                  "projects"
+                )
               }
             >
 
@@ -696,7 +658,9 @@ function Dashboard({
               className="stat-card"
               type="button"
               onClick={() =>
-                navigate("documentation")
+                navigate(
+                  "documentation"
+                )
               }
             >
 
@@ -717,7 +681,9 @@ function Dashboard({
                 </h2>
 
                 <span className="stat-change">
-                  Across all projects
+                  Across{" "}
+                  {totalProjects}{" "}
+                  projects
                 </span>
 
               </div>
@@ -731,14 +697,18 @@ function Dashboard({
               className="stat-card"
               type="button"
               onClick={() =>
-                navigate("projects")
+                navigate(
+                  "projects"
+                )
               }
             >
+
               <div className="stat-icon">
                 ✓
               </div>
 
               <div>
+
                 <span className="stat-title">
                   Last Scan
                 </span>
@@ -756,7 +726,9 @@ function Dashboard({
                     ? "Completed"
                     : "No scan yet"}
                 </span>
+
               </div>
+
             </button>
 
           </div>
@@ -789,7 +761,9 @@ function Dashboard({
               className="view-all"
               type="button"
               onClick={() =>
-                navigate("projects")
+                navigate(
+                  "projects"
+                )
               }
             >
               View all →
@@ -807,11 +781,25 @@ function Dashboard({
               <thead>
 
                 <tr>
-                  <th>Repository</th>
-                  <th>Type</th>
-                  <th>Language</th>
-                  <th>Status</th>
-                  <th>Last Scan</th>
+                  <th>
+                    Repository
+                  </th>
+
+                  <th>
+                    Type
+                  </th>
+
+                  <th>
+                    Language
+                  </th>
+
+                  <th>
+                    Status
+                  </th>
+
+                  <th>
+                    Last Scan
+                  </th>
                 </tr>
 
               </thead>
@@ -877,7 +865,8 @@ function Dashboard({
                             <span
                               className={`status ${repo.statusClass}`}
                             >
-                              ● {repo.status}
+                              ●{" "}
+                              {repo.status}
                             </span>
 
                           </td>
@@ -981,7 +970,9 @@ function Dashboard({
               </p>
 
               {insightTechnologies.map(
-                (technology) => {
+                (
+                  technology
+                ) => {
 
                   const percentage =
                     Math.round(
@@ -992,7 +983,9 @@ function Dashboard({
                   return (
                     <div
                       className="technology"
-                      key={technology}
+                      key={
+                        technology
+                      }
                     >
 
                       <span>
@@ -1000,12 +993,14 @@ function Dashboard({
                       </span>
 
                       <div className="progress">
+
                         <div
                           className="progress-fill"
                           style={{
                             width: `${percentage}%`,
                           }}
                         />
+
                       </div>
 
                       <span>
@@ -1021,7 +1016,9 @@ function Dashboard({
                 className="insight-button"
                 type="button"
                 onClick={() =>
-                  navigate("bob")
+                  navigate(
+                    "bob"
+                  )
                 }
               >
                 View AI Analysis →
