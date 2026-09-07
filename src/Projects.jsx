@@ -121,7 +121,7 @@ function Projects({
 
         <section className="projects-title-section">
 
-          <div>
+          <div className="projects-title-content">
 
             <h1>
               𝑷𝒓𝒐𝒋𝒆𝒄𝒕𝒔
