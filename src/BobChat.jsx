@@ -313,26 +313,6 @@ function BobChat({ onBack, projectId }) {
 
           </div>
 
-          {/* CHAT HEADER */}
-
-          <div className="bob-chat-card-header">
-
-            <div className="bob-avatar">
-              B
-            </div>
-
-            <div>
-              <h2>
-                Bob
-              </h2>
-
-              <span>
-                AI Code Assistant
-              </span>
-            </div>
-
-          </div>
-
           {/* MESSAGES */}
 
           <div className="bob-messages">
