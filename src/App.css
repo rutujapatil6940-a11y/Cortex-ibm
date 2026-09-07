@@ -33,6 +33,17 @@ body {
   min-height: 100vh;
 }
 
+.authenticated-page .projects-header,
+.authenticated-page .project-header,
+.authenticated-page .bob-chat-header,
+.authenticated-page .documentation-header,
+.authenticated-page .code-structure-header,
+.authenticated-page .dependencies-header,
+.authenticated-page .analysis-header,
+.authenticated-page .analyze-header {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .authenticated-app {
     padding-left: 210px;

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 import AppSidebar from "./AppSidebar";
+import TopNavbar from "./TopNavbar";
 import BobChat from "./BobChat";
 import Dashboard from "./Dashboard";
 import Projects from "./Projects";
@@ -1000,6 +1001,9 @@ function App() {
       <div className="authenticated-app">
         <AppSidebar page={page} onNavigate={navigate} />
         <div className="authenticated-page">
+          {page !== "dashboard" && (
+            <TopNavbar onBack={() => navigate("dashboard")} />
+          )}
           {renderAuthenticatedPage()}
         </div>
       </div>
