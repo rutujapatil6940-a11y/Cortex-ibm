@@ -1,13 +1,16 @@
 /* =====================================================
-   BOB CHAT PAGE — LIGHT PROFESSIONAL UI
+   BOB CHAT PAGE
 ===================================================== */
 
 .bob-chat-page {
   min-height: 100vh;
   width: 100%;
+
   background: #f4f7fb;
   color: #172033;
+
   box-sizing: border-box;
+
   font-family:
     Inter,
     -apple-system,
@@ -22,17 +25,34 @@
 ===================================================== */
 
 .bob-chat-header {
-  min-height: 72px;
   width: 100%;
-  padding: 0 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  min-height: 72px;
 
   background: #ffffff;
+
   border-bottom: 1px solid #e3e8ef;
+
+  box-sizing: border-box;
+}
+
+
+/* Centered header container */
+
+.bob-header-inner {
+  width: 100%;
+  max-width: 1080px;
+
+  min-height: 72px;
+
+  margin: 0 auto;
+
+  padding: 0 30px;
+
+  display: grid;
+
+  grid-template-columns: 1fr auto 1fr;
+
+  align-items: center;
 
   box-sizing: border-box;
 }
@@ -43,12 +63,16 @@
 ===================================================== */
 
 .bob-back-button {
+  justify-self: start;
+
   border: 1px solid #d8e0e9;
+
   background: #ffffff;
 
   color: #536174;
 
   padding: 9px 15px;
+
   border-radius: 9px;
 
   font-size: 13px;
@@ -65,8 +89,11 @@
 
 .bob-back-button:hover {
   background: #f1f6fc;
+
   border-color: #a9c5e6;
+
   color: #1769aa;
+
   transform: translateX(-2px);
 }
 
@@ -76,8 +103,12 @@
 ===================================================== */
 
 .bob-brand {
+  justify-self: center;
+
   display: flex;
+
   align-items: center;
+
   gap: 11px;
 
   color: #172033;
@@ -88,12 +119,14 @@
   height: 36px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   border-radius: 10px;
 
   background: #e8f2fc;
+
   color: #1976b8;
 
   font-size: 18px;
@@ -124,13 +157,18 @@
 ===================================================== */
 
 .bob-status {
+  justify-self: end;
+
   display: flex;
+
   align-items: center;
+
   gap: 7px;
 
   padding: 7px 12px;
 
   border: 1px solid #cfe9dc;
+
   border-radius: 20px;
 
   background: #f2fbf6;
@@ -157,11 +195,11 @@
 
 .bob-chat-main {
   width: 100%;
-  max-width: 1080px;
+  max-width: 900px;
 
   margin: 0 auto;
 
-  padding: 42px 30px 70px;
+  padding: 42px 24px 70px;
 
   box-sizing: border-box;
 }
@@ -173,11 +211,15 @@
 
 .bob-chat-title {
   display: flex;
+
   align-items: center;
+  justify-content: center;
 
   gap: 14px;
 
   margin-bottom: 24px;
+
+  text-align: left;
 }
 
 .bob-title-icon {
@@ -185,12 +227,16 @@
   height: 48px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 
   border-radius: 13px;
 
   background: #eaf4fc;
+
   border: 1px solid #d2e7f8;
 
   color: #1976b8;
@@ -204,7 +250,9 @@
   color: #172033;
 
   font-size: 30px;
+
   font-weight: 700;
+
   letter-spacing: -0.5px;
 }
 
@@ -240,11 +288,65 @@
 
 
 /* =====================================================
+   PROJECT SELECTOR
+===================================================== */
+
+.bob-project-selector {
+  padding: 16px 22px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e4e9ef;
+
+  box-sizing: border-box;
+}
+
+.bob-project-selector label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #536174;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.bob-project-selector select {
+  width: 100%;
+
+  height: 42px;
+
+  padding: 0 12px;
+
+  border-radius: 9px;
+
+  border: 1px solid #d5dde7;
+
+  background: #fbfcfe;
+
+  color: #263246;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  outline: none;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
    CHAT CARD HEADER
 ===================================================== */
 
 .bob-chat-card-header {
   display: flex;
+
   align-items: center;
 
   gap: 12px;
@@ -261,8 +363,11 @@
   height: 39px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 
   border-radius: 11px;
 
@@ -271,6 +376,7 @@
   color: #1976b8;
 
   font-size: 16px;
+
   font-weight: 700;
 }
 
@@ -303,7 +409,9 @@
   padding: 25px;
 
   display: flex;
+
   flex-direction: column;
+
   gap: 17px;
 
   background: #f8fafc;
@@ -340,6 +448,7 @@
   flex-shrink: 0;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
@@ -358,17 +467,25 @@
 ===================================================== */
 
 .bob-message {
-  max-width: 72%;
+  max-width: 86%;
 
-  padding: 12px 15px;
+  padding: 14px 17px;
 
-  border-radius: 12px;
+  border-radius: 13px;
 
-  font-size: 13px;
+  font-size: 13.5px;
 
-  line-height: 1.55;
+  line-height: 1.65;
 
   box-sizing: border-box;
+
+  text-align: left;
+
+  overflow-wrap: anywhere;
+
+  word-break: break-word;
+
+  white-space: pre-wrap;
 }
 
 
@@ -378,7 +495,9 @@
 
 .assistant-message {
   background: #ffffff;
+
   border: 1px solid #dfe5ec;
+
   color: #435065;
 
   border-top-left-radius: 5px;
@@ -386,30 +505,33 @@
   box-shadow:
     0 3px 10px rgba(30, 50, 70, 0.04);
 
-  text-align: justify;
-
-  line-height: 1.7;
-
   max-width: 86%;
 
   max-height: 420px;
+
   overflow-y: auto;
-
-  overflow-wrap: anywhere;
-  word-break: break-word;
-
-  white-space: pre-wrap;
 
   scrollbar-width: thin;
 }
-/* =====================================================
-   BOB MARKDOWN CONTENT
-===================================================== */
 
-.assistant-message {
-  text-align: left;
-  line-height: 1.7;
+.assistant-message::-webkit-scrollbar {
+  width: 6px;
 }
+
+.assistant-message::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.assistant-message::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+
+  border-radius: 10px;
+}
+
+
+/* =====================================================
+   MARKDOWN
+===================================================== */
 
 .assistant-message > *:first-child {
   margin-top: 0;
@@ -418,9 +540,6 @@
 .assistant-message > *:last-child {
   margin-bottom: 0;
 }
-
-
-/* HEADINGS */
 
 .assistant-message h1,
 .assistant-message h2,
@@ -451,9 +570,6 @@
   font-size: 14px;
 }
 
-
-/* PARAGRAPHS */
-
 .assistant-message p {
   margin: 0 0 12px;
 
@@ -464,16 +580,11 @@
   text-align: left;
 }
 
-
-/* BOLD */
-
 .assistant-message strong {
   color: #172033;
+
   font-weight: 700;
 }
-
-
-/* LISTS */
 
 .assistant-message ul,
 .assistant-message ol {
@@ -492,9 +603,6 @@
   line-height: 1.6;
 }
 
-
-/* INLINE CODE */
-
 .assistant-message code {
   padding: 2px 6px;
 
@@ -512,9 +620,6 @@
 
   font-size: 12px;
 }
-
-
-/* CODE BLOCK */
 
 .assistant-message pre {
   margin: 12px 0;
@@ -546,17 +651,11 @@
   white-space: pre;
 }
 
-
-/* LINKS */
-
 .assistant-message a {
   color: #1976b8;
 
   text-decoration: underline;
 }
-
-
-/* BLOCKQUOTE */
 
 .assistant-message blockquote {
   margin: 12px 0;
@@ -570,9 +669,6 @@
   color: #5d6b7d;
 }
 
-
-/* HORIZONTAL LINE */
-
 .assistant-message hr {
   margin: 16px 0;
 
@@ -580,9 +676,6 @@
 
   border-top: 1px solid #e3e8ee;
 }
-
-
-/* TABLE */
 
 .assistant-message table {
   width: 100%;
@@ -619,18 +712,23 @@
   color: #435065;
 }
 
+
 /* =====================================================
    USER MESSAGE
 ===================================================== */
 
 .user-message {
+  max-width: 70%;
+
   background: #e5f1fb;
 
   border: 1px solid #c9e1f3;
 
   color: #245577;
 
-  border-top-right-radius: 4px;
+  border-top-right-radius: 5px;
+
+  text-align: left;
 }
 
 
@@ -642,6 +740,8 @@
   display: flex;
 
   flex-wrap: wrap;
+
+  justify-content: center;
 
   gap: 9px;
 
@@ -794,6 +894,16 @@
     0 6px 16px rgba(39, 125, 181, 0.20);
 }
 
+.bob-send-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
 
 /* =====================================================
    FOOTER
@@ -820,8 +930,8 @@
 
 @media (max-width: 900px) {
 
-  .bob-chat-header {
-    padding: 0 24px;
+  .bob-header-inner {
+    padding: 0 22px;
   }
 
   .bob-chat-main {
@@ -831,6 +941,7 @@
   .bob-message {
     max-width: 78%;
   }
+
 }
 
 
@@ -840,7 +951,7 @@
 
 @media (max-width: 700px) {
 
-  .bob-chat-header {
+  .bob-header-inner {
     min-height: 64px;
 
     padding: 0 16px;
@@ -876,6 +987,8 @@
   }
 
   .bob-chat-main {
+    max-width: 100%;
+
     padding: 28px 14px 45px;
   }
 
@@ -907,6 +1020,10 @@
   }
 
   .bob-chat-card-header {
+    padding: 14px 16px;
+  }
+
+  .bob-project-selector {
     padding: 14px 16px;
   }
 
@@ -964,6 +1081,7 @@
   .bob-footer-text {
     padding-bottom: 15px;
   }
+
 }
 
 
@@ -972,6 +1090,14 @@
 ===================================================== */
 
 @media (max-width: 400px) {
+
+  .bob-header-inner {
+    grid-template-columns: auto 1fr;
+  }
+
+  .bob-brand {
+    justify-self: end;
+  }
 
   .bob-chat-main {
     padding-left: 10px;
@@ -993,88 +1119,5 @@
   .bob-brand span {
     display: none;
   }
-}
 
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-.bob-message {
-  max-width: 86%;
-
-  padding: 14px 17px;
-
-  border-radius: 13px;
-
-  font-size: 13.5px;
-  line-height: 1.65;
-
-  box-sizing: border-box;
-
-  text-align: left;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-
-  white-space: pre-wrap;
-}
-
-
-/* =====================================================
-   ASSISTANT MESSAGE
-===================================================== */
-
-.assistant-message {
-  background: #ffffff;
-
-  border: 1px solid #dfe5ec;
-
-  color: #435065;
-
-  border-top-left-radius: 5px;
-
-  box-shadow:
-    0 3px 10px rgba(30, 50, 70, 0.04);
-
-  text-align: left;
-
-  /* Better for long repository responses */
-  max-height: 420px;
-  overflow-y: auto;
-
-  scrollbar-width: thin;
-}
-
-
-/* Clean scrollbar for long Bob responses */
-
-.assistant-message::-webkit-scrollbar {
-  width: 6px;
-}
-
-.assistant-message::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.assistant-message::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-
-/* =====================================================
-   USER MESSAGE
-===================================================== */
-
-.user-message {
-  max-width: 70%;
-
-  background: #e5f1fb;
-
-  border: 1px solid #c9e1f3;
-
-  color: #245577;
-
-  border-top-right-radius: 5px;
-
-  text-align: left;
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import "./BobChat.css";
+
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000"
 ).replace(/\/+$/, "");
@@ -204,33 +205,37 @@ function BobChat({ onBack, projectId }) {
 
       <header className="bob-chat-header">
 
-        <button
-          type="button"
-          className="bob-back-button"
-          onClick={onBack}
-        >
-          ← Back to Dashboard
-        </button>
+        <div className="bob-header-inner">
 
-        <div className="bob-brand">
+          <button
+            type="button"
+            className="bob-back-button"
+            onClick={onBack}
+          >
+            ← Back to Dashboard
+          </button>
 
-          <div className="bob-brand-icon">
-            ✦
+          <div className="bob-brand">
+
+            <div className="bob-brand-icon">
+              ✦
+            </div>
+
+            <div>
+              <strong>Bob Chat</strong>
+              <span>AI Code Assistant</span>
+            </div>
+
           </div>
 
-          <div>
-            <strong>Bob Chat</strong>
-            <span>AI Code Assistant</span>
+          <div className="bob-status">
+            <span className="bob-status-dot"></span>
+
+            {sending
+              ? "Thinking..."
+              : "Ready"}
           </div>
 
-        </div>
-
-        <div className="bob-status">
-          <span className="bob-status-dot"></span>
-
-          {sending
-            ? "Thinking..."
-            : "Ready"}
         </div>
 
       </header>
@@ -265,23 +270,10 @@ function BobChat({ onBack, projectId }) {
 
           {/* PROJECT SELECTOR */}
 
-          <div
-            style={{
-              padding: "16px 22px",
-              background: "#ffffff",
-              borderBottom:
-                "1px solid #e4e9ef",
-            }}
-          >
+          <div className="bob-project-selector">
+
             <label
               htmlFor="bob-project-select"
-              style={{
-                display: "block",
-                marginBottom: "7px",
-                color: "#536174",
-                fontSize: "12px",
-                fontWeight: "600",
-              }}
             >
               Repository
             </label>
@@ -294,21 +286,10 @@ function BobChat({ onBack, projectId }) {
                   event.target.value
                 )
               }
-              disabled={projectsLoading || sending}
-              style={{
-                width: "100%",
-                height: "42px",
-                padding: "0 12px",
-                borderRadius: "9px",
-                border:
-                  "1px solid #d5dde7",
-                background: "#fbfcfe",
-                color: "#263246",
-                fontFamily: "inherit",
-                fontSize: "13px",
-                fontWeight: "600",
-                outline: "none",
-              }}
+              disabled={
+                projectsLoading ||
+                sending
+              }
             >
               {projectsLoading ? (
                 <option value="">
@@ -329,6 +310,7 @@ function BobChat({ onBack, projectId }) {
                 </option>
               )}
             </select>
+
           </div>
 
           {/* CHAT HEADER */}
@@ -340,7 +322,6 @@ function BobChat({ onBack, projectId }) {
             </div>
 
             <div>
-
               <h2>
                 Bob
               </h2>
@@ -348,7 +329,6 @@ function BobChat({ onBack, projectId }) {
               <span>
                 AI Code Assistant
               </span>
-
             </div>
 
           </div>
@@ -394,6 +374,7 @@ function BobChat({ onBack, projectId }) {
 
             {sending && (
               <div className="bob-message-row bob">
+
                 <div className="message-avatar">
                   ✦
                 </div>
@@ -401,6 +382,7 @@ function BobChat({ onBack, projectId }) {
                 <div className="bob-message assistant-message">
                   Bob is analyzing the repository...
                 </div>
+
               </div>
             )}
 
