@@ -291,6 +291,71 @@ function DetailedAnalysis({ onBack, analysis: repositoryAnalysis }) {
     return `The repository has been analyzed using the available source and project information.`;
   };
 
+  {/* =========================================
+    HOW THE PROJECT WORKS
+    ========================================= */}
+
+    <section className="analysis-card file-analysis">
+
+      <div className="analysis-card-heading">
+
+        <div className="analysis-heading-icon">
+          ⇢
+        </div>
+
+        <div>
+
+          <h2>
+            How the Project Works
+          </h2>
+
+          <p>
+            Application workflow identified by Bob AI
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div className="finding-list">
+
+        {howTheProjectWorks.length > 0 ? (
+
+          howTheProjectWorks.map(
+            (item, index) => (
+
+              <div
+                className="finding-item"
+                key={index}
+              >
+
+                <div className="finding-check">
+                  {index + 1}
+                </div>
+
+                <p>
+                  {item}
+                </p>
+
+              </div>
+
+            )
+          )
+
+        ) : (
+
+          <div className="finding-empty">
+            No application workflow information was
+            returned by Bob AI.
+          </div>
+
+        )}
+
+      </div>
+
+    </section>
+
   // =========================================
   // FILE ANALYSIS
   // =========================================
