@@ -15,7 +15,7 @@ async function connectCortexDB() {
     const uri = process.env.CORTEX_MONGODB_URI;
 
     if (!uri) {
-        throw new Error("CORTEX_MONGODB_URI is not configured");
+        throw new Error("CODEALPHA_MONGODB_URI is not configured");
     }
 
     connectionPromise = mongoose
@@ -27,7 +27,7 @@ async function connectCortexDB() {
     try {
         cortexConnection = await connectionPromise;
 
-        console.log("Cortex MongoDB connected");
+        console.log("CodeAlpha MongoDB connected");
 
         return cortexConnection;
     } catch (error) {
@@ -35,7 +35,7 @@ async function connectCortexDB() {
         cortexConnection = null;
 
         console.error(
-            "Cortex MongoDB connection failed:",
+            "CodeAlpha MongoDB connection failed:",
             error.message
         );
 
@@ -45,7 +45,7 @@ async function connectCortexDB() {
 
 function getCortexDB() {
     if (!cortexConnection || cortexConnection.readyState !== 1) {
-        throw new Error("Cortex MongoDB is not connected");
+        throw new Error("CodeAlpha MongoDB is not connected");
     }
 
     return cortexConnection;

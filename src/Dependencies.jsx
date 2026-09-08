@@ -47,7 +47,7 @@ function Dependencies({ onBack, analysis }) {
             ◇
           </div>
 
-          <span>Cortex</span>
+          <span>CodeAlpha</span>
 
         </div>
 

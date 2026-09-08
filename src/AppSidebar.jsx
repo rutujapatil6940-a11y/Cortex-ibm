@@ -30,8 +30,8 @@ function AppSidebar({ page, onNavigate }) {
   return (
     <aside className="app-sidebar">
       <div className="app-sidebar-brand">
-        <img src={logo} alt="Cortex Logo" className="app-sidebar-logo" />
-        <span>Cortex</span>
+        <img src={logo} alt="CodeAlpha Logo" className="app-sidebar-logo" />
+        <span>CodeAlpha</span>
       </div>
 
       <nav className="app-sidebar-nav" aria-label="Main navigation">

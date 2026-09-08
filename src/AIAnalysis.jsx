@@ -35,7 +35,7 @@ function AIAnalysis({ onBack, analysis: repositoryAnalysis }) {
             ◇
           </div>
 
-          <span>Cortex</span>
+          <span>CodeAlpha</span>
 
         </div>
 

@@ -157,7 +157,7 @@ function ProjectOverview({
             ◇
           </div>
 
-          <span>Cortex</span>
+          <span>CodeAlpha</span>
         </div>
 
       </header>
@@ -170,7 +170,7 @@ function ProjectOverview({
 
           <div className="project-title-content">
             <h1>
-              𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑶𝒗𝒆𝒓𝒗𝒊𝒆𝒘
+              Project Overview
             </h1>
           </div>
 

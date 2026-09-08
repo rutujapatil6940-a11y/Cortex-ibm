@@ -101,7 +101,7 @@ function Projects({
           </div>
 
           <span>
-            Cortex
+            CodeAlpha
           </span>
 
         </div>
@@ -199,7 +199,7 @@ function Projects({
 
               <p>
                 Analyze a GitHub repository to create
-                your first Cortex project.
+                your first CodeAlpha project.
               </p>
 
             </div>

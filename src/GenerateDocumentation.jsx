@@ -31,7 +31,7 @@ function GenerateDocumentation({ onBack, analysis }) {
             ◇
           </div>
 
-          <span>Cortex</span>
+          <span>CodeAlpha</span>
         </div>
 
         <div className="documentation-ai-badge">

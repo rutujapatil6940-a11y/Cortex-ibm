@@ -12,10 +12,10 @@ function CodeStructure({ onBack, analysis }) {
   return <div className="code-structure-page">
     <header className="code-structure-header">
       <button className="code-back-button" type="button" onClick={onBack}>← Back</button>
-      <div className="code-brand"><div className="code-brand-icon">◇</div><span>Cortex</span></div>
+      <div className="code-brand"><div className="code-brand-icon">◇</div><span>CodeAlpha</span></div>
     </header>
     <main className="code-structure-main">
-      <section className="code-title-section"><div><h1>𝑪𝒐𝒅𝒆 𝑺𝒕𝒓𝒖𝒄𝒕𝒖𝒓𝒆</h1></div><div className="code-analysis-status"><span></span>Analysis Complete</div></section>
+      <section className="code-title-section"><div><h1>Code Structure</h1></div><div className="code-analysis-status"><span></span>Analysis Complete</div></section>
       <section className="code-project-card"><div className="code-project-icon">◈</div><div><h2>{analysis?.repository?.name || "Repository"}</h2><p>{analysis?.projectOverview || "No overview was returned for this repository."}</p></div></section>
       <section className="code-content-grid">
         <div className="code-tree-card"><div className="code-card-heading"><div className="code-heading-icon">◫</div><div><h2>Project File Structure</h2><p>Structure returned by Bob from the cloned repository</p></div></div><div className="file-tree">{structure.length ? structure.map((item, index) => <div className="tree-file" key={`${toText(item)}-${index}`}><span className="file-icon">◫</span>{toText(item)}</div>) : <p>No file structure was returned.</p>}</div></div>

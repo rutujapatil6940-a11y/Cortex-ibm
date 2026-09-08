@@ -299,7 +299,7 @@ function App() {
       setShowPassword(false);
 
       alert(
-        "Registration successful! Welcome to Cortex."
+        "Registration successful! Welcome to CodeAlpha."
       );
 
       // =================================================
@@ -757,7 +757,7 @@ function App() {
               <h1>Settings</h1>
 
               <p>
-                Manage your Cortex preferences.
+                Manage your CodeAlpha preferences.
               </p>
 
               <div className="settings-option">
@@ -1057,7 +1057,7 @@ function App() {
             <h2>Login</h2>
 
             <p className="description">
-              Welcome back! Sign in to continue to Cortex.
+              Welcome back! Sign in to continue to CodeAlpha.
             </p>
 
             <div className="input-box">
@@ -1169,7 +1169,7 @@ function App() {
             <h2>Create Account</h2>
 
             <p className="description">
-              Create your account and start using Cortex.
+              Create your account and start using CodeAlpha.
             </p>
 
             <div className="input-box">
@@ -1396,7 +1396,7 @@ function App() {
           <div className="welcome-content login-welcome">
 
             <div className="brand">
-              CORTEX
+              CodeAlpha
             </div>
 
             <h1>
@@ -1420,7 +1420,7 @@ function App() {
           <div className="welcome-content register-welcome">
 
             <div className="brand">
-              CORTEX
+              CodeAlpha
             </div>
 
             <h1>
@@ -1432,7 +1432,7 @@ function App() {
             <p>
               Create your account and start
               <br />
-              analyzing your code with Cortex.
+              analyzing your code with CodeAlpha.
             </p>
 
             <div className="welcome-line" />
@@ -1444,7 +1444,7 @@ function App() {
           <div className="welcome-content forgot-welcome">
 
             <div className="brand">
-              CORTEX
+              CodeAlpha
             </div>
 
             <h1>
@@ -1456,7 +1456,7 @@ function App() {
             <p>
               Don't worry. We'll help you
               <br />
-              get back into your Cortex account.
+              get back into your CodeAlpha account.
             </p>
 
             <div className="welcome-line" />
