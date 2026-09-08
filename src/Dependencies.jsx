@@ -60,7 +60,7 @@ function Dependencies({ onBack, analysis }) {
           <div className="dependencies-title-content">
 
             <h1>
-              𝑫𝒆𝒑𝒆𝒏𝒅𝒆𝒏𝒄𝒊𝒆𝒔
+              Project Dependencies
             </h1>
 
           </div>

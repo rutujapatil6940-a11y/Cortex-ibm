@@ -124,7 +124,7 @@ function Projects({
           <div className="projects-title-content">
 
             <h1>
-              𝑷𝒓𝒐𝒋𝒆𝒄𝒕𝒔
+              Projects
             </h1>
 
             <p>

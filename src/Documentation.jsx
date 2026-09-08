@@ -515,7 +515,7 @@ const handleDownload = () => {
 
   <div>
     <h1>
-      𝑷𝒓𝒐𝒋𝒆𝒄𝒕 𝑫𝒐𝒄𝒖𝒎𝒆𝒏𝒕𝒂𝒕𝒊𝒐𝒏
+      Project Documentation
     </h1>
 
     <div className="documentation-project-selector">
