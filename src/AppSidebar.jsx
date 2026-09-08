@@ -30,15 +30,24 @@ function AppSidebar({ page, onNavigate }) {
   return (
     <aside className="app-sidebar">
       <div className="app-sidebar-brand">
-        <img src={logo} alt="CodeAlpha Logo" className="app-sidebar-logo" />
+        <img
+          src={logo}
+          alt="CodeAlpha Logo"
+          className="app-sidebar-logo"
+        />
         <span>CodeAlpha</span>
       </div>
 
-      <nav className="app-sidebar-nav" aria-label="Main navigation">
+      <nav
+        className="app-sidebar-nav"
+        aria-label="Main navigation"
+      >
         {navigationItems.map((item) => (
           <button
             key={item.id}
-            className={`app-sidebar-item${activePage === item.id ? " active" : ""}`}
+            className={`app-sidebar-item${
+              activePage === item.id ? " active" : ""
+            }`}
             type="button"
             onClick={() => onNavigate(item.id)}
           >
