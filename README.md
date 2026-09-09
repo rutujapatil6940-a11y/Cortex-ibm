@@ -14,13 +14,11 @@ and documentation.
 
 ## 👥 Team
 
-  \#   Team Member
-  ---- -----------------------
-  1    **Sakshi Bariya**
-  2    **Shreya Mangela**
-  3    **Ruta Birje**
-  4    **Rutuja Patil**
-  5    **Shrihari Kulkarni**
+1. **Sakshi Bariya**
+2. **Shreya Mangela**
+3. **Ruta Birje**
+4. **Rutuja Patil**
+5. **Shrihari Kulkarni**
 
 ## 🎯 Problem Statement
 
