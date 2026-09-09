@@ -341,7 +341,7 @@ CodeAtlas/
 The goal is not just to analyze code, but to help developers
 **understand, explore, and document codebases faster**.
 
-## 👥 Team CodeAtlas
+## 👥 Team Cortex
 
 **Sakshi Bariya · Shreya Mangela · Ruta Birje · Rutuja Patil · Shrihari
 Kulkarni**
