@@ -35,7 +35,7 @@ function AIAnalysis({ onBack, analysis: repositoryAnalysis }) {
             ◇
           </div>
 
-          <span>CodeAlpha</span>
+          <span>CodeAtlas</span>
 
         </div>
 

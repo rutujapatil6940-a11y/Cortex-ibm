@@ -44,7 +44,7 @@ function AnalyzeRepository({ onBack, onClone, onAnalyze, isAnalyzing }) {
   return <div className="analyze-page">
     <header className="analyze-header">
       <button type="button" className="back-dashboard" onClick={onBack}><span className="back-arrow">←</span><span>Back to Dashboard</span></button>
-      <div className="analyze-brand"><div className="analyze-brand-icon">◇</div><span>CodeAlpha</span></div>
+      <div className="analyze-brand"><div className="analyze-brand-icon">◇</div><span>CodeAtlas</span></div>
     </header>
     <main className="analyze-main">
       <section className="analyze-title"><h1>Analyze Repository</h1></section>
@@ -59,7 +59,7 @@ function AnalyzeRepository({ onBack, onClone, onAnalyze, isAnalyzing }) {
         {statusMessage && <div className={`workspace-ready-message ${stage === "completed" ? "" : "workspace-progress-message"}`} role="status"><span className="workspace-ready-icon">{stage === "completed" ? "✓" : "…"}</span><span><strong>{statusMessage}</strong>{ready?.analysisId && <><br />Analysis ID: {ready.analysisId}</>}</span></div>}
         <div className="analyze-actions"><button type="button" className="cancel-button" onClick={onBack} disabled={isAnalyzing}>Cancel</button><button type="button" className="analyze-repository-button" onClick={handleAnalyze} disabled={isAnalyzing}><span>✦</span><span>{stage === "cloning" || (isAnalyzing && !stage) ? "Cloning repository..." : stage === "analyzing" ? "Analyzing repository..." : "Analyze Repository"}</span></button></div>
       </section>
-      <section className="analyze-info"><div className="info-icon">✦</div><div className="info-content"><h3>What happens next?</h3><p>CodeAlpha clones the repository into temporary server storage and verifies it is ready for later analysis.</p></div></section>
+      <section className="analyze-info"><div className="info-icon">✦</div><div className="info-content"><h3>What happens next?</h3><p>CodeAtlas clones the repository into temporary server storage and verifies it is ready for later analysis.</p></div></section>
     </main>
   </div>;
 }

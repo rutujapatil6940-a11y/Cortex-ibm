@@ -47,7 +47,7 @@ function Dependencies({ onBack, analysis }) {
             ◇
           </div>
 
-          <span>CodeAlpha</span>
+          <span>CodeAtlas</span>
 
         </div>
 

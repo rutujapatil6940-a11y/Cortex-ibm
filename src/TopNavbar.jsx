@@ -9,8 +9,8 @@ function TopNavbar({ onBack }) {
       </button>
 
       <div className="top-navbar-brand">
-        <img src={logo} alt="CodeAlpha Logo" />
-        <span>CodeAlpha</span>
+        <img src={logo} alt="CodeAtlas Logo" />
+        <span>CodeAtlas</span>
       </div>
     </header>
   );

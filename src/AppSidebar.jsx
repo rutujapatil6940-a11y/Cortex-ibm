@@ -32,10 +32,10 @@ function AppSidebar({ page, onNavigate }) {
       <div className="app-sidebar-brand">
         <img
           src={logo}
-          alt="CodeAlpha Logo"
+          alt="CodeAtlas Logo"
           className="app-sidebar-logo"
         />
-        <span>CodeAlpha</span>
+        <span>CodeAtlas</span>
       </div>
 
       <nav

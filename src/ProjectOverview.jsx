@@ -157,7 +157,7 @@ function ProjectOverview({
             ◇
           </div>
 
-          <span>CodeAlpha</span>
+          <span>CodeAtlas</span>
         </div>
 
       </header>

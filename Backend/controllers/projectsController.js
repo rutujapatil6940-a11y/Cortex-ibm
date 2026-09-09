@@ -21,7 +21,7 @@ const getProjects = async (req, res) => {
             projects,
         });
     } catch (error) {
-        console.error("Get CodeAlpha projects error:", error);
+        console.error("Get CodeAtlas projects error:", error);
 
         return res.status(500).json({
             success: false,
@@ -51,7 +51,7 @@ const getProjectById = async (req, res) => {
             project,
         });
     } catch (error) {
-        console.error("Get CodeAlpha project error:", error);
+        console.error("Get CodeAtlas project error:", error);
 
         return res.status(500).json({
             success: false,

@@ -340,7 +340,7 @@ async function analyzeRepositoryWorkspace(
         });
 
         console.log(
-            "CodeAlpha repository saved",
+            "CodeAtlas repository saved",
             {
                 repositoryName:
                     record.name,

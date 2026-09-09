@@ -12,7 +12,7 @@ function CodeStructure({ onBack, analysis }) {
   return <div className="code-structure-page">
     <header className="code-structure-header">
       <button className="code-back-button" type="button" onClick={onBack}>← Back</button>
-      <div className="code-brand"><div className="code-brand-icon">◇</div><span>CodeAlpha</span></div>
+      <div className="code-brand"><div className="code-brand-icon">◇</div><span>CodeAtlas</span></div>
     </header>
     <main className="code-structure-main">
       <section className="code-title-section"><div><h1>Code Structure</h1></div><div className="code-analysis-status"><span></span>Analysis Complete</div></section>

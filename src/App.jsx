@@ -299,7 +299,7 @@ function App() {
       setShowPassword(false);
 
       alert(
-        "Registration successful! Welcome to CodeAlpha."
+        "Registration successful! Welcome to CodeAtlas."
       );
 
       // =================================================
@@ -757,7 +757,7 @@ function App() {
               <h1>Settings</h1>
 
               <p>
-                Manage your CodeAlpha preferences.
+                Manage your CodeAtlas preferences.
               </p>
 
               <div className="settings-option">
@@ -1057,7 +1057,7 @@ function App() {
             <h2>Login</h2>
 
             <p className="description">
-              Welcome back! Sign in to continue to CodeAlpha.
+              Welcome back! Sign in to continue to CodeAtlas.
             </p>
 
             <div className="input-box">
@@ -1169,7 +1169,7 @@ function App() {
             <h2>Create Account</h2>
 
             <p className="description">
-              Create your account and start using CodeAlpha.
+              Create your account and start using CodeAtlas.
             </p>
 
             <div className="input-box">
@@ -1396,7 +1396,7 @@ function App() {
           <div className="welcome-content login-welcome">
 
             <div className="brand">
-              CodeAlpha
+              CodeAtlas
             </div>
 
             <h1>
@@ -1420,7 +1420,7 @@ function App() {
           <div className="welcome-content register-welcome">
 
             <div className="brand">
-              CodeAlpha
+              CodeAtlas
             </div>
 
             <h1>
@@ -1432,7 +1432,7 @@ function App() {
             <p>
               Create your account and start
               <br />
-              analyzing your code with CodeAlpha.
+              analyzing your code with CodeAtlas.
             </p>
 
             <div className="welcome-line" />
@@ -1444,7 +1444,7 @@ function App() {
           <div className="welcome-content forgot-welcome">
 
             <div className="brand">
-              CodeAlpha
+              CodeAtlas
             </div>
 
             <h1>
@@ -1456,7 +1456,7 @@ function App() {
             <p>
               Don't worry. We'll help you
               <br />
-              get back into your CodeAlpha account.
+              get back into your CodeAtlas account.
             </p>
 
             <div className="welcome-line" />
