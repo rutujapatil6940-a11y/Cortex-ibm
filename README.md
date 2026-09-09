@@ -1,8 +1,8 @@
-# CodeAlpha
+# CodeAtlas
 
 > **AI-Powered Code Intelligence & Automated Documentation Platform**
 
-CodeAlpha is an AI-powered code intelligence platform that helps
+CodeAtlas is an AI-powered code intelligence platform that helps
 developers understand unfamiliar GitHub repositories faster. It
 processes a repository, builds structured repository context, uses **IBM
 Bob** to generate AI-powered insights, and presents the results through
@@ -40,15 +40,15 @@ clear understanding of the project.
 
 ## 💡 Our Solution
 
-**CodeAlpha** automates the initial understanding of a GitHub repository
+**CodeAtlas** automates the initial understanding of a GitHub repository
 using AI.
 
-A user provides a GitHub repository, and CodeAlpha processes it to
+A user provides a GitHub repository, and CodeAtlas processes it to
 create structured context. This context is analyzed using **IBM Bob**,
 which generates structured project information and AI-powered insights.
 
 The generated information is stored and presented through different
-sections of the CodeAlpha interface, allowing developers to understand
+sections of the CodeAtlas interface, allowing developers to understand
 and explore a project more efficiently.
 
 ### Core Flow
@@ -66,7 +66,7 @@ Structured AI Results
         ↓
 MongoDB Atlas
         ↓
-CodeAlpha Dashboard
+CodeAtlas Dashboard
 ```
 
 ## ✨ Key Features
@@ -112,9 +112,9 @@ backend, AI runtime, and database work together remotely.
 
 ## 🤖 IBM Bob Integration
 
-IBM Bob is the core AI component of CodeAlpha.
+IBM Bob is the core AI component of CodeAtlas.
 
-CodeAlpha first processes the repository and creates structured
+CodeAtlas first processes the repository and creates structured
 repository context containing relevant project information and
 source-code context. This prepared context is provided to IBM Bob for
 analysis.
@@ -172,7 +172,7 @@ analysis workflow to operate as part of the deployed application.
 
 ### Architecture Components
 
-**Vercel** --- Hosts the CodeAlpha frontend and user-facing web
+**Vercel** --- Hosts the CodeAtlas frontend and user-facing web
 interface.
 
 **Render** --- Hosts the Node.js/Express backend and handles APIs,
@@ -229,24 +229,24 @@ analysis.
 -   Git
 -   GitHub
 
-## 🔄 How CodeAlpha Works
+## 🔄 How CodeAtlas Works
 
 1.  The user signs in and provides a GitHub repository.
 2.  The backend processes the repository and identifies relevant project
     information.
-3.  CodeAlpha creates structured repository context from the available
+3.  CodeAtlas creates structured repository context from the available
     project files.
 4.  The prepared context is passed to IBM Bob for AI analysis.
 5.  IBM Bob generates structured project insights.
 6.  The generated analysis and project information are stored in MongoDB
     Atlas.
-7.  The CodeAlpha frontend retrieves and displays the results.
+7.  The CodeAtlas frontend retrieves and displays the results.
 8.  Users can explore the project through the overview, code structure,
     dependencies, documentation, and Bob Chat interfaces.
 
 ## 📈 Current Project Status
 
-CodeAlpha currently provides an end-to-end working workflow for GitHub
+CodeAtlas currently provides an end-to-end working workflow for GitHub
 repository analysis.
 
 Implemented components include:
@@ -266,7 +266,7 @@ Implemented components include:
 
 ## 🚀 Future Scope
 
-CodeAlpha can be extended with:
+CodeAtlas can be extended with:
 
 -   Support for more programming languages and frameworks
 -   Deeper code quality analysis
@@ -299,7 +299,7 @@ codebases.
 
 ## 🔒 Security Considerations
 
-CodeAlpha processes repository information through the backend and
+CodeAtlas processes repository information through the backend and
 applies repository-context filtering before AI analysis. Sensitive file
 types and sensitive information are handled with filtering/redaction
 logic during repository context preparation.
@@ -311,7 +311,7 @@ repository.
 ## 📁 High-Level Project Structure
 
 ``` text
-CodeAlpha/
+CodeAtlas/
 ├── Backend/
 │   ├── controllers/
 │   ├── middleware/
@@ -335,17 +335,17 @@ CodeAlpha/
 
 ## 📌 Project Vision
 
-> **CodeAlpha transforms a GitHub repository into an understandable,
+> **CodeAtlas transforms a GitHub repository into an understandable,
 > AI-powered knowledge layer for developers.**
 
 The goal is not just to analyze code, but to help developers
 **understand, explore, and document codebases faster**.
 
-## 👥 Team CodeAlpha
+## 👥 Team CodeAtlas
 
 **Sakshi Bariya · Shreya Mangela · Ruta Birje · Rutuja Patil · Shrihari
 Kulkarni**
 
 ## 📄 License
 
-This project was developed as a hackathon/project submission. All Rights Reserved — Team CodeAlpha
+This project was developed as a hackathon/project submission. All Rights Reserved — Team CodeAtlas
