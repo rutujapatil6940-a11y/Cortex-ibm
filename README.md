@@ -348,4 +348,4 @@ Kulkarni**
 
 ## 📄 License
 
-This project was developed as a hackathon/project submission. All Rights Reserved — Team CodeAtlas
+This project was developed as a hackathon/project submission. All Rights Reserved — Team Cortex
