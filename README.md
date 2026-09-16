@@ -2,11 +2,7 @@
 
 > **AI-Powered Code Intelligence & Automated Documentation Platform**
 
-CodeAtlas is an AI-powered code intelligence platform that helps
-developers understand unfamiliar GitHub repositories faster. It
-processes a repository, builds structured repository context, uses **IBM
-Bob** to generate AI-powered insights, and presents the results through
-a web interface.
+CodeAtlas is an AI-powered developer intelligence platform built using the **MERN Stack** and **IBM Bob**. It helps developers understand unfamiliar GitHub repositories faster by processing source code, building structured repository context, generating AI-powered insights, and presenting the results through an interactive web interface.
 
 The platform is designed to reduce the time developers spend manually
 understanding project structure, technologies, dependencies, components,
@@ -128,8 +124,7 @@ IBM Bob is used to generate information such as:
 -   Potentially important notes and insights
 -   Documentation-oriented information
 
-**IBM Bob Shell** runs within the backend environment, allowing the AI
-analysis workflow to operate as part of the deployed application.
+**IBM Bob Shell** provides the runtime interface through which the backend communicates with IBM Bob during the AI analysis workflow.
 
 ## 🏗️ System Architecture
 
@@ -221,13 +216,24 @@ analysis.
 ### Deployment
 
 -   **Vercel** --- Frontend
--   **Render** --- Backend and Bob Shell runtime
+- **Render** --- Backend
 -   **MongoDB Atlas** --- Cloud database
 
 ### Version Control
 
 -   Git
 -   GitHub
+
+CodeAtlas is developed using the **MERN Stack** for its full-stack web application, with **IBM Bob** serving as the AI-powered code intelligence component.
+
+### MERN Stack
+
+| Technology | Purpose |
+|------------|---------|
+| **MongoDB** | Database and persistent data storage |
+| **Express.js** | Backend REST API and server-side application layer |
+| **React.js** | Frontend user interface |
+| **Node.js** | Backend runtime environment |
 
 ## 🔄 How CodeAtlas Works
 
@@ -263,7 +269,8 @@ Implemented components include:
 -   Authentication
 -   MongoDB Atlas persistence
 -   Cloud deployment using Vercel and Render
-
+- MERN-based application architecture
+  
 ## 🚀 Future Scope
 
 CodeAtlas can be extended with:
