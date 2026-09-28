@@ -1,8 +1,7 @@
 const Repository = require("../Models/repository");
 const { parseGitHubRepositoryUrl } = require("../services/githubService");
 const {
-    generateDocumentation,
-    runBobHealthCheck,
+    generateDocumentation
 } = require("../services/bobService");
 
 const {
@@ -195,20 +194,6 @@ async function analyzeRepositoryWorkspace(
 
         await verifyRepositoryWorkspace(
             workspace
-        );
-
-        const bobHealth =
-            await runBobHealthCheck();
-
-        console.log(
-            "IBM Bob preflight completed",
-            {
-                workspaceId: analysisId,
-                bobVersion:
-                    bobHealth.bobVersion,
-                inferenceElapsedMs:
-                    bobHealth.inferenceElapsedMs,
-            }
         );
 
         const repository = {
