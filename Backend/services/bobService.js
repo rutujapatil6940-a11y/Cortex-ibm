@@ -1171,7 +1171,8 @@ async function runBobHealthCheck() {
 async function runBob(
     prompt,
     workspace,
-    workspaceId
+    workspaceId,
+    options = {}
 ) {
     assertBobConfigured();
 
@@ -1187,14 +1188,37 @@ async function runBob(
     const args =
         buildBobRunArgs(
             workspace,
-            prompt
+            prompt,
+            options
+        );
+
+    const operation =
+        options.operation ||
+        "repository analysis";
+
+    const timeoutMs =
+        options.timeoutMs ||
+        getTimeout(
+            "BOB_TIMEOUT_MS",
+            300_000
         );
 
     console.log(
-        "IBM Bob repository analysis started",
+        "IBM Bob started",
         {
             workspaceId,
+            operation,
             runtimeConfigured,
+            format:
+                options.format || "json",
+            maxCost:
+                options.maxCost ||
+                process.env.BOB_MAX_COST ||
+                "0.50",
+            maxTurns:
+                options.maxTurns ||
+                process.env.BOB_MAX_TURNS ||
+                "10",
         }
     );
 
@@ -1208,57 +1232,133 @@ async function runBob(
                 args,
                 env,
 
-                operation:
-                    "repository analysis",
+                operation,
 
-                timeoutMs:
-                    getTimeout(
-                        "BOB_TIMEOUT_MS",
-                        300_000
-                    ),
+                timeoutMs,
 
                 workspace,
                 workspaceId,
             });
 
-            console.log("=== BOB RAW STDOUT START ===");
-            console.log(String(stdout || "").slice(0, 5000));
-            console.log("=== BOB RAW STDOUT END ===");
-
-            console.log("=== BOB RAW STDERR START ===");
-            console.log(String(diagnostics?.stderr || "").slice(0, 2000));
-            console.log("=== BOB RAW STDERR END ===");
-
-        const streamResult =
-            parseBobStreamResult(stdout);
-
-        const bobResult =
-            streamResult.result;
-
-        const analysis =
-            parseAnalysis(
-                bobResult.last_message
-            );
-
         console.log(
-            "IBM Bob repository analysis successful",
+            "IBM Bob raw output",
             {
                 workspaceId,
+                operation,
+                stdoutBytes:
+                    Buffer.byteLength(
+                        String(stdout || ""),
+                        "utf8"
+                    ),
+                stderrBytes:
+                    Buffer.byteLength(
+                        String(
+                            diagnostics?.stderr ||
+                            ""
+                        ),
+                        "utf8"
+                    ),
+            }
+        );
+
+        if (!String(stdout || "").trim()) {
+            throw createBobExecutionError(
+                new Error(
+                    "IBM Bob completed without returning any output."
+                )
+            );
+        }
+
+        let bobResult;
+
+        /*
+         * Bob supports two output formats:
+         *
+         * json:
+         *   One complete JSON object.
+         *
+         * stream-json:
+         *   Multiple newline-delimited JSON events.
+         */
+        if (
+            options.format ===
+            "stream-json"
+        ) {
+            const streamResult =
+                parseBobStreamResult(
+                    stdout
+                );
+
+            bobResult =
+                streamResult.result;
+
+            console.log(
+                "IBM Bob stream completed",
+                {
+                    workspaceId,
+                    operation,
+                    eventTypes:
+                        streamResult.eventTypes,
+                }
+            );
+        } else {
+            bobResult =
+                parseBobResult(stdout);
+        }
+
+        if (!bobResult) {
+            throw new Error(
+                "IBM Bob did not return a usable result."
+            );
+        }
+
+        const assistantMessage =
+            String(
+                bobResult.last_message ||
+                bobResult.message ||
+                bobResult.output ||
+                ""
+            ).trim();
+
+        if (!assistantMessage) {
+            throw new Error(
+                "IBM Bob completed, but did not return a message."
+            );
+        }
+
+        /*
+         * Repository analysis needs structured analysis.
+         * Bob Chat only needs the assistant message.
+         */
+        let analysis = null;
+
+        if (
+            operation ===
+            "repository analysis"
+        ) {
+            analysis =
+                parseAnalysis(
+                    assistantMessage
+                );
+        }
+
+        console.log(
+            "IBM Bob completed successfully",
+            {
+                workspaceId,
+                operation,
                 taskId:
                     bobResult.stats
                         ?.task_id,
-
                 elapsedMs:
-                    diagnostics.elapsedMs,
-
-                eventTypes:
-                    streamResult.eventTypes,
+                    diagnostics?.elapsedMs,
             }
         );
 
         return {
             analysis,
             bobResult,
+            assistantMessage,
         };
     } catch (error) {
         const bobError =
@@ -1269,9 +1369,10 @@ async function runBob(
                   );
 
         console.error(
-            "IBM Bob repository analysis failed",
+            "IBM Bob failed",
             {
                 workspaceId,
+                operation,
                 message:
                     bobError.message,
                 diagnostics:
