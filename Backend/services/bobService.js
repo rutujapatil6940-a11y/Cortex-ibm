@@ -1221,6 +1221,14 @@ async function runBob(
                 workspaceId,
             });
 
+            console.log("=== BOB RAW STDOUT START ===");
+            console.log(String(stdout || "").slice(0, 5000));
+            console.log("=== BOB RAW STDOUT END ===");
+
+            console.log("=== BOB RAW STDERR START ===");
+            console.log(String(diagnostics?.stderr || "").slice(0, 2000));
+            console.log("=== BOB RAW STDERR END ===");
+            
         const streamResult =
             parseBobStreamResult(stdout);
 
