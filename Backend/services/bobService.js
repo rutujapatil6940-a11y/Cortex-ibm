@@ -675,12 +675,12 @@ function buildBobRunArgs(
         "--max-cost",
         options.maxCost ||
             process.env.BOB_MAX_COST ||
-            "0.30",
+            "0.50",
 
         "--max-turns",
         options.maxTurns ||
             process.env.BOB_MAX_TURNS ||
-            "4",
+            "10",
 
         "--disable-mcp",
         "--disable-subagents",
