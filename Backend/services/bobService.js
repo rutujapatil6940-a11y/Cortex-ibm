@@ -116,19 +116,50 @@ function parseBobStreamResult(stdout) {
 }
 
 function parseAnalysis(lastMessage) {
-    const content = String(lastMessage || "")
-        .trim()
-        .replace(/^```json\s*|\s*```$/g, "");
+    let content = String(lastMessage || "").trim();
+
+    if (!content) {
+        throw createBobError(
+            "IBM Bob returned an empty analysis response.",
+            502
+        );
+    }
+
+    // Remove markdown code fences.
+    content = content
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/i, "")
+        .trim();
 
     let analysis;
 
     try {
         analysis = JSON.parse(content);
     } catch {
-        throw createBobError(
-            "IBM Bob completed, but did not return the requested structured analysis JSON.",
-            502
+        // Try extracting the first complete JSON object.
+        const firstBrace = content.indexOf("{");
+        const lastBrace = content.lastIndexOf("}");
+
+        if (firstBrace === -1 || lastBrace <= firstBrace) {
+            throw createBobError(
+                "IBM Bob completed, but did not return a valid JSON analysis.",
+                502
+            );
+        }
+
+        const extracted = content.slice(
+            firstBrace,
+            lastBrace + 1
         );
+
+        try {
+            analysis = JSON.parse(extracted);
+        } catch {
+            throw createBobError(
+                "IBM Bob completed, but its analysis JSON could not be parsed.",
+                502
+            );
+        }
     }
 
     const requiredFields = [
@@ -147,7 +178,9 @@ function parseAnalysis(lastMessage) {
         !analysis ||
         typeof analysis !== "object" ||
         Array.isArray(analysis) ||
-        requiredFields.some((field) => !(field in analysis))
+        requiredFields.some(
+            (field) => !(field in analysis)
+        )
     ) {
         throw createBobError(
             "IBM Bob returned an incomplete structured analysis.",
@@ -624,7 +657,7 @@ function buildBobRunArgs(
     const args = [
         "run",
         "--format",
-        options.format || "json",
+        options.format || "stream-json",
         "--mode",
         "ask",
         "--workspace",
@@ -642,12 +675,12 @@ function buildBobRunArgs(
         "--max-cost",
         options.maxCost ||
             process.env.BOB_MAX_COST ||
-            "0.50",
+            "0.30",
 
         "--max-turns",
         options.maxTurns ||
             process.env.BOB_MAX_TURNS ||
-            "10",
+            "4",
 
         "--disable-mcp",
         "--disable-subagents",
@@ -1188,8 +1221,11 @@ async function runBob(
                 workspaceId,
             });
 
+        const streamResult =
+            parseBobStreamResult(stdout);
+
         const bobResult =
-            parseBobResult(stdout);
+            streamResult.result;
 
         const analysis =
             parseAnalysis(
@@ -1206,6 +1242,9 @@ async function runBob(
 
                 elapsedMs:
                     diagnostics.elapsedMs,
+
+                eventTypes:
+                    streamResult.eventTypes,
             }
         );
 
