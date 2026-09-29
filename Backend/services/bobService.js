@@ -1228,12 +1228,12 @@ async function runBob(
             console.log("=== BOB RAW STDERR START ===");
             console.log(String(diagnostics?.stderr || "").slice(0, 2000));
             console.log("=== BOB RAW STDERR END ===");
-            
+
         const streamResult =
             parseBobStreamResult(stdout);
 
         const bobResult =
-            parseBobResult(stdout);
+            streamResult.result;
 
         const analysis =
             parseAnalysis(
