@@ -657,7 +657,7 @@ function buildBobRunArgs(
     const args = [
         "run",
         "--format",
-        options.format || "stream-json",
+        options.format || "json",
         "--mode",
         "ask",
         "--workspace",
@@ -1225,7 +1225,7 @@ async function runBob(
             parseBobStreamResult(stdout);
 
         const bobResult =
-            streamResult.result;
+            parseBobResult(stdout);
 
         const analysis =
             parseAnalysis(
